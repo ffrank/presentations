@@ -82,8 +82,132 @@
 						<h3>Rehashing OOP</h3>
 					</section>
 					<section>
+						<h3>OOP 1 - The Class Of Animals</h3>
+						<img src="oop1.svg"/>
 					</section>
 					<section>
+						<h3>OOP 2 - The Animal Kingdom</h3>
+						<img src="oop2.svg"/>
+					</section>
+					<section>
+						<h3>Then Ruby Happened</h3>
+						<img src="oop3.svg"/>
+					</section>
+					<section>
+						<h3>Everything is really confusing</h3>
+						<img src="donald-trump-funny-look-alike-14__700.jpg"/>
+					</section>
+					<section>
+						<h3>What's important: Both classes and instances
+						have state and behavior. Puppet types
+						take advantage of that.</h3>
+					</section>
+				</section>
+
+				<section>
+					<h1>Types overview</h1>
+				</section>
+
+				<section>
+					<section>
+						<h3>Defining native types creates subclasses</h3>
+						<pre><code data-trim contenteditable>
+Puppet::Type.newtype(:cron) do
+  # code!
+end
+						</code></pre>
+						<p>...effectively gives you:</p>
+						<pre><code data-trim contenteditable>
+class Puppet::Type::Cron : Puppet::Type do
+  # generated code!
+end
+						</code></pre>
+					</section>
+					<section>
+						<p>Forget code for a minute, though.</p>
+						<h3>The practical angle</h3>
+						<p> - a layer model for resources</p>
+					</section>
+					<section>
+						<table>
+						<tr><td>manifest resources</td></tr>
+						<tr><td>catalog resources</td></tr>
+						<tr><td>Resource Abstraction Layer</td></tr>
+						<tr><td>system entities</td></tr>
+						</table>
+					</section>
+					<section>
+						<h4>I: Manifest Resources</h4>
+						<pre><code data-trim contenteditable>
+file { '/etc/motd':
+    mode => 644
+}
+cron { 'break-all-the-things':
+    command => '/opt/scripts/cleanup.rb'
+}
+						</code></pre>
+					</section>
+					<section>
+						<h4>II: Catalog Resources</h4>
+						<pre><code data-trim contenteditable>
+{
+  "type": "File",
+  "title": "/etc/motd",
+  "tags": ["file","class"],
+  "file": "/tmp/example-manifest.pp",
+  "line": 1,
+  "exported": false,
+  "parameters": {
+    "mode": 644
+  }
+}
+
+						</code></pre>
+					</section>
+					<section>
+						<h4>III: RAL resources</h4>
+						<p>(resource abstraction layer)</p>
+						<ul>
+						<li>complete representation of a system entity</li>
+						<li>properties and parameters</li>
+						<li>does all the interesting work</li>
+						</ul>
+					</section>
+					<section>
+						<h4>IV: system entities</h4>
+						<pre><code data-trim contenteditable>
+-rw-r--r-- 1 root root 0 Feb  5  2011 /etc/motd
+
+---
+
+# HEADER: ...
+
+# Puppet Name: break-all-the-things
+1 1 2 * * /usr/scripts/cleanup.rb
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<div>
+						<img src="boring.jpg"/>
+						<p style="font-size: small; text-align: right">
+						http://www.theawl.com/2010/02/church-boring
+						</p>
+					</div>
+					<h3>Now back to the code</h3>
+				</section>
+				<section>
+					<section>
+						<h3>So what does this</h3>
+						<pre><code data-trim contenteditable>
+class Puppet::Type::Cron : Puppet::Type do
+  # generated code!
+end
+						</code></pre>
+					</section>
+					<section>
+						<p>...or in yet another form</p>
+						<img src="cron-class.svg"/>
 					</section>
 				</section>
 			</div>
