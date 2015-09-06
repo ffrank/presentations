@@ -78,29 +78,76 @@
 				</section>
 
 				<section>
+					<h3>How do I get started with resource type
+					and provider development?</h3>
+				</section>
+
+				<section>
+					<h3>Read code, perhaps try and<br/>
+					fix a bug or three</h3>
+				</section>
+
+				<section>
+					<section>
+						<h3>Remember</h3>
+						<ul>
+						<li>lib/puppet/type(.rb)</li>
+						<li>lib/puppet/provider(.rb)</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Also</h3>
+						<ul>
+						<li>lib/puppet/property(.rb)</li>
+						<li>lib/puppet/parameter(.rb)</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Don't be mislead.</h3>
+						<p>all the <em>Resource</em> classes hardly relate</p>
+						<ul>
+						<li>lib/puppet/parser/resource.rb</li>
+						<li>lib/puppet/parser/ast/resource.rb</li>
+						<li>lib/puppet/face/resource.rb</li>
+						<li>lib/puppet/resource.rb</li>
+						<li>lib/puppet/application/resource.rb</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h3>First some background:</h3>
+				</section>
+
+				<section>
 					<section>
 						<h3>Rehashing OOP</h3>
 					</section>
 					<section>
-						<h3>OOP 1 - The Class Of Animals</h3>
+						<h4>OOP 1 - The Class Of Animals</h4>
 						<img src="oop1.svg"/>
 					</section>
 					<section>
-						<h3>OOP 2 - The Animal Kingdom</h3>
+						<h4>OOP 2 - The Animal Kingdom</h4>
 						<img src="oop2.svg"/>
 					</section>
 					<section>
-						<h3>Then Ruby Happened</h3>
+						<h4>Then Ruby Happened</h4>
 						<img src="oop3.svg"/>
 					</section>
 					<section>
-						<h3>Everything is really confusing</h3>
+						<h4>Everything is really confusing</h4>
 						<img src="donald-trump-funny-look-alike-14__700.jpg"/>
+						<p style="font-size: small; text-align: right">
+						http://theawesomedaily.com/21-things-that-look-exactly-like-donald-trump/
+						</p>
 					</section>
 					<section>
 						<h3>What's important: Both classes and instances
-						have state and behavior. Puppet types
-						take advantage of that.</h3>
+						have state and behavior.</h3>
+						<p>Puppet types take advantage of that.</p>
 					</section>
 				</section>
 
@@ -198,16 +245,55 @@ cron { 'break-all-the-things':
 				</section>
 				<section>
 					<section>
-						<h3>So what does this</h3>
+						<p>So what about this</p>
 						<pre><code data-trim contenteditable>
 class Puppet::Type::Cron : Puppet::Type do
   # generated code!
 end
 						</code></pre>
+						<p>versus this</p>
+						<img src="layers.svg"/>
+					</section>
+					<section>
+						<img src="layers-vs-objects.svg"/>
+					</section>
+				</section>
+
+				<section>
+					<h3>When reading the <em>Puppet::Type</em> code,<br/>
+					be mindful of class vs. instance scope</h3>
+				</section>
+
+				<section>
+					<section>
+						<h3>Ruby - know thyself</h3>
+						<pre><code data-trim contenteditable>
+# class method
+def self.allattrs
+						</code></pre>
+						<pre><code data-trim contenteditable>
+# instance method
+def name_var
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Caution!</h3>
+						<pre><code data-trim contenteditable>
+class Puppet::Parameter
+  class &lt;&lt;self
+    # ...
+    def validate
+      # ...
+    end
+  end
+end
+						</code></pre>
+						<p><em>Puppet::Parameter::validate</em> is a class method
+						<!-- demo: vim lib/puppet/parameter.rb +242 -->
 					</section>
 				</section>
 			</div>
-
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
