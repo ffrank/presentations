@@ -293,6 +293,51 @@ end
 						<!-- demo: vim lib/puppet/parameter.rb +242 -->
 					</section>
 				</section>
+
+				<section>
+					<h2>Reading type code</h2>
+				</section>
+
+				<section>
+					<section>
+						<h3>DSL mainly consists of calls to
+						class methods of <em>Puppet::Type</em></h3>
+						<pre><code data-trim contenteditable>
+newproperty(:user) do
+						</code></pre>
+						<pre><code data-trim contenteditable>
+newparam(:user) do
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>The occasional type also comprises
+						some plain Ruby code.</h3>
+						<!-- e.g. Cron -->
+					</section>
+				</section>
+
+				<section>
+					<h3>Speaking of properties and parameters</h3>
+				</section>
+
+				<section>
+					<section>
+						<h3>Mnemonic: Properties can<br/>and will sync.</h3>
+						<p>Parameters can never do that.</h3>
+					</section>
+
+					<section>
+						<h3>E.g. File/content</h3>
+						<p>Classic property: Is the content on disk?</p>
+					</section>
+
+					<section>
+						<h3>E.g. provider</h3>
+						<p>Classic parameter: How would Puppet switch<br/>
+						from <em>rpm</em> to <em>gem</em>?</p>
+					</section>
+				</section>
 			</div>
 		</div>
 
