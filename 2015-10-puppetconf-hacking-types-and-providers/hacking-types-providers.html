@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>Hacking Types and Providers - PuppetConf 2015 - Felix Frank</title>
 
 		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
 		<meta name="author" content="Hakim El Hattab">
@@ -49,31 +49,42 @@
 					<section>
 						<h2>Who is that cat?</h2>
 						<p>
-							Felix Frank (<a href="https://twitter.com/felis_rex">@felis_rex</a>)
+							Felix Frank 
 							<ul>
 								<li>Server Op from Berlin</li>
 								<li>Puppet user since 0.24</li>
 								<li>contributor since ~3.4</li>
+								<li class="fragment highlight-red">Twitter <a href="https://twitter.com/felis_rex">@felis_rex</a></li>
+								<li class="fragment highlight-red">GitHub <a href="https://github.com/ffrank">@ffrank</a></li>
 							</ul>
 						</p>
 					</section>
 					<section>
+						<h3>This talk will go a little meta<br/>
+						now and then</h3>
+					</section>
+					<section>
 						<img src="unicorn.jpg" alt="generalist"/>
+					</section>
+					<section>
+						<h3>Will show lookups<br/>
+						rather than results</h3>
 					</section>
 				</section>
 
 				<section>
 					<section>
 						<h2>Agenda</h2>
-						<ol>
+						<ol style="width:70%">
 							<li class="fragment grow">The Type class and DSL</li>
 							<li class="fragment grow">Providers</li>
+							<li class="fragment grow">The bigger picture</li>
 							<li class="fragment grow">Live demo</li>
 						</ol>
 					</section>
 					<section>
-						<h3>Focus will be on code a few key concepts,
-						insights and code excerpts.</h3>
+						<h3>Focus will be on a few key concepts,
+						insights, and code excerpts.</h3>
 					</section>
 				</section>
 
@@ -328,15 +339,153 @@ newparam(:user) do
 					</section>
 
 					<section>
-						<h3>E.g. File/content</h3>
+						<h3>E.g. File content</h3>
 						<p>Classic property: Is the content on disk?</p>
 					</section>
 
 					<section>
 						<h3>E.g. provider</h3>
-						<p>Classic parameter: How would Puppet switch<br/>
-						from <em>rpm</em> to <em>gem</em>?</p>
+						<p>Classic parameter: Unsyncable, or how would Puppet<br/>
+						switch a package from <em>rpm</em> to <em>gem</em>?</p>
 					</section>
+				</section>
+
+				<section>
+					<h2>Finding your way</h2>
+				</section>
+
+				<section>
+					<section>
+						<h3>Suppose you encounter<br/>
+						a method invocation<br/>
+						and want to learn How It Works.</h3>
+					</section>
+
+					<section>
+						<pre><code data-trim contenteditable>
+# in lib/puppet/type/file.rb
+Puppet::Type.newtype(:file) do
+# ...
+  CREATORS = [:content, :source, :target]
+  SOURCE_ONLY_CHECKSUMS = [:none, :ctime, :mtime]
+
+  validate do
+    creator_count = 0
+    CREATORS.each do |param|
+      creator_count += 1 if self.should(param)
+    end
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Look for validate<br/>
+						among <em>Puppet::Type</em>'s<br/>
+						class methods.</h3>
+					</section>
+
+					<section>
+						<pre><code data-trim contenteditable>
+# in lib/puppet/type.rb
+module Puppet
+class Type
+# ...
+  def self.validate(&block)
+    define_method(:validate, &block)
+  end
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Same for self.should?</h3>
+					</section>
+
+					<section>
+						<h3>We're in instance scope now.</h3>
+						<pre><code data-trim contenteditable>
+class Type
+# ...
+  def should(name)
+    name = name.intern
+    (prop = @parameters[name] and
+     prop.is_a?(Puppet::Property)) ? prop.should : nil
+  end
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h3>Proper digging hints</h3>
+					<img src="http://i.imgur.com/hhQxUnK.jpg"/>
+					<p style="font-size: small; text-align: right">
+					http://i.imgur.com/hhQxUnK.jpg
+					</p>
+				</section>
+
+				<section>
+					<section>
+						<h3>Keep mixins in mind</h3>
+					</section>
+
+					<section>
+						<pre><code data-trim contenteditable>
+module Puppet
+class Type
+  include Puppet::Util
+  include Puppet::Util::Errors
+  include Puppet::Util::Logging
+  include Puppet::Util::Tagging
+						</code></pre>
+					</section>
+
+					<section>
+						<img src="tribbles-scaled.jpg"/>
+						<p style="font-size: small; text-align: right">
+						http://en.memory-alpha.wikia.com/wiki/Tribble?file=Kirk_surrounded_by_Tribbles.jpg
+						</p>
+					</section>
+
+					<section>
+						<h3>The bazooka</h3>
+						<pre><code data-trim contenteditable>
+$ grep -Er '^ *def should|^ *def self\.should' lib/
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>Yes, heavy handed,</br>
+						but it's quick, simple, and<br/>
+						it keeps you reading</h3>
+					</section>
+				</section>
+
+				<section>
+					<h3>Concluding types</h3>
+					<h2>Lifecycle</h2>
+				</section>
+
+<!-- TODO
+- type lifecycle
+- provider
+- lifecycle
+- parsedfile structure
+- summary
+-->
+				<section>
+					<h2>Where to start</h2>
+				</section>
+				<section>
+					<h3>Most of you will want to enhance modules</h3>
+				</section>
+				<section>
+					<section>
+						<h3>Working on core Puppet has some advantages</h3>
+					</section>
+					<section><h3>Test coverage is good</h3></section>
+					<section><h3>Weekly triage sessions</h3></section>
+					<section><h3>Bugs are plentiful</h3></section>
+				</section>
+				<section>
+					<h2>To Jira!</h2>
 				</section>
 			</div>
 		</div>
