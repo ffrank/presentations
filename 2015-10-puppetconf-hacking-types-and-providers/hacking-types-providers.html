@@ -117,27 +117,49 @@
 				</section>
 
 				<section>
-					<h3>First some background:</h3>
+					<h3>When reading type code</h3>
 				</section>
 
 				<section>
 					<section>
-						<h3>Rehashing OOP</h3>
+						<h3>Keep some Ruby idiosyncracies in mind</h3>
 					</section>
 					<section>
-						<h4>OOP 1 - The Class Of Animals</h4>
-						<img src="oop1.svg"/>
+						<h4>Classes are instances</h4>
+						<pre><code data-trim contenteditable>
+Class String ... end
+						</code></pre>
+						<p>same as</p>
+						<pre><code data-trim contenteditable>
+String = Class.new do ... end
+						</code></pre>
 					</section>
 					<section>
-						<h4>OOP 2 - The Animal Kingdom</h4>
-						<img src="oop2.svg"/>
+						<h4>An "overview"</h4>
+						<pre><code data-trim contenteditable>
+x                        +---------+             +-...
+                         |         |             |
+         BasicObject-----|-->(BasicObject)-------|-...
+             ^           |         ^             |
+             |           |         |             |
+          Object---------|----->(Object)---------|-...
+             ^           |         ^             |
+             |           |         |             |
+             +-------+   |         +--------+    |
+             |       |   |         |        |    |
+             |    Module-|---------|--->(Module)-|-...
+             |       ^   |         |        ^    |
+             |     Class-|---------|---->(Class)-|-...
+             |       ^   |         |        ^    |
+             |       +---+         |        +----+
+obj--->OtherClass---------->(OtherClass)-----------...
+						</code></pre>
+						<p style="font-size: small; text-align: right">
+						http://ruby-doc.org/core-2.2.0/Class.html
+						</p>
 					</section>
 					<section>
-						<h4>Then Ruby Happened</h4>
-						<img src="oop3.svg"/>
-					</section>
-					<section>
-						<h4>Everything is really confusing</h4>
+						<h4>Everything is very confusing</h4>
 						<img src="donald-trump-funny-look-alike-14__700.jpg"/>
 						<p style="font-size: small; text-align: right">
 						http://theawesomedaily.com/21-things-that-look-exactly-like-donald-trump/
@@ -151,12 +173,12 @@
 				</section>
 
 				<section>
-					<h1>Types overview</h1>
+					<h3>Defining native types creates subclasses</h3>
 				</section>
 
 				<section>
 					<section>
-						<h3>Defining native types creates subclasses</h3>
+						<p>This code...</p>
 						<pre><code data-trim contenteditable>
 Puppet::Type.newtype(:cron) do
   # code!
@@ -223,9 +245,8 @@ cron { 'break-all-the-things':
 						<h4>IV: system entities</h4>
 						<pre><code data-trim contenteditable>
 -rw-r--r-- 1 root root 0 Feb  5  2011 /etc/motd
-
----
-
+						</code></pre>
+						<pre><code data-trim contenteditable>
 # HEADER: ...
 
 # Puppet Name: break-all-the-things
