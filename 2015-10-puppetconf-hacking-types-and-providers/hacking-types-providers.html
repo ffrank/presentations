@@ -105,7 +105,7 @@
 
 					<section>
 						<h3>Don't be mislead.</h3>
-						<p>all the <em>Resource</em> classes hardly relate</p>
+						<p>all the <code>Resource</code> classes hardly relate</p>
 						<ul>
 						<li>lib/puppet/parser/resource.rb</li>
 						<li>lib/puppet/parser/ast/resource.rb</li>
@@ -280,7 +280,7 @@ end
 				</section>
 
 				<section>
-					<h3>When reading the <em>Puppet::Type</em> code,<br/>
+					<h3>When reading the <code>Puppet::Type</code> code,<br/>
 					be mindful of class vs. instance scope</h3>
 				</section>
 
@@ -311,7 +311,7 @@ class Puppet::Parameter
   end
 end
 						</code></pre>
-						<p><em>Puppet::Parameter::validate</em> is a class method
+						<p><code>Puppet::Parameter::validate</code> is a class method
 						<!-- demo: vim lib/puppet/parameter.rb +242 -->
 					</section>
 				</section>
@@ -323,7 +323,7 @@ end
 				<section>
 					<section>
 						<h3>DSL mainly consists of calls to
-						class methods of <em>Puppet::Type</em></h3>
+						class methods of <code>Puppet::Type</code></h3>
 						<pre><code data-trim contenteditable>
 newproperty(:user) do
 						</code></pre>
@@ -331,16 +331,20 @@ newproperty(:user) do
 newparam(:user) do
 						</code></pre>
 					</section>
-
 					<section>
-						<h3>The occasional type also comprises
-						some plain Ruby code.</h3>
-						<!-- e.g. Cron -->
+						<h3>It is generally safe to read<br/>
+						Type class methods to learn the DSL</h3>
+						<p>Things like <code>self.newparam</code>
+						or <code>self.ensurable</code></p>
+					</section>
+					<section>
+						<h3>Some are lifecycle methods though</h3>
+						<p><code>self.instances</code> is pretty neat</p>
 					</section>
 				</section>
 
 				<section>
-					<h3>Speaking of properties and parameters</h3>
+					<h3>Interlude: properties and parameters</h3>
 				</section>
 
 				<section>
@@ -357,7 +361,7 @@ newparam(:user) do
 					<section>
 						<h3>E.g. provider</h3>
 						<p>Classic parameter: Unsyncable, or how would Puppet<br/>
-						switch a package from <em>rpm</em> to <em>gem</em>?</p>
+						switch a package from <code>rpm</code> to <code>gem</code>?</p>
 					</section>
 				</section>
 
@@ -390,7 +394,7 @@ Puppet::Type.newtype(:file) do
 
 					<section>
 						<h3>Look for validate<br/>
-						among <em>Puppet::Type</em>'s<br/>
+						among <code>Puppet::Type</code>'s<br/>
 						class methods.</h3>
 					</section>
 
