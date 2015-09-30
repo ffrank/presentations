@@ -366,120 +366,54 @@ newparam(:user) do
 				</section>
 
 				<section>
-					<h2>Finding your way</h2>
+					<h1>Types and providers</h1>
 				</section>
 
 				<section>
 					<section>
-						<h3>Suppose you encounter<br/>
-						a method invocation<br/>
-						and want to learn How It Works.</h3>
+						<h3>Which does what?</h3>
 					</section>
-
 					<section>
+						<img src="layers-with-provider.svg" style="width:80%"/>
+					</section>
+					<section>
+						<h3>For example: catalog</h3>
 						<pre><code data-trim contenteditable>
-# in lib/puppet/type/file.rb
-Puppet::Type.newtype(:file) do
-# ...
-  CREATORS = [:content, :source, :target]
-  SOURCE_ONLY_CHECKSUMS = [:none, :ctime, :mtime]
-
-  validate do
-    creator_count = 0
-    CREATORS.each do |param|
-      creator_count += 1 if self.should(param)
-    end
+{
+  "type": "Package",
+  "title": "cowsay",
+  "parameters": {
+    "ensure": "installed"
+  }
+}
 						</code></pre>
 					</section>
-
 					<section>
-						<h3>Look for validate<br/>
-						among <code>Puppet::Type</code>'s<br/>
-						class methods.</h3>
+						<h3>Should value</h3>
+						<p><code>Package[cowsay]/ensure: present</code></p>
 					</section>
-
 					<section>
-						<pre><code data-trim contenteditable>
-# in lib/puppet/type.rb
-module Puppet
-class Type
-# ...
-  def self.validate(&block)
-    define_method(:validate, &block)
-  end
-						</code></pre>
+						<code>Puppet::Provider::Package.prefetch</code>
+						<p>takes a hash argument</p>
+						<code>{ 'cowsay' =&gt; Package[cowsay] }</code>
+						<p>...where <code>Package[cowsay]</code> is an instance
+						of <code>Puppet::Type::Package</code></p>
 					</section>
-
 					<section>
-						<h3>Same for self.should?</h3>
+						<p><code>prefetch</code> in turn calls</p>
+						<code>Puppet::Provider::Package::Dpkg.instances</code>
+						<p>assuming Dpkg or Apt is the selected provider</p>
 					</section>
-
 					<section>
-						<h3>We're in instance scope now.</h3>
-						<pre><code data-trim contenteditable>
-class Type
-# ...
-  def should(name)
-    name = name.intern
-    (prop = @parameters[name] and
-     prop.is_a?(Puppet::Property)) ? prop.should : nil
-  end
-						</code></pre>
+						<h3>Entities that cannot be enumerated
+						or just not found get a "fresh" provider</h3>
+					</section>
+					<section>
+						<h3>Now properties can be checked
+						and synced one by one</h3>
 					</section>
 				</section>
-
-				<section>
-					<h3>Proper digging hints</h3>
-					<img src="http://i.imgur.com/hhQxUnK.jpg"/>
-					<p style="font-size: small; text-align: right">
-					http://i.imgur.com/hhQxUnK.jpg
-					</p>
-				</section>
-
-				<section>
-					<section>
-						<h3>Keep mixins in mind</h3>
-					</section>
-
-					<section>
-						<pre><code data-trim contenteditable>
-module Puppet
-class Type
-  include Puppet::Util
-  include Puppet::Util::Errors
-  include Puppet::Util::Logging
-  include Puppet::Util::Tagging
-						</code></pre>
-					</section>
-
-					<section>
-						<img src="tribbles-scaled.jpg"/>
-						<p style="font-size: small; text-align: right">
-						http://en.memory-alpha.wikia.com/wiki/Tribble?file=Kirk_surrounded_by_Tribbles.jpg
-						</p>
-					</section>
-
-					<section>
-						<h3>The bazooka</h3>
-						<pre><code data-trim contenteditable>
-$ grep -Er '^ *def should|^ *def self\.should' lib/
-						</code></pre>
-					</section>
-
-					<section>
-						<h3>Yes, heavy handed,</br>
-						but it's quick, simple, and<br/>
-						it keeps you reading</h3>
-					</section>
-				</section>
-
-				<section>
-					<h3>Concluding types:</h3>
-					<h2>Lifecycle</h2>
-				</section>
-
 <!-- TODO
-- type lifecycle
 - provider
 - lifecycle
 - parsedfile structure
