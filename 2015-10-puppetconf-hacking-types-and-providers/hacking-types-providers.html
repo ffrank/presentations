@@ -79,6 +79,10 @@
 				</section>
 
 				<section>
+					<h1>Types</h1>
+				</section>
+
+				<section>
 					<section>
 						<h3>Remember</h3>
 						<ul>
@@ -405,6 +409,123 @@ newparam(:user) do
 						and synced one by one</h3>
 					</section>
 				</section>
+
+				<section>
+					<h2>Providers are straight forward</h2>
+				</section>
+
+				<section>
+					<section>
+						<h3>...except when they inherit
+						ParsedFile</h3>
+						<code>lib/puppet/provider/parsedfile.rb</code>
+					</section>
+					<section>
+						<ul>
+						<li>cron</li>
+						<li>mount</li>
+						<li>host</li>
+						<li>sshkey</li>
+						<li>...</li>
+					</section>
+					<section>
+						<p>ParsedFile peculiarities</p>
+						<h2>There is a specific DSL</h2>
+						<p>See <code>Util::FileParsing</code></p>
+						<pre><code data-trim contenteditable>
+text_line   :comment, :match => /^\s*#/
+text_line   :blank,   :match => /^\s*$/
+record_line :parsed,
+  :fields   => %w{options type key name},
+  :optional => %w{options},
+						</code></pre>
+					</section>
+					<section>
+						<p>ParsedFile peculiarities</p>
+						<h2>Notion of <em>records</em>
+						to represent resources</h2>
+						<pre><code data-trim contenteditable>
+def self.prefetch_all_targets(resources)
+  records = []
+  targets(resources).each do |target|
+    records += prefetch_target(target)
+  end
+  records
+end
+						</code></pre>
+						<h3><em>Targets</em> are the managed files</h3>
+					</section>
+					<section>
+						<p>ParsedFile peculiarities</p>
+						<h2>Instance methods will often
+						rely on class methods</h2>
+						<pre><code data-trim contenteditable>
+def flush
+  # ...
+  self.class.flush(@property_hash)
+end
+						</code></pre>
+					</section>
+					<section>
+						<p>ParsedFile peculiarities</p>
+						<h3>Action is defered to <code>flush</code></h3>
+						<p>(true for some other providers as well)</p>
+						<pre><code data-trim contenteditable>
+def self.flush
+  @modified.each do |target|
+    flush_target(target)
+  end
+end
+						</code></pre>
+					</section>
+					<section>
+						<p>ParsedFile peculiarities</p>
+						<h3>Flushing implies gathering<br/>
+						global state (records)</h3>
+						<pre><code data-trim contenteditable>
+def self.flush_target(target)
+  backup(target)
+  records = target_records(target)
+  target_object(target).write(to_file(records))
+end
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h3>When debugging parsedfile providers,
+					keep the convoluted flow of logic<br/>in mind</h3>
+				</section>
+
+				<section>
+					<h3>Aside: Please avoid creating new
+					parsedfile providers</h3>
+					<p>Look at <a href=https://forge.puppetlabs.com/herculesteam/augeasproviders_core>
+					augeas providers</a> instead</p>
+				</section>
+
+				<section>
+					<h1>Summarizing</h1>
+				</section>
+
+				<section>
+					<section>
+						<h3>With types, keep class vs.
+						instance level in mind</h3>
+					</section>
+					<section>
+						<h3>Provider instances get paired
+						with RAL resources, i.e. type
+						instances</h3>
+					</section>
+					<section>
+						<h2>Parsedfile providers are
+						a can of worms</h2>
+						<h3>Learning their structure
+						is rewarding but will not help
+						you with other providers at all</h3>
+					</section>
+				</section>
 <!-- TODO
 - provider
 - lifecycle
@@ -412,7 +533,7 @@ newparam(:user) do
 - summary
 -->
 				<section>
-					<h2>Where to start</h2>
+					<h1>Where to start</h1>
 				</section>
 				<section>
 					<h3>How do I get started with resource type
