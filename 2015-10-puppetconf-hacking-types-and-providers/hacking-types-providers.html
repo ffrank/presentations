@@ -318,7 +318,7 @@ end
 
 				<section>
 					<section>
-						<h3>DSL mainly consists of calls to
+						<h3>DSL mainly consists of calls to<br/>
 						class methods of <code>Puppet::Type</code></h3>
 						<pre><code data-trim contenteditable>
 newproperty(:user) do
@@ -345,8 +345,8 @@ newparam(:user) do
 
 				<section>
 					<section>
-						<h3>Mnemonic: Properties can<br/>and will sync.</h3>
-						<p>Parameters can never do that.</h3>
+						<h3>Mnemonic: Properties can<br/>and will sync</h3>
+						<p>Parameters can never do that</h3>
 					</section>
 
 					<section>
@@ -403,6 +403,13 @@ newparam(:user) do
 					<section>
 						<h3>Entities that cannot be enumerated
 						or just not found get a "fresh" provider</h3>
+						<pre><code data-trim contenteditable>
+Type::Package.provider(:apt).new
+						</pre></code>
+						<p>or in other words</p>
+						<pre><code data-trim contenteditable>
+Provider::Package::Apt.new
+						</pre></code>
 					</section>
 					<section>
 						<h3>Now properties can be checked
@@ -411,7 +418,7 @@ newparam(:user) do
 				</section>
 
 				<section>
-					<h2>Providers are straight forward</h2>
+					<h2>Providers are<br/>straight forward</h2>
 				</section>
 
 				<section>
@@ -494,7 +501,7 @@ end
 
 				<section>
 					<h3>When debugging parsedfile providers,
-					keep the convoluted flow of logic<br/>in mind</h3>
+					keep the convoluted<br/>flow of logic in mind</h3>
 				</section>
 
 				<section>
