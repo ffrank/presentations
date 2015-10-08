@@ -337,7 +337,7 @@ def self.allattrs
 						</code></pre></li>
 						<li>instance method:
 						<pre><code data-trim contenteditable>
-def name_var
+def retrieve
 						</code></pre></li>
 						</ul>
 					</section>
@@ -371,7 +371,7 @@ end
 newproperty(:user) do
 						</code></pre>
 						<pre><code data-trim contenteditable>
-newparam(:user) do
+newparam(:name) do
 						</code></pre>
 					</section>
 					<section>
@@ -410,9 +410,9 @@ newparam(:user) do
 					</section>
 
 					<section>
-						<h3>E.g. provider</h3>
-						<p>Classic parameter: Unsyncable, or how would Puppet<br/>
-						switch a package from <code>rpm</code> to <code>gem</code>?</p>
+						<h3>E.g. <code>install_options</code></h3>
+						<p>Classic parameter: Unsyncable, since flags
+						cannot be reset after the fact</p>
 					</section>
 				</section>
 
@@ -457,6 +457,10 @@ newparam(:user) do
 						<p>assuming Dpkg or Apt is the selected provider</p>
 					</section>
 					<section>
+						<p>the <code>instances</code> hook produces<br/>
+						a list of <code>Provider</code> instances</p>
+					</section>
+					<section>
 						<h3>Entities that cannot be enumerated
 						or just not found get a "fresh" provider</h3>
 						<pre><code data-trim contenteditable>
@@ -468,7 +472,7 @@ Provider::Package::Apt.new
 						</pre></code>
 					</section>
 					<section>
-						<h3>Now properties can be checked
+						<h3>Finally properties can be checked<br/>
 						and synced one by one</h3>
 					</section>
 				</section>
@@ -556,7 +560,7 @@ end
 				</section>
 
 				<section>
-					<h3>When debugging parsedfile providers,
+					<h3>When debugging<br/>parsedfile providers,<br/>
 					keep the convoluted<br/>flow of logic in mind</h3>
 				</section>
 
@@ -577,16 +581,15 @@ end
 						instance level in mind</h3>
 					</section>
 					<section>
-						<h3>Provider instances get paired
-						with RAL resources, i.e. type
-						instances</h3>
+						<h3>Provider instances get paired with<br/>
+						RAL resources, i.e. type instances</h3>
 					</section>
 					<section>
-						<h2>Parsedfile providers are
+						<h2>Parsedfile providers are<br/>
 						a can of worms</h2>
 						<h3>Learning their structure
 						is rewarding but will not help
-						you with other providers at all</h3>
+						you with<br/>other providers at all</h3>
 					</section>
 				</section>
 <!-- TODO
@@ -608,11 +611,11 @@ end
 					fix a bug or three</h3>
 				</section>
 				<section>
-					<h3>Most of you will want to enhance modules</h3>
+					<h3>Most of you will want<br/>to enhance modules</h3>
 				</section>
 				<section>
 					<section>
-						<h3>Working on core Puppet has some advantages</h3>
+						<h3>Working on core Puppet<br/>has some advantages</h3>
 					</section>
 					<section><h3>Test coverage is good</h3></section>
 					<section><h3>Weekly triage sessions</h3></section>
@@ -625,9 +628,9 @@ end
 
 				<section>
 					<section><h2>Now some final words, then Q&amp;A and demo!</h2></section>
-					<section><h2>The white dude ratio is ours to choose</h2></section>
-					<section><h3>Recommend my book?</h3></section>
-					<section><h3>US folks: Please don't make Mr. Trump your president</h3></section>
+					<section><h2>The white dude ratio<br/>is ours to choose</h2></section>
+					<section><h2>Recommend my book?</h2></section>
+					<section><h2>USA</h2><h3>Please don't make Mr. Trump<br/>your president</h3></section>
 				</section>
 				<section>
 					<h1>Q&amp;A</h1>
