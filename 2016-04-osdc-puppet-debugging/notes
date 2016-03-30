@@ -1,0 +1,9 @@
+- config introspection
+- certname impersonation
+- traces
+- where are my exports?
+  -> inspecting the catalog
+  = $client_datadir/catalog/$certname.json -or-
+  = $client_yaml/catalog/$certname.yaml
+ => irb + pry
+- ( pry )
