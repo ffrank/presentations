@@ -50,6 +50,96 @@
 					with software</h1>
 				</section>
 
+				<section>
+					<p>Things with Puppet (e.g.)</p>
+					<ol>
+					<li>weird behavior of the agent or master</li>
+					<li>the manifest or catalog fails</li>
+					<li>complex manifests don't function as expected</li>
+					</ol>
+				</section>
+
+				<section>
+					<h3>1. Understanding behavior</h3>
+					<img src="behavior.png">
+				</section>
+
+				<section>
+					The hammer
+					<h2>strace</h3>
+					The wrench
+					<h2>config print</h2>
+				</section>
+
+				<section>
+					<section>
+						<h1>Let's see it in action</h1>
+					</section>
+
+					<section>
+						...insert demo screenshots here...
+					</section>
+				</section>
+
+				<section>
+					<h3>2. failure forensics</h3>
+					<img src="cleanup.jpg">
+				</section>
+
+				<section>
+					The master failing badly:
+						<pre><code data-trim contenteditable>
+err: Could not retrieve catalog from remote server:
+	Error 400 on SERVER:
+	undefined method `empty?' for nil:NilClass at
+						</code></pre>
+					The agent failing:
+						<pre><code data-trim contenteditable>
+Error: Failed to apply catalog:
+	undefined method `ancestors' for nil:NilClass
+						</code></pre>
+				</section>
+
+				<section>
+					<h1>Needs some context!</h1>
+					Meet the <code>--trace</code> option.
+				</section>
+
+				<section>
+					<section>
+						<h1>Let's see it in action</h1>
+					</section>
+
+					<section>
+						...insert demo screenshots here...
+					</section>
+				</section>
+
+				<section>
+					<h3>3. it's working but it's weird</h3>
+					<img src="weird.jpg">
+				</section>
+
+				<section>
+					...
+				</section>
+
+				<section>
+					When not in the debugging mood...
+					<h1>Do get help</h1>
+					<img src="help.gif"/>
+				</section>
+
+				<section>
+					<h3>Thanks for listening</h3>
+					<p>Images</p>
+					<ul>
+					<li>http://www.babygaga.com/buzz/show/1066/when-your-fur-baby-meets-your-human-baby-how-to-make-the-introduction-as-smooth-as-possible</li>
+					<li>http://www.sammyspetboarding.com/cleaning.htm</li>
+					<li>http://www.playbuzz.com/shacharo/5-reasons-why-llama-is-the-funniest-animal-ever</li>
+					<li>http://i.giphy.com/c5eqVJN7oNLTq.gif</li>
+					</ul>
+				</section>
 			</div>
 
 			<div id="myLogo" style="background: url(um-logo.png);
@@ -79,7 +169,7 @@
 			Reveal.initialize({
 				controls: false,
 				progress: true,
-				history: false,
+				history: true,
 				center: true,
 
 				transition: 'slide', // none/fade/slide/convex/concave/zoom
