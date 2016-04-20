@@ -32,9 +32,14 @@
 		<!--[if lt IE 9]>
 		<script src="lib/js/html5shiv.js"></script>
 		<![endif]-->
+
 	</head>
 
 	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		</style>
 
 		<div class="reveal">
 
@@ -46,22 +51,61 @@
 				</section>
 
 				<section>
+					<section>
+						That person on stage
+						<table>
+						<tr>
+							<td><img src="desy-logo.jpg" width="100px"/></td>
+							<td style="vertical-align: middle;">5 years</td>
+							<td><img src="cfengine.png" width="100px"/></td>
+						</tr>
+						<tr>
+							<td><img src="mpex-logo.png" width="100px"/></td>
+							<td style="vertical-align: middle;">6 years</td>
+							<td><img src="puppetlabs.jpg" width="100px"/></td>
+						</tr>
+						<tr>
+							<td><img src="um-logo.png" width="100px"/></td>
+							<td style="vertical-align: middle;">2 months and counting</td>
+							<td><img src="puppet.jpg" width="100px"></td>
+						</tr>
+						</table>
+						<br/>
+						<a href="http://ffrank.github.io/">http://ffrank.github.io/</a><br/>
+						<br/>
+						<a href="https://twitter.com/felis_rex">@felis_rex</a>
+					</section>
+
+					<section>
+						Let's get started then
+						<br/>
+						<img src="silence.gif"/>
+						<p style="font-size: small; text-align: right">
+						http://jalapenoberry.com/blog/post/is-this-thing-on/545/
+						</p>
+					</section>
+				</section>
+
+				<section>
 					<h1>It's always something<br/>
 					with software</h1>
 				</section>
 
 				<section>
-					<p>Things with Puppet (e.g.)</p>
+					<h3>Things with Puppet (e.g.)</h3>
 					<ol>
-					<li>weird behavior of the agent or master</li>
-					<li>the manifest or catalog fails</li>
-					<li>complex manifests don't function as expected</li>
+					<li class="fragment grow">weird behavior of the agent or master</li>
+					<li class="fragment grow">the manifest or catalog fails</li>
+					<li class="fragment grow">complex manifests don't function as expected</li>
 					</ol>
 				</section>
 
 				<section>
 					<h3>1. Understanding behavior</h3>
 					<img src="behavior.png">
+					<p style="font-size: small; text-align: right">
+					http://www.babygaga.com/buzz/show/1066/when-your-fur-baby-meets-<br/>your-human-baby-how-to-make-the-introduction-as-smooth-as-possible
+					</p>
 				</section>
 
 				<section>
@@ -154,6 +198,9 @@ $ puppet apply  --configprint all | grep catalog_cache_terminus
 				<section>
 					<h3>2. failure forensics</h3>
 					<img src="cleanup.jpg">
+					<p style="font-size: small; text-align: right">
+					http://www.sammyspetboarding.com/cleaning.htm
+					</p>
 				</section>
 
 				<section>
@@ -257,6 +304,9 @@ Error: undefined method `ref' for nil:NilClass on node vagrant.edward.local
 				<section>
 					<h3>3. it's working but it's weird</h3>
 					<img src="weird.jpg">
+					<p style="font-size: small; text-align: right">
+					http://www.playbuzz.com/shacharo/5-reasons-why-llama-is-the-funniest-animal-ever
+					</p>
 				</section>
 
 				<section>
@@ -414,6 +464,9 @@ irb(main):004:0&gt; require 'pry' ; binding.pry
 						When not in the debugging mood...
 						<h1>Do get help</h1>
 						<img src="help.gif"/>
+						<p style="font-size: small; text-align: right">
+						http://i.giphy.com/c5eqVJN7oNLTq.gif
+						</p>
 					</section>
 
 					<section>
@@ -437,20 +490,56 @@ irb(main):004:0&gt; require 'pry' ; binding.pry
 					<section>
 						Also there is IRC, Slack, PUGs...
 						<img src="pugs.jpg"/>
+						<p style="font-size: small; text-align: right">
+						http://www.ranker.com/list/cutest-pug-pictures/pet-project
+						</p>
 					</section>
 				</section>
 
 				<section>
-					<h3>Thanks for listening</h3>
-					<p>Images</p>
-					<ul>
-					<li>http://www.babygaga.com/buzz/show/1066/when-your-fur-baby-meets-your-human-baby-how-to-make-the-introduction-as-smooth-as-possible</li>
-					<li>http://www.sammyspetboarding.com/cleaning.htm</li>
-					<li>http://www.playbuzz.com/shacharo/5-reasons-why-llama-is-the-funniest-animal-ever</li>
-					<li>http://i.giphy.com/c5eqVJN7oNLTq.gif</li>
-					<li>http://www.ranker.com/list/cutest-pug-pictures/pet-project</li>
-					</ul>
+					<h1>Thanks for listening</h1>
 				</section>
+
+				<section>
+					<section>
+						<h3>Before we start Q&A though</h3>
+						<img src="boring.jpg"/>
+						<p style="font-size: small; text-align: right">
+						http://www.theawl.com/2010/02/church-boring
+						</p>
+					</section>
+
+					<section>
+						<img src="um-logo.png" style="border:0px"/>
+						<h2>We are hiring</h2>
+						<ul>
+						<li>awesome team of ~100 people</li>
+						<li>exciting tech for formidable customers</li>
+						<li>not only operations positions</li>
+						<li>we have data engineers, data scientists...</li>
+						<br/>
+						<a href="https://www.unbelievable-machine.com/en/careers/">https://www.unbelievable-machine.com/en/careers/</a>
+					</section>
+
+					<section>
+						Recommended reading
+						<table><tr>
+						<td><img src="http://ecx.images-amazon.com/images/I/51LedVSn9dL._SX403_BO1,204,203,200_.jpg"/></td>
+						<td><img src="http://ecx.images-amazon.com/images/I/51q9GJMb2zL._SX403_BO1,204,203,200_.jpg"/></td>
+						</tr></table>
+					</section>
+
+					<section>
+						Check out mgmt
+						<img src="mgmt.png"/>
+						<a href="https://ttboj.wordpress.com/tag/mgmt/">https://ttboj.wordpress.com/tag/mgmt/</a>
+					</section>
+				</section>
+
+				<section>
+					<h1>Questions</h1>
+				</section>
+
 			</div>
 
 			<div id="myLogo" style="background: url(um-logo.png);
