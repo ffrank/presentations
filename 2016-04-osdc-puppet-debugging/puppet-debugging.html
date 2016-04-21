@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>What's Wrong With My Puppet - OSDC 2016 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Puppet debugging presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		</style>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>What's Wrong With My Puppet?</h1>
+					<h3>OSDC 2016, Berlin</h3>
+				</section>
+
+				<section>
+					<section>
+						That person on stage
+						<table>
+						<tr>
+							<td><img src="desy-logo.jpg" width="100px"/></td>
+							<td style="vertical-align: middle;">5 years</td>
+							<td><img src="cfengine.png" width="100px"/></td>
+						</tr>
+						<tr>
+							<td><img src="mpex-logo.png" width="100px"/></td>
+							<td style="vertical-align: middle;">6 years</td>
+							<td><img src="puppetlabs.jpg" width="100px"/></td>
+						</tr>
+						<tr>
+							<td><img src="um-logo.png" width="100px"/></td>
+							<td style="vertical-align: middle;">3 months and counting</td>
+							<td><img src="puppet.jpg" width="100px"></td>
+						</tr>
+						</table>
+						<br/>
+						<a href="http://ffrank.github.io/">http://ffrank.github.io/</a><br/>
+						<br/>
+						<a href="https://twitter.com/felis_rex">@felis_rex</a>
+					</section>
+
+					<section>
+						Let's get started then
+						<br/>
+						<img src="silence.gif"/>
+						<p style="font-size: small; text-align: right">
+						http://jalapenoberry.com/blog/post/is-this-thing-on/545/
+						</p>
+					</section>
+				</section>
+
+				<section>
+					<h1>It's always something<br/>
+					with software</h1>
+				</section>
+
+				<section>
+					<h3>Things with Puppet (e.g.)</h3>
+					<ol>
+					<li class="fragment grow">weird behavior of the agent or master</li>
+					<li class="fragment grow">the manifest or catalog fails</li>
+					<li class="fragment grow">complex manifests don't function as expected</li>
+					</ol>
+				</section>
+
+				<section>
+					<h3>1. Understanding behavior</h3>
+					<img src="behavior.png">
+					<p style="font-size: small; text-align: right">
+					http://www.babygaga.com/buzz/show/1066/when-your-fur-baby-meets-<br/>your-human-baby-how-to-make-the-introduction-as-smooth-as-possible
+					</p>
+				</section>
+
+				<section>
+					The hammer
+					<h2>strace</h3>
+					The wrench
+					<h2>config print</h2>
+				</section>
+
+				<section>
+					<section>
+						<h1>Let's see it in action</h1>
+					</section>
+
+					<section>
+						Where is puppet.conf?
+						<pre><code>
+$ strace -e trace=file  \
+	puppet apply -e 'notify { "test": }' \
+	2>&1 | grep 'puppet\.conf'
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+stat("/home/ffrank/.puppetlabs/etc/puppet/puppet.conf", \
+  {st_mode=S_IFREG|0644, st_size=225, ...}) = 0
+open("/home/ffrank/.puppetlabs/etc/puppet/puppet.conf", \
+  O_RDONLY|O_CLOEXEC) = 7
+						</code></pre>
+					</section>
+
+					<section>
+						From where is provider X loaded?
+						<pre><code>
+$ strace -e trace=file \
+	puppet apply -e 'package { "test": }' \
+	2>&1 | grep 'apt\.rb'
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+stat("/home/ffrank/gems/gems/CFPropertyList-2.3.2/lib/puppet/provider/package/apt.rb", \
+ 0x7fff342fc620) = -1 ENOENT (No such file or directory)
+stat("/home/ffrank/gems/gems/activesupport-4.2.1/lib/puppet/provider/package/apt.rb", \
+ 0x7fff342fc620) = -1 ENOENT (No such file or directory)
+stat("/home/ffrank/gems/gems/addressable-2.4.0/lib/puppet/provider/package/apt.rb", \
+ 0x7fff342fc620) = -1 ENOENT (No such file or directory)
+stat("/home/ffrank/gems/gems/aspector-0.14.0/lib/puppet/provider/package/apt.rb", \
+ 0x7fff342fc620) = -1 ENOENT (No such file or directory)
+...
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+stat("/home/ffrank/gems/gems/puppet-4.4.1/lib/puppet/provider/package/apt.rb", \
+ {st_mode=S_IFREG|0644, st_size=3354, ...}) = 0
+						</code></pre>
+					</section>
+
+					<section>
+						About puppet.conf though...
+						<pre class="fragment fade-up"><code>
+$ puppet config print all | grep 'puppet\.conf'
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+config_file_name = puppet.conf
+config = /home/ffrank/.puppetlabs/etc/puppet/puppet.conf
+						</code></pre>
+						<div class="fragment fade-up">
+						So the option is named <code>config</code>...
+						<pre><code>
+$ puppet config print config
+/home/ffrank/.puppetlabs/etc/puppet/puppet.conf
+						</code></pre>
+						</div>
+					</section>
+
+					<section>
+						Be mindful of the section though
+						<pre><code>
+$ puppet config print config --section master
+$ puppet config print config --section agent
+						</code></pre>
+						Mostly irrelevant, but there are choice exceptions.
+						<div class="fragment fade-up">
+						Alternative call
+						<pre><code>
+$ puppet agent  --configprint all
+$ puppet master --configprint masterport
+$ puppet apply  --configprint all | grep catalog_cache_terminus
+						</code></pre>
+						</div>
+					</section>
+				</section>
+
+				<section>
+					<h3>2. failure forensics</h3>
+					<img src="cleanup.jpg">
+					<p style="font-size: small; text-align: right">
+					http://www.sammyspetboarding.com/cleaning.htm
+					</p>
+				</section>
+
+				<section>
+					The master failing badly:
+						<pre><code data-trim contenteditable>
+$ puppet agent --test
+...
+err: Could not retrieve catalog from remote server:
+	Error 400 on SERVER:
+	undefined method `empty?' for nil:NilClass at
+						</code></pre>
+					The agent failing:
+						<pre><code data-trim contenteditable>
+$ puppet agent --test
+...
+Error: Failed to apply catalog:
+	undefined method `ancestors' for nil:NilClass
+						</code></pre>
+				</section>
+
+				<section>
+					<h1>Needs some context!</h1>
+					Meet the <code>--trace</code> option.
+				</section>
+
+				<section>
+					<section>
+						<h1>Let's see it in action</h1>
+					</section>
+
+					<section>
+						<pre><code data-trim contenteditable>
+ffrank@fflaptop:~$ puppet agent --test
+Error: Evaluation Error: \
+ Error while evaluating a Function Call, (&lt;unknown&gt;): \
+ found character that cannot start any token \
+ while scanning for the next token at line 4 column 7 \
+ at [...]/env/production/manifests/site.pp:45:8 \
+ on node fflaptop.local
+						</code></pre>
+						<div class="fragment fade-up">
+						Looking at line 45 of site.pp will help,<br/>
+						but let's practice tracing instead
+						</div>
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+ffrank@fflaptop:~$ puppet agent --test --trace
+Error: Evaluation Error: ...
+.../lib/puppet/indirector/rest.rb:208:in `is_http_200?'
+.../lib/puppet/indirector/rest.rb:106:in `find'
+.../lib/puppet/indirector/indirection.rb:194:in `find'
+.../lib/puppet/configurer.rb:377:in `block in retrieve_new_catalog'
+.../lib/puppet/util.rb:386:in `block in thinmark'
+/usr/lib/ruby/2.1.0/benchmark.rb:294:in `realtime'
+.../lib/puppet/util.rb:385:in `thinmark'
+.../lib/puppet/configurer.rb:376:in `retrieve_new_catalog'
+						</code></pre>
+					</section>
+
+					<section>
+						Combine this with one more trick
+						<pre class="fragment fade-up"><code>
+$ puppet master --compile fflaptop.local --trace
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+Notice: Scope(Class[main]): compiling site.pp
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+Error: Evaluation Error: Error while evaluating a Function...
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+.../lib/psych.rb:376:in `parse'
+.../lib/psych.rb:376:in `parse_stream'
+.../lib/psych.rb:324:in `parse'
+.../lib/psych.rb:251:in `load'
+.../lib/hiera/backend/yaml_backend.rb:19:in `block (2 levels) in lookup'
+.../lib/hiera/filecache.rb:53:in `read_file'
+.../lib/hiera/backend/yaml_backend.rb:18:in `block in lookup'
+						</code></pre>
+					</section>
+
+					<section>
+						As for non-contrived examples
+						<pre><code>
+Error: undefined method `ref' for nil:NilClass on node vagrant.edward.local
+.../puppet/resource/catalog.rb:527:in `block in to_catalog'
+.../puppet/resource/catalog.rb:515:in `each'
+.../puppet/resource/catalog.rb:515:in `to_catalog'
+.../puppet/resource/catalog.rb:402:in `to_resource'
+.../puppet/parser/compiler.rb:23:in `compile'
+.../puppet/indirector/catalog/compiler.rb:116:in `block (2 levels) in compile'
+.../puppet/util/profiler/none.rb:6:in `profile'
+.../puppet/util/profiler.rb:31:in `profile'
+.../puppet/indirector/catalog/compiler.rb:114:in `block in compile'
+.../puppet/util.rb:161:in `block in benchmark'
+ ...
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h3>3. it's working but it's weird</h3>
+					<img src="weird.jpg">
+					<p style="font-size: small; text-align: right">
+					http://www.playbuzz.com/shacharo/5-reasons-why-llama-is-the-funniest-animal-ever
+					</p>
+				</section>
+
+				<section>
+					That feeling when...
+					<pre><code data-trim contenteditable>
+# in node alice
+@@backup_job { 'alice_files': ... }
+					</code></pre>
+					...and nothing happens on <code>bob</code>
+					<pre><code data-trim contenteditable>
+Backup_job<<| |>>
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Non-functional resources<br/>
+					are always awkward</h2>
+					Debug mode is often inconclusive
+				</section>
+
+				<section>
+					<h2>What you want to do<br/>
+					is inspect the catalog</h2>
+				</section>
+
+				<section>
+					<section>
+						<h1>Let's do that then</h1>
+					</section>
+
+					<section>
+						The easy way
+						<pre><code data-trim contenteditable>
+$ puppet catalog find | less
+						</code></pre>
+						<pre class="fragment fade-up"><code data-trim contenteditable>
+Notice: Compiled catalog for exporter in environment production in 1.75 seconds
+{
+  "tags": ["settings","httpfile","exporter","class","node"],
+  "name": "fflaptop.local",
+  "version": 1461197958,
+  "code_id": null,
+  ...
+  "resources": [
+    {
+      "type": "File",
+      "title": "/tmp/README.md",
+      "tags": ["file","class","httpfile"],
+      "file": "[...]/env/production/manifests/site.pp",
+      "line": 14,
+      "exported": false,
+      "parameters": {
+        "ensure": "file",
+        "source": "https://raw.githubusercontent.com/puppetlabs/facter/master/README.md",
+        "backup": false
+      }
+    },
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>For the thorough</h3>
+
+						<div class="fragment fade-up">
+						1. Find out where the catalog is cached
+						<pre><code data-trim contenteditable>
+$ puppet agent --configprint catalog_cache_terminus
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						2a. for <code>json</code>
+						<pre><code data-trim contenteditable>
+$ puppet agent --configprint client_datadir
+						</code></pre>
+						2b. for <code>yaml</code>
+						<pre><code data-trim contenteditable>
+$ puppet agent --configprint clientyamldir
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						...one of these holds <code>&lt;certname&gt;.json</code> or <code>.yaml</code>
+						</div>
+					</section>
+
+					<section>
+						Digging into the catalog
+						<div class="fragment fade-up">
+						1. Request a YAML copy
+						<pre><code data-trim contenteditable>
+$ puppet agent --test --catalog_cache_terminus yaml
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						2. Launch the REPL
+						<pre><code data-trim contenteditable>
+$ irb -rpuppet -ryaml
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						3. Try and load the catalog
+						<pre><code data-trim contenteditable>
+irb(main):001:0&gt; data = YAML.load(File.new('.../client_yaml/catalog/fflaptop.local.yaml'))
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						oops...
+						<pre><code data-trim contenteditable>
+Puppet::Error: Could not parse for environment *root*:
+ no 'environments' in 
+ {:current_environment=&gt;#&lt;Puppet::Node::Environment:0x0...
+						</code></pre>
+						</div>
+					</section>
+
+					<section>
+						First initialize the puppet runtime
+						<pre><code data-trim contenteditable>
+irb(main):002:0&gt; Puppet.initialize_settings
+=&gt; "notice"
+						</code></pre>
+
+						<div class="fragment fade-up">
+						Now try again
+						<pre><code data-trim contenteditable>
+irb(main):003:0&gt; data = YAML.load(File.new('.../catalog/exporter.yaml'))
+=&gt; #&lt;Puppet::Resource::Catalog:0x00000000928100 @in_to={Stage[main]{...
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						Okay we got a catalog. Now what?
+						</div>
+
+						<div class="fragment fade-up">
+						<pre><code data-trim contenteditable>
+irb(main):004:0&gt; require 'pry' ; binding.pry
+[1] pry(main)&gt; cd data
+[2] pry(#&lt;Puppet::Resource::Catalog&gt;):1&gt; ls
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					When Puppet really acts up though
+					<h1>Use pry</h1>
+				</section>
+
+				<section>
+					<section>
+						When not in the debugging mood...
+						<h1>Do get help</h1>
+						<img src="help.gif"/>
+						<p style="font-size: small; text-align: right">
+						http://i.giphy.com/c5eqVJN7oNLTq.gif
+						</p>
+					</section>
+
+					<section>
+						<h3>Ask Puppet</h3>
+						<img src="ask.png"/>
+						<a href="http://ask.puppet.com">http://ask.puppet.com</a>
+					</section>
+
+					<section>
+						<h3>The Forge</h3>
+						<img src="forge.png"/>
+						<a href="http://forge.puppet.com">http://forge.puppet.com</a>
+					</section>
+
+					<section>
+						<h3>The Mailing List</h3>
+						<img src="group.png"/>
+						<a href="https://groups.google.com/forum/#!forum/puppet-users">https://groups.google.com/forum/#!forum/puppet-users</a>
+					</section>
+
+					<section>
+						Also there is IRC, Slack, PUGs...
+						<img src="pugs.jpg"/>
+						<p style="font-size: small; text-align: right">
+						http://www.ranker.com/list/cutest-pug-pictures/pet-project
+						</p>
+					</section>
+				</section>
+
+				<section>
+					<h1>Thanks for listening</h1>
+				</section>
+
+				<section>
+					<section>
+						<h3>Before we start Q&A though</h3>
+						<img src="boring.jpg"/>
+						<p style="font-size: small; text-align: right">
+						http://www.theawl.com/2010/02/church-boring
+						</p>
+					</section>
+
+					<section>
+						<h2>
+						<!-- <img src="um-logo.png" style="border:0px"/> -->
+						We are hiring
+						</h2>
+						...system architects, project managers, data engineers...
+						<ul>
+						<img src="careers.png"/>
+						<br/>
+						<a href="https://www.unbelievable-machine.com/en/careers/">https://www.unbelievable-machine.com/en/careers/</a>
+					</section>
+
+					<section>
+						Recommended reading
+						<table><tr>
+						<td><img src="http://ecx.images-amazon.com/images/I/51LedVSn9dL._SX403_BO1,204,203,200_.jpg"/></td>
+						<td><img src="http://ecx.images-amazon.com/images/I/51q9GJMb2zL._SX403_BO1,204,203,200_.jpg"/></td>
+						</tr></table>
+					</section>
+
+					<section>
+						Check out mgmt
+						<img src="mgmt.png"/>
+						<a href="https://ttboj.wordpress.com/tag/mgmt/">https://ttboj.wordpress.com/tag/mgmt/</a>
+					</section>
+				</section>
+
+				<section>
+					<h1>Questions</h1>
+				</section>
+
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 10px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+
+			<div id="myLogo" style="background: url(osdc-logo.png);
+						position: absolute;
+						bottom: 10px;
+						left: 10px;
+						width: 205px;
+						height: 95px;">
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
