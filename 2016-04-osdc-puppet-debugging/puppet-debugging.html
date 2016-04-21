@@ -66,7 +66,7 @@
 						</tr>
 						<tr>
 							<td><img src="um-logo.png" width="100px"/></td>
-							<td style="vertical-align: middle;">2 months and counting</td>
+							<td style="vertical-align: middle;">3 months and counting</td>
 							<td><img src="puppet.jpg" width="100px"></td>
 						</tr>
 						</table>
@@ -373,18 +373,18 @@ Notice: Compiled catalog for exporter in environment production in 1.75 seconds
 						<div class="fragment fade-up">
 						1. Find out where the catalog is cached
 						<pre><code data-trim contenteditable>
-$ puppet agent - -configprint catalog_cache_terminus
+$ puppet agent --configprint catalog_cache_terminus
 						</code></pre>
 						</div>
 
 						<div class="fragment fade-up">
 						2a. for <code>json</code>
 						<pre><code data-trim contenteditable>
-$ puppet agent - -configprint client_datadir
+$ puppet agent --configprint client_datadir
 						</code></pre>
 						2b. for <code>yaml</code>
 						<pre><code data-trim contenteditable>
-$ puppet agent - -configprint clientyamldir
+$ puppet agent --configprint clientyamldir
 						</code></pre>
 						</div>
 
@@ -510,13 +510,13 @@ irb(main):004:0&gt; require 'pry' ; binding.pry
 					</section>
 
 					<section>
-						<img src="um-logo.png" style="border:0px"/>
-						<h2>We are hiring</h2>
+						<h2>
+						<!-- <img src="um-logo.png" style="border:0px"/> -->
+						We are hiring
+						</h2>
+						...system architects, project managers, data engineers...
 						<ul>
-						<li>awesome team of ~100 people</li>
-						<li>exciting tech for formidable customers</li>
-						<li>not only operations positions</li>
-						<li>we have data engineers, data scientists...</li>
+						<img src="careers.png"/>
 						<br/>
 						<a href="https://www.unbelievable-machine.com/en/careers/">https://www.unbelievable-machine.com/en/careers/</a>
 					</section>
