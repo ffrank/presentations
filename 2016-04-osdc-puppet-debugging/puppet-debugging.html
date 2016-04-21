@@ -77,7 +77,77 @@
 					</section>
 
 					<section>
-						...insert demo screenshots here...
+						Where is puppet.conf?
+						<pre><code>
+$ strace -e trace=file  \
+	puppet apply -e 'notify { "test": }' \
+	2>&1 | grep 'puppet\.conf'
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+stat("/home/ffrank/.puppetlabs/etc/puppet/puppet.conf", \
+  {st_mode=S_IFREG|0644, st_size=225, ...}) = 0
+open("/home/ffrank/.puppetlabs/etc/puppet/puppet.conf", \
+  O_RDONLY|O_CLOEXEC) = 7
+						</code></pre>
+					</section>
+
+					<section>
+						From where is provider X loaded?
+						<pre><code>
+$ strace -e trace=file \
+	puppet apply -e 'package { "test": }' \
+	2>&1 | grep 'apt\.rb'
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+stat("/home/ffrank/gems/gems/CFPropertyList-2.3.2/lib/puppet/provider/package/apt.rb", \
+ 0x7fff342fc620) = -1 ENOENT (No such file or directory)
+stat("/home/ffrank/gems/gems/activesupport-4.2.1/lib/puppet/provider/package/apt.rb", \
+ 0x7fff342fc620) = -1 ENOENT (No such file or directory)
+stat("/home/ffrank/gems/gems/addressable-2.4.0/lib/puppet/provider/package/apt.rb", \
+ 0x7fff342fc620) = -1 ENOENT (No such file or directory)
+stat("/home/ffrank/gems/gems/aspector-0.14.0/lib/puppet/provider/package/apt.rb", \
+ 0x7fff342fc620) = -1 ENOENT (No such file or directory)
+...
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+stat("/home/ffrank/gems/gems/puppet-4.4.1/lib/puppet/provider/package/apt.rb", \
+ {st_mode=S_IFREG|0644, st_size=3354, ...}) = 0
+						</code></pre>
+					</section>
+
+					<section>
+						About puppet.conf though...
+						<pre class="fragment fade-up"><code>
+$ puppet config print all | grep 'puppet\.conf'
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+config_file_name = puppet.conf
+config = /home/ffrank/.puppetlabs/etc/puppet/puppet.conf
+						</code></pre>
+						<div class="fragment fade-up">
+						So the option is named <code>config</code>...
+						<pre><code>
+$ puppet config print config
+/home/ffrank/.puppetlabs/etc/puppet/puppet.conf
+						</code></pre>
+						</div>
+					</section>
+
+					<section>
+						Be mindful of the section though
+						<pre><code>
+$ puppet config print config --section master
+$ puppet config print config --section agent
+						</code></pre>
+						Mostly irrelevant, but there are choice exceptions.
+						<div class="fragment fade-up">
+						Alternative call
+						<pre><code>
+$ puppet agent  --configprint all
+$ puppet master --configprint masterport
+$ puppet apply  --configprint all | grep catalog_cache_terminus
+						</code></pre>
+						</div>
 					</section>
 				</section>
 
@@ -89,12 +159,16 @@
 				<section>
 					The master failing badly:
 						<pre><code data-trim contenteditable>
+$ puppet agent --test
+...
 err: Could not retrieve catalog from remote server:
 	Error 400 on SERVER:
 	undefined method `empty?' for nil:NilClass at
 						</code></pre>
 					The agent failing:
 						<pre><code data-trim contenteditable>
+$ puppet agent --test
+...
 Error: Failed to apply catalog:
 	undefined method `ancestors' for nil:NilClass
 						</code></pre>
@@ -111,7 +185,72 @@ Error: Failed to apply catalog:
 					</section>
 
 					<section>
-						...insert demo screenshots here...
+						<pre><code data-trim contenteditable>
+ffrank@fflaptop:~$ puppet agent --test
+Error: Evaluation Error: \
+ Error while evaluating a Function Call, (&lt;unknown&gt;): \
+ found character that cannot start any token \
+ while scanning for the next token at line 4 column 7 \
+ at [...]/env/production/manifests/site.pp:45:8 \
+ on node fflaptop.local
+						</code></pre>
+						<div class="fragment fade-up">
+						Looking at line 45 of site.pp will help,<br/>
+						but let's practice tracing instead
+						</div>
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+ffrank@fflaptop:~$ puppet agent --test --trace
+Error: Evaluation Error: ...
+.../lib/puppet/indirector/rest.rb:208:in `is_http_200?'
+.../lib/puppet/indirector/rest.rb:106:in `find'
+.../lib/puppet/indirector/indirection.rb:194:in `find'
+.../lib/puppet/configurer.rb:377:in `block in retrieve_new_catalog'
+.../lib/puppet/util.rb:386:in `block in thinmark'
+/usr/lib/ruby/2.1.0/benchmark.rb:294:in `realtime'
+.../lib/puppet/util.rb:385:in `thinmark'
+.../lib/puppet/configurer.rb:376:in `retrieve_new_catalog'
+						</code></pre>
+					</section>
+
+					<section>
+						Combine this with one more trick
+						<pre class="fragment fade-up"><code>
+$ puppet master --compile fflaptop.local --trace
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+Notice: Scope(Class[main]): compiling site.pp
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+Error: Evaluation Error: Error while evaluating a Function...
+						</code></pre>
+						<pre class="fragment fade-up"><code>
+.../lib/psych.rb:376:in `parse'
+.../lib/psych.rb:376:in `parse_stream'
+.../lib/psych.rb:324:in `parse'
+.../lib/psych.rb:251:in `load'
+.../lib/hiera/backend/yaml_backend.rb:19:in `block (2 levels) in lookup'
+.../lib/hiera/filecache.rb:53:in `read_file'
+.../lib/hiera/backend/yaml_backend.rb:18:in `block in lookup'
+						</code></pre>
+					</section>
+
+					<section>
+						As for non-contrived examples
+						<pre><code>
+Error: undefined method `ref' for nil:NilClass on node vagrant.edward.local
+.../puppet/resource/catalog.rb:527:in `block in to_catalog'
+.../puppet/resource/catalog.rb:515:in `each'
+.../puppet/resource/catalog.rb:515:in `to_catalog'
+.../puppet/resource/catalog.rb:402:in `to_resource'
+.../puppet/parser/compiler.rb:23:in `compile'
+.../puppet/indirector/catalog/compiler.rb:116:in `block (2 levels) in compile'
+.../puppet/util/profiler/none.rb:6:in `profile'
+.../puppet/util/profiler.rb:31:in `profile'
+.../puppet/indirector/catalog/compiler.rb:114:in `block in compile'
+.../puppet/util.rb:161:in `block in benchmark'
+ ...
+						</code></pre>
 					</section>
 				</section>
 
@@ -149,7 +288,119 @@ Backup_job<<| |>>
 					</section>
 
 					<section>
-						...insert demo screenshots here...
+						The easy way
+						<pre><code data-trim contenteditable>
+$ puppet catalog find | less
+						</code></pre>
+						<pre class="fragment fade-up"><code data-trim contenteditable>
+Notice: Compiled catalog for exporter in environment production in 1.75 seconds
+{
+  "tags": ["settings","httpfile","exporter","class","node"],
+  "name": "fflaptop.local",
+  "version": 1461197958,
+  "code_id": null,
+  ...
+  "resources": [
+    {
+      "type": "File",
+      "title": "/tmp/README.md",
+      "tags": ["file","class","httpfile"],
+      "file": "[...]/env/production/manifests/site.pp",
+      "line": 14,
+      "exported": false,
+      "parameters": {
+        "ensure": "file",
+        "source": "https://raw.githubusercontent.com/puppetlabs/facter/master/README.md",
+        "backup": false
+      }
+    },
+						</code></pre>
+					</section>
+
+					<section>
+						<h3>For the thorough</h3>
+
+						<div class="fragment fade-up">
+						1. Find out where the catalog is cached
+						<pre><code data-trim contenteditable>
+$ puppet agent - -configprint catalog_cache_terminus
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						2a. for <code>json</code>
+						<pre><code data-trim contenteditable>
+$ puppet agent - -configprint client_datadir
+						</code></pre>
+						2b. for <code>yaml</code>
+						<pre><code data-trim contenteditable>
+$ puppet agent - -configprint clientyamldir
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						...one of these holds <code>&lt;certname&gt;.json</code> or <code>.yaml</code>
+						</div>
+					</section>
+
+					<section>
+						Digging into the catalog
+						<div class="fragment fade-up">
+						1. Request a YAML copy
+						<pre><code data-trim contenteditable>
+$ puppet agent --test --catalog_cache_terminus yaml
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						2. Launch the REPL
+						<pre><code data-trim contenteditable>
+$ irb -rpuppet -ryaml
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						3. Try and load the catalog
+						<pre><code data-trim contenteditable>
+irb(main):001:0&gt; data = YAML.load(File.new('.../client_yaml/catalog/fflaptop.local.yaml'))
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						oops...
+						<pre><code data-trim contenteditable>
+Puppet::Error: Could not parse for environment *root*:
+ no 'environments' in 
+ {:current_environment=&gt;#&lt;Puppet::Node::Environment:0x0...
+						</code></pre>
+						</div>
+					</section>
+
+					<section>
+						First initialize the puppet runtime
+						<pre><code data-trim contenteditable>
+irb(main):002:0&gt; Puppet.initialize_settings
+=&gt; "notice"
+						</code></pre>
+
+						<div class="fragment fade-up">
+						Now try again
+						<pre><code data-trim contenteditable>
+irb(main):003:0&gt; data = YAML.load(File.new('.../catalog/exporter.yaml'))
+=&gt; #&lt;Puppet::Resource::Catalog:0x00000000928100 @in_to={Stage[main]{...
+						</code></pre>
+						</div>
+
+						<div class="fragment fade-up">
+						Okay we got a catalog. Now what?
+						</div>
+
+						<div class="fragment fade-up">
+						<pre><code data-trim contenteditable>
+irb(main):004:0&gt; require 'pry' ; binding.pry
+[1] pry(main)&gt; cd data
+[2] pry(#&lt;Puppet::Resource::Catalog&gt;):1&gt; ls
+						</code></pre>
 					</section>
 				</section>
 
