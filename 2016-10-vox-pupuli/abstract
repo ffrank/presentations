@@ -1,0 +1,21 @@
+We all rely on open source software increasingly. With large, popular projects
+like Mozilla or Apache, the tools often yield even better results than than
+their commercial counterpart. For less generic needs, there is usually still
+a more or less wide range of free software available. However, ongoing maintenance
+of such programs puts a great strain on their authors. Often enough, a tool
+or library will fall into disrepair as the maintainer's life goes on and
+priorities shift.
+
+Diverse ecosystems of independent small projects are especially prone for
+such partial decay. Examples include CPAN, PEAR, Ruby Gems or the Puppet Forge.
+For the latter, the Vox Pupuli group ("voice of the puppet") has set out
+to help. We form a collective of volunteers that will pick up the responsibility
+for Puppet modules, or other software from the Puppet ecosystem. We care for
+dozens of projects by now, with almost as many community members. Still, we
+are always looking for more help to take even better care of all the bug
+reports and pull requests.
+
+This presentation gives an overview of our work and organization. We advocate
+some important core values and principles, so be sure to check us out - we
+might just be the group you always wanted to join, without knowing it. You
+are most certainly welcome!
