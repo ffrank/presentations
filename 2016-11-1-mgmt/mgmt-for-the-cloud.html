@@ -276,6 +276,7 @@
 					</section>
 
 					<section>
+						<!-- is this needed? -->
 						The plugins -> facts -> catalog loop
 					</section>
 				</section>
@@ -305,6 +306,154 @@
 
 				<section>
 					Enter mgmt
+				</section>
+
+				<section>
+					<section>
+						<p>Conceptually similar to Puppet</p>
+						<ul>
+							<li>resource model</li>
+							<li>acyclic graph</li>
+							<li>import/export of resource data</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Unique key features</h2>
+						<ul>
+							<li>parallel execution</li>
+							<li>event system</li>
+							<li>distributed exchange</li>
+						</ul>
+						Explained in <a href="https://ttboj.wordpress.com/2016/01/18/next-generation-configuration-mgmt/">James's blog</a>
+					</section>
+
+					<section>
+						<h3>Parallel execution</h3>
+						<img width="30%" src="https://ttboj.files.wordpress.com/2016/01/graph1.png"
+							style="vertical-align: middle;"/>
+						vs.
+						<img width="30%" src="https://ttboj.files.wordpress.com/2016/01/graph2.png"
+							style="vertical-align: middle;"/>
+					</section>
+
+					<section>
+						<h3>Distributed exchange</h3>
+						<img src="https://ttboj.files.wordpress.com/2016/01/graph8.png"/>
+					</section>
+
+					<section>
+						As for the
+						<h3>Event system</h3>
+						...<br/>
+						Let's see a demo!
+					</section>
+
+					<section>
+						<p>Looking at the topology once more...</p>
+						<img src="https://ttboj.files.wordpress.com/2016/01/graph8.png"/>
+					</section>
+				</section>
+
+				<section>
+					Many innovative features apart from the core
+				</section>
+
+				<section>
+					<section>
+						Looking at some commodity features
+					</section>
+
+					<section>
+						<p>There is support for Puppet manifests!</p>
+						<p style="font-size: 50%">built by your's truly</p>
+					</section>
+
+					<section>
+						<h3>Automatic edges</h3>
+						<ul>
+							<li>e.g. find systemd units in package file listings</li>
+							<li>find config file locations in packages</li>
+							<li>...</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Automatic grouping</h3>
+						E.g. handle independent package resources in one go
+						<img width="30%" src="https://ttboj.files.wordpress.com/2016/03/grouping1.png"
+							style="vertical-align: middle;"/>
+						vs.
+						<img width="30%" src="https://ttboj.files.wordpress.com/2016/03/grouping2.png"
+							style="vertical-align: middle;"/>
+					</section>
+
+					<section>
+						<h3>Automatic clustering</h3>
+						<p>etcd is bundled right into mgmt</p>
+						<p>mgmt creates ad hoc etcd clusters for you</p>
+					</section>
+
+					<section>
+						<h3>Agent-less mode</h3>
+						a.k.a. that Ansible thing
+					</section>
+				</section>
+
+
+				<section>
+					<section>
+						We'd love to have you get involved!
+					</section>
+
+					<section>
+						Still on the slate:
+						<p style="font-size: 200%">The language</p>
+					</section>
+
+					<section>
+						Still on the slate:
+						<p style="font-size: 200%">More resources</p>
+					</section>
+
+					<section>
+						Still on the slate:
+						<p style="font-size: 200%">APIs (?)</p>
+					</section>
+
+					<section>
+						Still on the slate:
+						<p style="font-size: 200%">Early vetting</p>
+					</section>
+
+					<section>
+						Incentive:
+						<p style="font-size: 200%">Write in Go</p>
+					</section>
+
+					<section>
+						Incentive:
+						<p style="font-size: 200%">Interface with systemd et al</p>
+					</section>
+				</section>
+
+				<section>
+					<h1>Summarizing</h1>
+				</section>
+
+				<section>
+					<p>Summarizing</p>
+					<ul>
+						<li>mgmt runs with the core strengths of Puppet-like tools</li>
+						<li>its focus on the big Linux distros allows tight integration</li>
+						<li>events and a distributed message bus allow fast cluster convergence</li>
+						<li>provides new management approaches</li>
+						<li>currently pre-alpha, any contributions welcome</li>
+					</li>
+				</section>
+
+				<section>
+					<h2>Questions</h2>
 				</section>
 			</div>
 
