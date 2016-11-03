@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Config Management for the Cloud - OpenStack DACH Day 2016 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Puppet debugging presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; }
+		/* custom class */
+		p.source { font-size: small; text-align: right }
+		</style>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Config management<br/>for the cloud</h1>
+					<p>Felix Frank</p>
+					<p>OpenStack DACH Day 2016, Berlin</p>
+				</section>
+
+				<section>
+					<p>Presenting</p>
+					<img style="padding: 30px"
+						src="https://github.com/purpleidea/mgmt/raw/75dedf391affe4ace608ac0bde91f3c8e2cbde12/art/mgmt.png"/>
+				</section>
+
+				<section>
+					<div style="text-align: left">
+						<p>This cat on stage: Felix Frank (
+						<span style="font-size: 75%">
+						<img width="39" height="32" class="plain"
+							style="vertical-align: middle; margin-right:12px;"
+							src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Twitter_bird_logo_2012.svg/1259px-Twitter_bird_logo_2012.svg.png"/>
+						<a href="https://twitter.com/felis_rex">@felis_rex</a>
+						<img width="64" height="32" class="plain"
+							style="vertical-align: middle;"
+							src="https://assets-cdn.github.com/images/modules/open_graph/github-mark.png"/>
+						<a href="https://github.com/ffrank">ffrank</a>
+						</span>
+						)
+						</p>
+					</div>
+					<div width="90%">
+						<div style="float: left">
+							<img src="felix-venn.png" style="padding: 30px"/>
+							<p>Always</p>
+						</div>
+						<div style="float: right">
+							<img src="um.png" style="padding: 53px"/>
+							<p>9 to 5</p>
+						</div>
+					</div>
+					<div style="clear: left; width: 100%"></div>
+					<p class="source">https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Tux.png/122px-Tux.png</p>
+					<p class="source">https://avatars3.githubusercontent.com/u/234268</p>
+					<p class="source">https://cdn4.iconfinder.com/data/icons/iconsimple-logotypes/512/github-512.png</p>
+				</section>
+
+				<section>
+					<h1>Great to be here</h1>
+					<p>It was a long way</p>
+				</section>
+
+				<section>
+					<section>
+						<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/NASA_Mars_Rover.jpg/390px-NASA_Mars_Rover.jpg"/>
+						<p>2004</p>
+						<p class="source">https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/NASA_Mars_Rover.jpg/390px-NASA_Mars_Rover.jpg</p>
+					</section>
+					
+					<section>
+						<img src="http://www.desy.de/++resource++desy/images/logo_desy.gif"/>
+					</section>
+
+					<section>
+						<img src="http://www.desy.de/sites2009/site_www-desy/content/e141261/e158573/e158772/HERA_ger.png"/>
+						<p class="source">http://www.desy.de/forschung/anlagen__projekte/hera/index_ger.html</p>
+					</section>
+
+					<section>
+						<img src="http://www.desy.de/sites2009/site_www-desy/content/e141261/e158573/e158743/IT_1_ger.png"/>
+						<p class="source">http://www.desy.de/forschung/anlagen__projekte/tier_2/index_ger.html</p>
+					</section>
+
+					<section>
+						<img src="https://assets.nagios.com/images/footer/Nagios-Logo-Legal.png"
+							style="background-color: black; padding: 20px"/>
+						<p class="source">https://www.nagios.org/</p>
+					</section>
+
+					<section>
+						<img src="http://www.rccomputers.com/files/2013/08/Computer-Junk-300x226.jpg"/>
+						<p class="source">http://www.rccomputers.com/2013/08/06/we-help-you-get-rid-of-that-old-computer-junk/</p>
+					</section>
+
+					<section>
+						<img src="https://upload.wikimedia.org/wikipedia/en/0/00/Perl-camel-small.png"
+							style="padding: 125px"/>
+						<img src="https://pbs.twimg.com/profile_images/567363495855796224/xtL-y85N_400x400.png"/>
+						<p class="source">https://en.wikipedia.org/wiki/Perl</p>
+						<p class="source">https://twitter.com/cfengine</p>
+					</section>
+				</section>
+
+				<section>
+					<img src="hammer.png"/>
+				</section>
+
+				<section>
+					<section>
+						<img src="http://thesource.com/wp-content/uploads/2016/06/Michael-Jackson.jpg"/>
+						<p>2009</p>
+						<p class="source">http://thesource.com/2016/06/25/seven-years-too-long-remembering-michael-jackson/</p>
+					</section>
+
+					<section>
+						<img src="https://pbs.twimg.com/profile_images/675355121304395776/Ijf8QJ-Q_400x400.png"/>
+					</section>
+
+					<section>
+						<img src="https://static.spiceworks.com/shared/topic/0000/0271/mini_magick20140616-29418-kdoybi.jpg"/>
+						<p class="source">https://community.spiceworks.com/topic/517887-how-do-you-stack-your-rack</p>
+					</section>
+
+					<section>
+						<img src="https://assets.digitalocean.com/articles/architecture/master_slave_database_replication.png"/>
+						<p class="source">https://www.digitalocean.com/community/tutorials/5-common-server-setups-for-your-web-application</p>
+					</section>
+
+					<section>
+						<img src="https://puppet.com/themes/hoverboard/images/puppet-logo/puppet-logo-amber-white-lg.png"
+							style="background-color: gray; padding: 50px"/>
+					</section>
+
+					<section>
+						<img src="https://www.ruby-lang.org/images/header-ruby-logo.png"
+							style="padding:100px"/>
+						<img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+							width="256" height="256"/>
+						<p class="source">https://www.ruby-lang.org/en/about/logo/</p>
+						<p class="source">https://github.com/logos</p>
+					</section>
+
+					<section>
+						<p>Infrastructure as code</p>
+						<img src="code.jpg" style="vertical-align: middle;"/>
+						&rarr;
+						<img src="dc.jpg" style="vertical-align: middle;"/>
+						<p class="source">http://www.clipartkid.com/stock-photos-programming-source-code-a26erW-clipart/</p>
+						<p class="source">http://www.cisco.com/c/en/us/td/docs/solutions/Enterprise/Data_Center/App_Networking/MS-windows-TS-DC.html</p>
+					</section>
+
+					<section>
+						<div style="transform: rotateX(60deg)">
+							<p style="font-size: 250%">EPISODE IV</p>
+							<p style="font-size: 150%">A New Hobby</p>
+						</div>
+					</section>
+				</section>
+
+				<section>
+					<p>And now here we are</p>
+					<img src="http://imgur.com/Uvd6b4C.jpg"/>
+					<p class="source">http://imgur.com/Uvd6b4C</p>
+				</section>
+
+				<section>
+					<section>
+						<img src="http://esq.h-cdn.co/assets/15/34/980x490/landscape-1439831481-trump-signal.jpg"/>
+						<p>2016</p>
+						<p class="source">http://www.esquire.com/news-politics/news/a37221/donald-trump-batman/</p>
+					</section>
+
+					<section>
+						<div style="text-align: left">
+						<img src="https://puppet.com/themes/hoverboard/images/puppet-logo/puppet-logo-amber-white-lg.png"
+							width="150" style="background-color: gray; padding: 10px; margin-left:100px"/>
+						</div>
+						Collage, collage
+					</section>
+				</section>
+
+				<section>
+					This story follows the
+					general trend of server handling.
+				</section>
+
+				<section>
+					Automation became pervasive
+					to more and more tasks.
+				</section>
+
+				<section>
+					Cloud computing is at the apex
+					of this evolution.
+				</section>
+
+				<section>
+					When software defines everything,
+					almost anything becomes possible.
+				</section>
+
+				<section>
+					Tooling and technology evolve
+					head to head.
+				</section>
+
+				<section>
+					Some abstractions are even
+					on the way out.
+				</section>
+
+				<section>
+					Yet the VM will remain the backbone
+					of any cloud stack for a while.
+				</section>
+
+				<section>
+					The cloud paradigm turned our
+					pets into cattle.
+				</section>
+
+				<section>
+					<section>
+						Puppet and friends can deal,
+						but it can feel clunky
+					</section>
+
+					<section>
+						Why do we even [Puppet]?
+					</section>
+
+					<section>
+						Distinct resources which<br/>
+						<ol>
+							<li>Check their respective state</li>
+							<li>Sync if necessary</li>
+						</ol>
+					</section>
+
+					<section>
+						The plugins -> facts -> catalog loop
+					</section>
+				</section>
+
+				<section>
+					Puppet has defined a new standard
+					for describing infrastructure
+				</section>
+
+				<section>
+					<section>
+						Some caveats, especially in distributed contexts
+					</section>
+
+					<section>
+						Performance: Resources are evaluated one by one
+					</section>
+
+					<section>
+						Master / PuppetDB can be a hotspot
+					</section>
+
+					<section>
+						Larger clusters can take a long time to converge
+					</section>
+				</section>
+
+				<section>
+					Enter mgmt
+				</section>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 10px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
