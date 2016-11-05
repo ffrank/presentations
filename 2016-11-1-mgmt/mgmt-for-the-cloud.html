@@ -41,8 +41,9 @@
 		.reveal section img { border: 0px; }
 		.reveal img.plain { box-shadow: none }
 		.reveal a { color: black; }
-		/* custom class */
+		/* custom classes */
 		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
 		</style>
 
 		<div class="reveal">
@@ -62,35 +63,21 @@
 				</section>
 
 				<section>
-					<div style="text-align: left">
-						<p>This cat on stage: Felix Frank (
-						<span style="font-size: 75%">
-						<img width="39" height="32" class="plain"
-							style="vertical-align: middle; margin-right:12px;"
-							src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Twitter_bird_logo_2012.svg/1259px-Twitter_bird_logo_2012.svg.png"/>
-						<a href="https://twitter.com/felis_rex">@felis_rex</a>
-						<img width="64" height="32" class="plain"
-							style="vertical-align: middle;"
-							src="https://assets-cdn.github.com/images/modules/open_graph/github-mark.png"/>
+					<p style="font-size: 50%">This cat on stage:</p>
+					Felix Frank
+					<p style="font-size: 75%">
+					<img width="39" height="32" class="plain"
+						style="vertical-align: middle; margin-right:12px;"
+						src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Twitter_bird_logo_2012.svg/1259px-Twitter_bird_logo_2012.svg.png"/>
+					<a href="https://twitter.com/felis_rex">@felis_rex</a>
+					<img width="64" height="32" class="plain"
+						style="vertical-align: middle;"
+						src="https://assets-cdn.github.com/images/modules/open_graph/github-mark.png"/>
 						<a href="https://github.com/ffrank">ffrank</a>
-						</span>
-						)
-						</p>
-					</div>
-					<div width="90%">
-						<div style="float: left">
-							<img src="felix-venn.png" style="padding: 30px"/>
-							<p>Always</p>
-						</div>
-						<div style="float: right">
-							<img src="um.png" style="padding: 53px"/>
-							<p>9 to 5</p>
-						</div>
-					</div>
-					<div style="clear: left; width: 100%"></div>
-					<p class="source">https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Tux.png/122px-Tux.png</p>
-					<p class="source">https://avatars3.githubusercontent.com/u/234268</p>
-					<p class="source">https://cdn4.iconfinder.com/data/icons/iconsimple-logotypes/512/github-512.png</p>
+					</p>
+					<br/>
+					<p>old school Linux person</p>
+					<p>hobbyist programmer</p>
 				</section>
 
 				<section>
@@ -155,7 +142,9 @@
 					</section>
 
 					<section>
+						<p>mpex</p>
 						<img src="https://pbs.twimg.com/profile_images/675355121304395776/Ijf8QJ-Q_400x400.png"/>
+						<p>ISP (Berlin)</p>
 					</section>
 
 					<section>
@@ -213,66 +202,84 @@
 					</section>
 
 					<section>
+						<p>The unbelievable Machine Company</p>
 						<img src="um.png"/>
+						<p>ISP, data specialists (Berlin)
 					</section>
 
 					<section>
-						<div style="text-align: left">
-						<img src="https://puppet.com/themes/hoverboard/images/puppet-logo/puppet-logo-amber-white-lg.png"
-							width="150" style="background-color: gray; padding: 10px; margin-left:100px"/>
-						</div>
-						Collage, collage
+						<img src="collage.png"/>
 					</section>
 				</section>
 
 				<section>
+					<p class="large">
 					This story follows the
-					general trend of server handling.
+					general trends in server operations.
+					</p>
 				</section>
 
 				<section>
-					Automation became pervasive
-					to more and more tasks.
+					<p class="large">
+					Automation became pervasive to<br/>
+					more and more tasks.
+					</p>
 				</section>
 
 				<section>
-					Cloud computing is at the apex
-					of this evolution.
+					<p class="large">
+					Cloud computing is at<br/>
+					the apex of this evolution.
+					</p>
 				</section>
 
 				<section>
+					<p class="large">
 					When software defines everything,
 					almost anything becomes possible.
+					</p>
 				</section>
 
 				<section>
+					<p class="large">
 					Tooling and technology evolve
 					head to head.
+					</p>
 				</section>
 
 				<section>
+					<p class="large">
 					Some abstractions are even
 					on the way out.
+					</p>
 				</section>
 
 				<section>
+					<p class="large">
 					Yet the VM will remain the backbone
 					of any cloud stack for a while.
+					</p>
 				</section>
 
 				<section>
+					<p class="large">
 					The cloud paradigm turned our
 					pets into cattle.
+					</p>
 				</section>
 
 				<section>
 					<section>
+						<p class="large">
 						Puppet and friends can deal,
 						but it can feel clunky
+						</p>
 					</section>
 
 					<section>
+						<p class="large">
 						Why do we even [Puppet]?
+						</p>
 					</section>
 
 					<section>
@@ -282,41 +289,47 @@
 							<li>Sync if necessary</li>
 						</ol>
 					</section>
-
-					<section>
-						<!-- is this needed? -->
-						The plugins -> facts -> catalog loop
-					</section>
 				</section>
 
 				<section>
+					<p class="large">
 					Puppet has defined a new standard
 					for describing infrastructure
+					</p>
 				</section>
 
 				<section>
 					<section>
+						<p class="large">
 						Some caveats, especially in distributed contexts
+						</p>
 					</section>
 
 					<section>
+						<p class="large">
 						Performance: Resources are evaluated one by one
+						</p>
 					</section>
 
 					<section>
-						Master / PuppetDB can be a hotspot
+						<p class="large">
+						Master / PuppetDB can become a hotspot
+						</p>
 					</section>
 
 					<section>
-						Larger clusters can take a long time to converge
+						<p class="large">
+						Larger clusters can take<br/>
+						a long time to converge
+						</p>
 					</section>
 				</section>
 
-				<section>
-					Enter mgmt
+				<section data-background-image="mgmt-background.png">
+					<h2>Enter mgmt</h2>
 				</section>
 
-				<section>
+				<section data-background-image="mgmt-background.png">
 					<section>
 						<p>Conceptually similar to Puppet</p>
 						<ul>
@@ -363,17 +376,21 @@
 					</section>
 				</section>
 
-				<section>
+				<section data-background-image="mgmt-background.png">
+					<p class="large">
 					Many innovative features apart from the core
+					</p>
 				</section>
 
-				<section>
+				<section data-background-image="mgmt-background.png">
 					<section>
+						<p class="large">
 						Looking at some commodity features
+						</p>
 					</section>
 
 					<section>
-						<p>There is support for Puppet manifests!</p>
+						<p class="large">There is support for Puppet manifests!</p>
 						<p style="font-size: 50%">built by your's truly</p>
 					</section>
 
@@ -409,39 +426,40 @@
 				</section>
 
 
-				<section>
+				<section data-background-image="github-background.png">
 					<section>
+						<p class="large">
 						We'd love to have you get involved!
 					</section>
 
 					<section>
 						Still on the slate:
-						<p style="font-size: 200%">The language</p>
+						<p class="large">The language</p>
 					</section>
 
 					<section>
 						Still on the slate:
-						<p style="font-size: 200%">More resources</p>
+						<p class="large">More resources</p>
 					</section>
 
 					<section>
 						Still on the slate:
-						<p style="font-size: 200%">APIs (?)</p>
+						<p class="large">APIs (?)</p>
 					</section>
 
 					<section>
 						Still on the slate:
-						<p style="font-size: 200%">Early vetting</p>
+						<p class="large">Early vetting</p>
 					</section>
 
 					<section>
 						Incentive:
-						<p style="font-size: 200%">Write in Go</p>
+						<p class="large">Write in Go</p>
 					</section>
 
 					<section>
 						Incentive:
-						<p style="font-size: 200%">Interface with systemd et al</p>
+						<p class="large">Interface with systemd et al</p>
 					</section>
 				</section>
 
@@ -449,7 +467,7 @@
 					<h1>Summarizing</h1>
 				</section>
 
-				<section>
+				<section data-background-image="mgmt-background.png">
 					<p>Summarizing</p>
 					<ul>
 						<li>mgmt runs with the core strengths of Puppet-like tools</li>
