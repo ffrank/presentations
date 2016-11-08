@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Config Management for the Cloud - OpenStack DACH Day 2016 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Puppet debugging presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; }
+		/* custom classes */
+		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
+		</style>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Config management<br/>for the cloud</h1>
+					<p>Felix Frank</p>
+					<p>OpenStack DACH Day 2016, Berlin</p>
+				</section>
+
+				<section>
+					<p>Presenting</p>
+					<img style="padding: 30px"
+						src="https://github.com/purpleidea/mgmt/raw/75dedf391affe4ace608ac0bde91f3c8e2cbde12/art/mgmt.png"/>
+				</section>
+
+				<section>
+					<p style="font-size: 50%">This cat on stage:</p>
+					Felix Frank
+					<p style="font-size: 75%">
+					<img width="39" height="32" class="plain"
+						style="vertical-align: middle; margin-right:12px;"
+						src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Twitter_bird_logo_2012.svg/1259px-Twitter_bird_logo_2012.svg.png"/>
+					<a href="https://twitter.com/felis_rex">@felis_rex</a>
+					<img width="64" height="32" class="plain"
+						style="vertical-align: middle;"
+						src="https://assets-cdn.github.com/images/modules/open_graph/github-mark.png"/>
+						<a href="https://github.com/ffrank">ffrank</a>
+					</p>
+					<br/>
+					<p>old school Linux person</p>
+					<p>hobbyist programmer</p>
+				</section>
+
+				<section>
+					<h1>Great to be here</h1>
+					<p>It was a long way</p>
+				</section>
+
+				<section>
+					<section>
+						<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/NASA_Mars_Rover.jpg/390px-NASA_Mars_Rover.jpg"/>
+						<p>2004</p>
+						<p class="source">https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/NASA_Mars_Rover.jpg/390px-NASA_Mars_Rover.jpg</p>
+					</section>
+					
+					<section>
+						<img src="http://www.tu-berlin.de/fileadmin/Aperto_design/img/logo_01.gif"
+							style="padding-right: 100px"/>
+						<p>but also</p>
+						<img src="http://www.desy.de/++resource++desy/images/logo_desy.gif"
+							style="padding-left: 100px; padding-right: 100px"/>
+					</section>
+
+					<section>
+						<img src="http://www.desy.de/sites2009/site_www-desy/content/e141261/e158573/e158772/HERA_ger.png"/>
+						<p class="source">http://www.desy.de/forschung/anlagen__projekte/hera/index_ger.html</p>
+					</section>
+
+					<section>
+						<img src="http://www.desy.de/sites2009/site_www-desy/content/e141261/e158573/e158743/IT_1_ger.png"/>
+						<p class="source">http://www.desy.de/forschung/anlagen__projekte/tier_2/index_ger.html</p>
+					</section>
+
+					<section>
+						<img src="https://assets.nagios.com/images/footer/Nagios-Logo-Legal.png"
+							style="background-color: black; padding: 20px"/>
+					</section>
+
+					<section>
+						<img src="http://www.rccomputers.com/files/2013/08/Computer-Junk-300x226.jpg"/>
+						<p class="source">http://www.rccomputers.com/2013/08/06/we-help-you-get-rid-of-that-old-computer-junk/</p>
+					</section>
+
+					<section>
+						<img src="https://upload.wikimedia.org/wikipedia/en/0/00/Perl-camel-small.png"
+							style="padding: 125px"/>
+						<img src="https://pbs.twimg.com/profile_images/567363495855796224/xtL-y85N_400x400.png"/>
+						<p class="source">https://en.wikipedia.org/wiki/Perl</p>
+						<p class="source">https://twitter.com/cfengine</p>
+					</section>
+				</section>
+
+				<section>
+					<img src="hammer.png"/>
+					<p>early automation summarized</p>
+				</section>
+
+				<section>
+					<section>
+						<img src="http://www.thestate.com/latest-news/5bo2o/picture102190412/ALTERNATES/FREE_960/homesold"
+							width="75%"/>
+						<p>2009</p>
+						<p class="source">http://www.thestate.com/latest-news/article102190417.html</p>
+					</section>
+
+					<section>
+						<p>mpex</p>
+						<img src="https://pbs.twimg.com/profile_images/675355121304395776/Ijf8QJ-Q_400x400.png"/>
+						<p>ISP (Berlin)</p>
+					</section>
+
+					<section>
+						<img src="https://static.spiceworks.com/shared/topic/0000/0271/mini_magick20140616-29418-kdoybi.jpg"/>
+						<p class="source">https://community.spiceworks.com/topic/517887-how-do-you-stack-your-rack</p>
+					</section>
+
+					<section>
+						<img src="https://assets.digitalocean.com/articles/architecture/master_slave_database_replication.png"/>
+						<p class="source">https://www.digitalocean.com/community/tutorials/5-common-server-setups-for-your-web-application</p>
+					</section>
+
+					<section>
+						<img src="https://puppet.com/themes/hoverboard/images/puppet-logo/puppet-logo-amber-white-lg.png"
+							style="background-color: gray; padding: 50px"/>
+					</section>
+
+					<section>
+						<img src="https://www.ruby-lang.org/images/header-ruby-logo.png"
+							style="padding:100px"/>
+						<img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+							width="256" height="256"/>
+						<p class="source">https://www.ruby-lang.org/en/about/logo/</p>
+						<p class="source">https://github.com/logos</p>
+					</section>
+
+					<section>
+						<p>Infrastructure as code</p>
+						<img src="code.jpg" style="vertical-align: middle;"/>
+						&rarr;
+						<img src="dc.jpg" style="vertical-align: middle;"/>
+						<p class="source">http://www.clipartkid.com/stock-photos-programming-source-code-a26erW-clipart/</p>
+						<p class="source">http://www.cisco.com/c/en/us/td/docs/solutions/Enterprise/Data_Center/App_Networking/MS-windows-TS-DC.html</p>
+					</section>
+
+					<section>
+						<div style="transform: rotateX(60deg)">
+							<p style="font-size: 250%">EPISODE IV</p>
+							<p style="font-size: 150%">A New Hobby</p>
+						</div>
+					</section>
+				</section>
+
+				<section>
+					<p>And now here we are</p>
+					<img src="http://imgur.com/Uvd6b4C.jpg"/>
+					<p class="source">http://imgur.com/Uvd6b4C</p>
+				</section>
+
+				<section>
+					<section>
+						<img src="http://esq.h-cdn.co/assets/15/34/980x490/landscape-1439831481-trump-signal.jpg"/>
+						<p>2016</p>
+						<p class="source">http://www.esquire.com/news-politics/news/a37221/donald-trump-batman/</p>
+					</section>
+
+					<section>
+						<p>The unbelievable Machine Company</p>
+						<img src="um.png"/>
+						<p>ISP, data specialists (Berlin)
+					</section>
+
+					<section>
+						<img src="collage.png"/>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">
+					This story follows the
+					general trends in server operations.
+					</p>
+				</section>
+
+				<section>
+					<p class="large">
+					Automation became pervasive to<br/>
+					more and more tasks.
+					</p>
+				</section>
+
+				<section>
+					<p class="large">
+					Cloud computing is at<br/>
+					the apex of this evolution.
+					</p>
+				</section>
+
+				<section>
+					<p class="large">
+					When software defines everything,
+					almost anything becomes possible.
+					</p>
+				</section>
+
+				<section>
+					<p class="large">
+					Tooling and technology evolve
+					head to head.
+					</p>
+				</section>
+
+				<section>
+					<p class="large">
+					Some abstractions are even
+					on the way out.
+					</p>
+				</section>
+
+				<section>
+					<p class="large">
+					Yet the VM will remain the backbone
+					of any cloud stack for a while.
+					</p>
+				</section>
+
+				<section>
+					<p class="large">
+					The cloud paradigm turned our
+					pets into cattle.
+					</p>
+				</section>
+
+				<section>
+					<section>
+						<p class="large">
+						Puppet and friends can deal,
+						but it can feel clunky
+						</p>
+					</section>
+
+					<section>
+						<p class="large">
+						Why do we even [Puppet]?
+						</p>
+					</section>
+
+					<section>
+						<ol>
+							<li>Distinct resources which</li>
+							<li>Check their respective state</li>
+							<li>Sync if necessary</li>
+						</ol>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">
+					Puppet has defined a new standard
+					for describing infrastructure
+					</p>
+				</section>
+
+				<section>
+					<section>
+						<p class="large">
+						Some caveats, especially in distributed contexts
+						</p>
+					</section>
+
+					<section>
+						<p class="large">
+						Performance: Resources are evaluated one by one
+						</p>
+					</section>
+
+					<section>
+						<p class="large">
+						Master / PuppetDB can become a hotspot
+						</p>
+					</section>
+
+					<section>
+						<p class="large">
+						Larger clusters can take<br/>
+						a long time to converge
+						</p>
+					</section>
+				</section>
+
+				<section data-background-image="mgmt-background.png">
+					<h2>Enter mgmt</h2>
+				</section>
+
+				<section data-background-image="mgmt-background.png">
+					<section>
+						<img src="james.png"/>
+						<p>written by James (RedHat)</p>
+					</section>
+
+					<section>
+						<p>Conceptually similar to Puppet</p>
+						<ul>
+							<li>resource model</li>
+							<li>acyclic graph</li>
+							<li>import/export of resource data</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Unique key features</h2>
+						<ul>
+							<li>parallel execution</li>
+							<li>event system</li>
+							<li>distributed exchange</li>
+						</ul>
+						<p>Explained in <a href="https://ttboj.wordpress.com/2016/01/18/next-generation-configuration-mgmt/">James's blog</a></p>
+					</section>
+
+					<section>
+						<h3>Parallel execution</h3>
+						<img width="30%" src="https://ttboj.files.wordpress.com/2016/01/graph1.png"
+							style="vertical-align: middle;"/>
+						vs.
+						<img width="30%" src="https://ttboj.files.wordpress.com/2016/01/graph2.png"
+							style="vertical-align: middle;"/>
+					</section>
+
+					<section>
+						<h3>Distributed exchange</h3>
+						<img src="https://ttboj.files.wordpress.com/2016/01/graph8.png"/>
+					</section>
+
+					<section>
+						As for the
+						<h3>Event system</h3>
+						...<br/>
+						Let's see a demo!
+					</section>
+
+					<section>
+						<p>Looking at the topology once more...</p>
+						<img src="https://ttboj.files.wordpress.com/2016/01/graph8.png"/>
+					</section>
+				</section>
+
+				<section data-background-image="mgmt-background.png">
+					<p class="large">
+					Many innovative features apart from the core
+					</p>
+				</section>
+
+				<section data-background-image="mgmt-background.png">
+					<section>
+						<p class="large">
+						Looking at some commodity features
+						</p>
+					</section>
+
+					<section>
+						<p class="large">There is support for Puppet manifests!</p>
+						<p style="font-size: 50%">built by your's truly</p>
+					</section>
+
+					<section>
+						<h3>Automatic edges</h3>
+						<ul>
+							<li>e.g. find systemd units in package file listings</li>
+							<li>find config file locations in packages</li>
+							<li>...</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Automatic grouping</h3>
+						E.g. handle independent package resources in one go
+						<img width="30%" src="https://ttboj.files.wordpress.com/2016/03/grouping1.png"
+							style="vertical-align: middle;"/>
+						vs.
+						<img width="30%" src="https://ttboj.files.wordpress.com/2016/03/grouping2.png"
+							style="vertical-align: middle;"/>
+					</section>
+
+					<section>
+						<h3>Automatic clustering</h3>
+						<p>etcd is bundled right into mgmt</p>
+						<p>mgmt creates ad hoc etcd clusters for you</p>
+					</section>
+
+					<section>
+						<h3>Agent-less mode</h3>
+						a.k.a. that Ansible thing
+					</section>
+				</section>
+
+
+				<section data-background-image="github-background.png">
+					<section>
+						<p class="large">
+						We'd love to have you get involved!
+						</p>
+						<br/>
+						<p><a href="https://github.com/purpleidea/mgmt">
+						https://github.com/purpleidea
+						</a></p>
+					</section>
+
+					<section>
+						Still on the slate:
+						<p class="large">The language</p>
+					</section>
+
+					<section>
+						Still on the slate:
+						<p class="large">More resources</p>
+					</section>
+
+					<section>
+						Still on the slate:
+						<p class="large">APIs (?)</p>
+					</section>
+
+					<section>
+						Still on the slate:
+						<p class="large">Early vetting</p>
+					</section>
+
+					<section>
+						Incentive:
+						<p class="large">Write in Go</p>
+					</section>
+
+					<section>
+						Incentive:
+						<p class="large">Interface with systemd et al</p>
+					</section>
+				</section>
+
+				<section>
+					<h1>Summarizing</h1>
+				</section>
+
+				<section data-background-image="mgmt-background.png">
+					<p>Summarizing</p>
+					<ul>
+						<li>mgmt runs with the core strengths of Puppet-like tools</li>
+						<li>its focus on the big Linux distros allows tight integration</li>
+						<li>events and a distributed message bus allow fast cluster convergence</li>
+						<li>provides new management approaches</li>
+						<li>currently pre-alpha, any contributions welcome</li>
+					</li>
+				</section>
+
+				<section>
+					<h2>Questions</h2>
+				</section>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 10px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
