@@ -1,0 +1,20 @@
+- intro
+- puppet/mgmt
+- gophers vs. ducks
+- power of puppet: resource model + graph
+- james makes flashy demos and throws fire in your face, but all YAML driven
+- Infrastructure as Data not ideal, needs a programming language
+- explain idea to run from puppet manifests
+- mental image
+- explain facter + catalog request
+- explain manifest + catalog
+- point out that custom parser would be nuts (don't be that shell guy)
+- needs actual lexer, grammar, ast...all that is in Puppet proper -> catalog
+- example for data restructuring (e.g. file resource)
+- larger overview: mgmt graph structure
+- show cowsay example (package, exec)
+- jot down example catalog and transition, point out holes from untranslatables
+- introduce puppet resource command
+- describe exec wrapping
+- point out need for own language
+- qna during the break
