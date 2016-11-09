@@ -12,7 +12,7 @@
 12 - needs actual lexer, grammar, ast...all that is in Puppet proper -> catalog
 13 - example for data restructuring (e.g. file resource)
 14 - show a screen of the translator DSL
-15 - larger overview: mgmt graph structure
+15 - show a more complex screen
 16 - show cowsay example (package, exec)
 17 - introduce puppet resource command
 18 - describe exec wrapping
