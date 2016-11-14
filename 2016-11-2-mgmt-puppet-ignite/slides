@@ -11,9 +11,9 @@
 11 - point out that custom parser would be nuts (don't be that shell guy)
 12 - needs actual lexer, grammar, ast...all that is in Puppet proper -> catalog
 13 - example for data restructuring (e.g. file resource)
-14 - show a screen of the translator DSL
-15 - show a more complex screen
-16 - show cowsay example (package, exec)
+14 - show cowsay example (package, exec)
+15 - show a screen of the translator DSL
+16 - show a more complex screen
 17 - introduce puppet resource command
 18 - describe exec wrapping
 19 - point out need for own language
