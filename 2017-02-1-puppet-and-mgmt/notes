@@ -1,0 +1,67 @@
+- title
+- intro self
+ -> we are hiring
+- talking about config mgmt -> start with games
+- game design: much like util software
+ -> some abstract but predictable system
+ -> ideally intuitive UI
+ -> should be fun to play
+ -> cool approach is rapid prototyping
+- outside indie gaming, again much like util software
+- projects can easily fall out of schedule and budget
+- example: European Air War
+ -> large code base, riddled with bugs, almost cancelled
+ -> smart new developer built new feature: Cool Cam
+ -> glossed over issues at exec meetings
+ -> ultimately saved the project
+- mgmt not problematic at this time
+- but great challenges before GA, e.g. language
+- early nice-to-have feature: Puppet support
+
+- what does that even mean?
+- demo-slide 1 : inline package resource
+- demo-slide 2 : inline file + service resource
+- demo-slide 3 : include module(s)
+- demo-slide 4 : call manifest file
+- demo-slide 5 : agent
+
+- how is that even possible?!
+ -> a quick puppet deep-dive
+- operational basis: manifest code + "compiler"
+ (briefly go into misnomer)
+- requested by agent, transferred in manifest-like representation
+ = includes classes, resources, parameters + metaparams
+( - agent blesses resource into RAL )
+- agent applies parameters and auto-rules
+ -> actual graph emerges
+- can be converted to mgmt piecemeal
+
+- some secrets:
+ * encompassing main class
+ * whit resources for start and end (similar to anchors)
+ -> become noop resources in mgmt
+
+- actual resources: apply transformation rules
+ * example 1 : TODO
+ * example 2 : TODO
+ ( * example 3 : those complicated file rules )
+- unsupported resources: the exec wrapper
+- unsupported properties are tough to handle
+
+- what makes this powerful?
+ * static validation in puppet types
+ * auto rules applied by the agent
+ * munging
+- flipside: only works properly through the puppet agent
+ -> could also just use the master API, but that's no fun
+ -> e.g., have to resolve before/require yourself
+
+- limitations: compiler relies on other inputs like facts, puppetdb data
+ -> puppet's graph is meant for transaction
+  = describes desired state at the moment of requesting catalog
+ -> currently no plans to incorporate graph updates
+
+- how far will we take this?
+ -> it would be great if most puppet modules would work
+- focus should be on a DSL though
+ -> example distinction: facts take no constant values
