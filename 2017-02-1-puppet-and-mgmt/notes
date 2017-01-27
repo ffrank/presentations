@@ -45,8 +45,6 @@
  * example 1 : TODO
  * example 2 : TODO
  ( * example 3 : those complicated file rules )
-- unsupported resources: the exec wrapper
-- unsupported properties are tough to handle
 
 - what makes this powerful?
  * static validation in puppet types
@@ -65,3 +63,7 @@
  -> it would be great if most puppet modules would work
 - focus should be on a DSL though
  -> example distinction: facts take no constant values
+
+BONUS
+- unsupported resources: the exec wrapper
+- unsupported properties are tough to handle

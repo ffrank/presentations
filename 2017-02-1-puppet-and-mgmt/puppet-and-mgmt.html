@@ -44,6 +44,7 @@
 		/* custom classes */
 		p.source { font-size: small; text-align: right }
 		p.large { font-size: 200% }
+		div.title { position: absolute; top: 50px }
 		</style>
 
 		<div class="reveal">
@@ -73,6 +74,11 @@
 						<img class="plain" src="careers.png"/>
 						<p>...we are hiring in Berlin</p>
 					</section>
+				</section>
+
+				<section>
+					<h1>Warning!</h1>
+					<p class="large">Major Puppet spoilers ahead</p>
 				</section>
 
 				<section>
@@ -137,7 +143,7 @@
 				</section>
 
 				<section>
-					<div style="position: absolute; top: 50px">
+					<div class="title">
 						<h3>Puppet+mgmt examples</h3>
 					</div>
 
@@ -179,15 +185,447 @@ $ mgmt run --allow-tmp-prefix --puppet agent
 				</section>
 
 				<section>
-					<p>Two principal parts of Puppet</p>
-					IMAGE: compiler vs. configurer
-				</section>
+					<div class="title">
+						<p>Two principal parts of Puppet</p>
+					</div>
+
+					<section>
+						IMAGE: broad view of agent/facter + master
+					</section>
 				
+					<section>
+						IMAGE: zoom - compiler vs. configurer
+					</section>
+
+					<section>
+						<p class="large">Side note: the Puppet compiler
+						is not actually a compiler</p>
+					</section>
+				</section>
+
+				<section>
+					<p>catalog representation</p>
+					IMAGE: colorful bubbles represent nodes
+				</section>
+
+				<section>
+					<p class="large">On the wire, the catalog
+					looks very similar to the manifest</p>
+				</section>
+
+				<section>
+					CODE SEGMENT: catalog from REST API
+				</section>
+
+				<section>
+					PSEUDO CODE: classes/defines, resources, parameters/metaparameters
+				</section>
+
+				<section> 
+					<p>From catalog to Resource Abstraction Layer</p>
+					IMAGE: json representation --) actual type instance
+						+ munge, validate, autorequire
+				</section> 
+
+				<section>
+					<p>Finally the RAL catalog emerges</p>
+					IMAGE: type instances and edges
+					<p>Puppet will hand this to the configurer</p>
+				</section>
+
+				<section>
+					<p>We remodel it into an mgmt graph instead</p>
+					IMAGE: highlight two related file resources, transitions to data structure for mgmt
+				</section>
+
+				<section>
+					<p class="large">Transformation</p>
+					<div style="float: left; width: 45%;">
+						<pre><code class="lang-json">
+{
+  "type": "File",
+  "title": "/etc/ntpd.conf",
+  "tags": ["file","class"],
+  "file": "",
+  "line": 1,
+  "exported": false,
+  "parameters": {
+    "ensure": "present"
+  }
+}
+						</code></pre>
+					</div>
+					<div style="float: right; width: 45%;">
+						<pre><code class="lang-yaml">
+
+
+
+file:
+- name: /etc/ntpd.conf
+  path: /etc/ntpd.conf
+  state: exists
+  content:
+
+
+
+						</code></pre>
+					</div>
+				</section>
+
+				<section>
+					<div style="float: left; width: 45%;">
+						<pre><code class="lang-json">
+{
+  "type": "File",
+  "title": "/etc/ntpd.conf",
+  "tags": ["file","class"],
+  "file": "",
+  "line": 1,
+  "exported": false,
+  "parameters": {
+    "ensure": "present"
+  }
+}
+						</code></pre>
+						<pre><code class="lang-yaml">
+file:
+- name: /etc/ntpd.conf
+  path: /etc/ntpd.conf
+  state: exists
+  content:
+						</code></pre>
+					</div>
+					<div style="float: right; width: 55%;">
+						Getting from A to B requires<br/>
+						<ul>
+						<li>translating type <b>File</b> to <b>file</b></li>
+						<li>using the <b>title</b> as <b>path</b></li>
+						<li>translating the vaule from <b>parameters[ensure]</b> from <b>present</b> to <b>exists</b></li>
+						<li>use the result as the value for <b>state</b></li>
+						</ul>
+					</div>
+					<p class="fragment fade-up">
+					<br/><br/><br/>
+					let's convert that to code
+					</p>
+				</section>
+
+				<section>
+					<div style="float: left; width: 40%;">
+						<ul>
+						<li>translating type <b>File</b> to <b>file</b></li>
+						<li>using the <b>title</b> as <b>path</b></li>
+						<li>translating the vaule from <b>parameters[ensure]</b> from <b>present</b> to <b>exists</b></li>
+						<li>use the result as the value for <b>state</b></li>
+						</ul>
+					</div>
+					<div style="float: right; width: 60%;">
+						<pre><code class="lang-ruby" style="max-height: 90%">
+module PuppetX::CatalogTranslation
+  Type.new :file do
+    spawn :name do
+      @resource.title
+    end
+
+    spawn :path do
+      @resource[:name]
+    end
+
+    rename :ensure, :state do |value|
+      case value
+      when :present, :file, :directory
+        :exists
+      when :absent
+        :absent
+      else
+        raise "cannot translate file ensure:#{value}"
+      end
+    end
+						</code></pre>
+					</div>
+				</section>
+
+				<section>
+					<p class="large">Puppet name vs. title</p>
+					<pre><code class="lang-puppet">
+file { "the-ntp-configuration":
+  path =&gt; "/etc/ntpd.conf",
+  owner =&gt; "root",
+}
+
+file { "the-other-ntp-configuration-you-see":
+  path =&gt; "/etc/ntpd.conf",
+  mode =&gt; "0644",
+}
+					</code></pre>
+					<p class="fragment fade-in">This is the same file, twice!</p>
+					<p class="fragment fade-in">Puppet knows this (it's not dumb).</p>
+				</section>
+
+				<section>
+					<p>This is how mgmt will see the former</p>
+					<pre><code>
+file:
+- name: the-ntp-configuration
+  path: /etc/ntpd.conf
+  content:
+					</code></pre>
+					<p>in Puppet, <b>name</b> and <b>title</b> are quite distinct:</p>
+					<ul>
+					<li>the title is chosen freely</li>
+					<li>the name gets its value from the <b>namevar</b> of the resource</li>
+					<li>the namevar can use the title if not otherwise specified</li>
+					</ul>
+				</section>
+
+				<section>
+					<p>Hence the rule:</p>
+					<pre><code class="lang-ruby">
+spawn :path do
+  @resource[:name]
+end
+					</code></pre>
+					<p>It always picks up the actual path thanks to the namevar semantics.</p>
+					<p>This is much safer than looking at the <b>path</b> parameter.</p>
+				</section>
+
+				<section>
+					<p>I lied about that rule, by the way.</b>
+					<div class="fragment fade-in">
+						<p>Here's what it actually looks like:</p>
+						<pre><code class="lang-ruby">
+spawn :path do
+  if @resource[:ensure] == :directory
+    @resource[:name] + "/"
+  else
+    @resource[:name]
+  end
+end
+						</code></pre>
+						<p>mgmt has no <b>state=directory</b>.</p>
+						<p>It uses a trailing slash on the path.</p>
+					</div>
+				</section>
+
+				<section>
+					<section>
+						<p>Here's the rule(s) for another resource type</p>
+						<pre><code class="lang-ruby">
+PuppetX::CatalogTranslation::Type.new :whit do
+  emit :noop
+
+  spawn :name do
+    @resource[:name]
+  end
+end
+						</code></pre>
+						<p>What, you never heard of the <b>whit</b> resource?</p>
+					</section>
+
+					<section>
+						<p>Let's talk about containment</p>
+						<pre><code class="lang-puppet">
+Class['ntp'] -&gt; Class['kerberos']
+						</code></pre>
+						IMAGE: classes with resources, arrow and question mark in between
+					</section>
+
+					<section>
+						IMAGE: zoom in to a class, add whit resources in gray
+						<p>edges to containers become edges to their <b>whit</b> boundaries</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">Too Weird; Didn't Listen?</p>
+					<p>the translation will just deal with
+					classes, defines, and relationships between them</p>
+				</section>
+
+				<section>
+					<p>Advantages of this approach</p>
+					<ul>
+					<li>static validation by Puppet's agent engine</li>
+					<li>Puppet magic like autorequire Just Works</li>
+					<li>the usual convenience from Puppet's munging rules applies</li>
+					<ul>
+					<div class="fragment">
+						<p>on the flipside:</p>
+						<ul>
+						<li>a full agent installation on every node is needed</li>
+						<li>getting an abstract catalog from a master using REST would work as well</li>
+						<li>but then you lose all the advantages mentioned above</li>
+						</ul>
+						<p>Perhaps <b>you</b> will find a better compromise?</p>
+					</div>
+				</section>
+
+				<section>
+					<p class="large">
+					All that being said, there are some
+					general restrictions when running from Puppet code.
+					</p>
+				</section>
+
+				<section>
+					<p>Puppet will always create a catalog using
+					point-in-time input</p>
+					<ul>
+					<li>facts seen on the node</li>
+					<li>values from PuppetDB</li>
+					<li>manifest code</li>
+					</ul>
+				</section>
+
+				<section>
+					<p>The catalog builder derives</p>
+					<ul>
+					<li>a consistent graph that represents</li>
+					<li>the desired state of the (complete) system</li>
+					<li>as of the time of requesting the catalog</li>
+					<li>is suited to converge in a single transaction</li>
+					</ul>
+				</section>
+
+				<section>
+					<p>mgmt can actually update the graph
+					of a running agent</p>
+					<p>However, adding support for triggered
+					Puppet graph rebuilds does not seem sensible</p>
+				</section>
+
+				<section>
+					<p class="large">So what <b>can</b> you expect?</p>
+				</section>
+
+				<section>
+					<p>A sensible goal is to make it possible to run
+					(the) most (popular) Puppet modules through mgmt.</p>
+					<p class="fragment">For mgmt to become effective, however,
+					a custom DSL is much more important.</p>
+					<p class="fragment">That's because Puppet's DSL
+					has some built-in assumptions.</p>
+				</section>
+
+				<section>
+					<p>Example: facts are static values</p>
+					<pre><code class="lang-puppet">
+class { "apache": mpm_module =&gt; "prefork" }
+
+$process_cap = Integer( $memfree_mb / 125.0 - 10.0 )
+class { "apache::mod::prefork":
+  maxclients =&gt; $process_cap
+}
+					</code></pre>
+					<p class="fragment">In a VM, the memory size could change on the fly.</p>
+					<p class="fragment">mgmt could receive an event about that and initiate action.</p>
+					<p class="fragment">But Puppet cannot emit a structure that reflects this.</p>
+				</section>
+
+				<section>
+					<p class="large">In summary</p>
+					<p>Support for Puppet manifests is neat, it eases testing right now
+					and will help wider adoption.</p>
+					<p>On the other hand, a custom DSL for mgmt will allow actual new
+					config management practices that a translated catalog cannot implement.</p>
+				</section>
+
 				<section>
 					<div style="height: 400px"><h2>Questions</h2></div>
 					<p class="source">
 					"The Cool Cam" originally published at http://thedailywtf.com/articles/The-Cool-Cam
 					</p>
+				</section>
+
+				<section>
+					<p class="large">Bonus content</p>
+					<p>But what about Puppet resources that mgmt does not have?</p>
+					<div class="fragment">
+						<p>Consider the <b>puppet resource</b> command</p>
+						<pre><code class="lang-bash">
+$ puppet resource nagios_host mail01 ensure=absent
+						</code></pre>
+						<p>It allows simple resource management from the shell.</p>
+					</div>
+				</section>
+
+				<section>
+					<p>There's just one problem:</p>
+					<pre><code class="lang-puppet">
+nagios_host { 'mail01':
+  host_groups =&gt; [ "mailservers", "legacy" ]
+}
+					</code></pre>
+					<p>Non-trivial values like hashes and arrays are not supported.</p>
+				</section>
+
+				<section>
+					<p class="large">Solution</p>
+					<p>Yet another Puppet module that introduces the <b>puppet yamlresource</b> face:</p>
+					<pre><code class="lang-bash">
+$ puppet yamlresource nagios_host \
+    mail01 '{ "ensure": "absent" }'
+$ puppet yamlresource nagios_host \
+    mail01 '{ "host_groups": [ "mailservers", "legacy" ] }'
+					</code></pre>
+					<p>Now the translator can emit an <b>exec</b> resource
+					that makes Puppet to the legwork</p>
+				</section>
+
+				<section>
+					<pre><code class="lang-ruby" style="max-height: 90%">
+PuppetX::CatalogTranslation::Type.new :default_translation do
+  emit :exec
+
+  catch_all
+
+  spawn :name do
+    @resource.type.to_s.capitalize + ":" + @resource[:name]
+  end
+
+  def command(resource)
+    r_type = @resource.type.to_s
+    r_title = @resource[:name]
+    r_params = @resource.to_hash.reject { |attr,value|
+      attr == :name
+    }
+    "puppet yamlresource #{r_type} '#{r_title}' " +
+      "'#{Psych.to_json(r_params).chomp}'"
+  end
+
+  spawn :cmd do
+    command(@resource)
+  end
+					</code></pre>
+				</section>
+
+				<section>
+					<pre><code class="lang-yaml" style="max-height: 90%">
+# puppet mgmtgraph print --code \
+#   'nagios_host { "mail01": ensure =&gt; absent }'
+  exec:
+  - name: Nagios_host:mail01
+    cmd: |-
+      puppet yamlresource nagios_host 'mail01' '{
+        "host_name": "mail01", "provider": "naginator",
+        "ensure": "absent", "target": "/etc/nagios/nagios_host.cfg",
+        "loglevel": "notice"}'
+    timeout: 30
+    shell: /bin/bash
+    watchshell: /bin/bash
+    ifshell: /bin/bash
+    watchcmd: 'while : ;
+      do echo "puppet run interval passed" ; /bin/sleep 1800 ;
+      done'
+    ifcmd: |-
+      puppet yamlresource nagios_host 'mail01' '{
+        "host_name": "mail01", "provider": "naginator",
+        "ensure": "absent", "target": "/etc/nagios/nagios_host.cfg",
+        "loglevel": "notice"}' --noop --color=false \
+        | grep -q ^Notice:
+    state: present
+    pollint: 0
+					</code></pre>
 				</section>
 			</div>
 
