@@ -18,7 +18,7 @@
 - let's see how you allow Puppet to
 # TODO: these should be funnier
  * install and manage your new FOSS tool
- * become fizzbuzz-complete
+ * use map/reduce
  * bring your cloud infrastructure under version control
  * show you what is being managed
  * make you a sandwich
@@ -32,14 +32,13 @@
 - also delivery mechanism is significant: identical for all forms of extension
 - quick look at the Forge, comment on quality rating
 
-# TODO: this metaphor is stupid, find a better one
-- fizzbuzz in Puppet: functions
-- cool way to make complex manifests more readable
+- using map/reduce in Puppet, or really any more complex computation
+- functions generally serve to make manifests more readable
 - now can be written in Puppet DSL
  -> cool for teams with a strict no-Ruby rule
  -> must wrap your head around declarative structure though
 - Ruby functions still worthwhile: now with lambda support
-- TODO: come up with a compelling use case!
+- also simple access to external data sources -> hadoop?
 
 - make puppet manage cloud infrastructure
  -> because Terraform can be you painfully literal

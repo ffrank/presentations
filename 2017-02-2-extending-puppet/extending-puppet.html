@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Config Management for the Cloud - OpenStack DACH Day 2016 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Puppet debugging presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; }
+		/* custom classes */
+		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
+		div.title { position: absolute; top: 50px }
+		</style>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Extending Puppet</h1>
+					<h2>within reason - and beyond</h2>
+					<p>Felix Frank</p>
+					<p>CfgMgmtCamp.eu Gent 2017</p>
+				</section>
+
+				<section>
+					<p>Felix - trying to automate all the things since 2004</p>
+					<ul>
+					<li>ask me about Puppet</li>
+					<li>ask me about Ansible</li>
+					<li>ask me about mgmt (soon)</li>
+					<li>...or ask my employer if I can help with your project</li>
+					</ul>
+					<br/><br/>
+					<p>In my younger days, I'd play with my computers,
+					read a lot, and write a little code.</p>
+					IMAGE: little Felix with a computer and some books
+				</section>
+
+				<section>
+					<section>
+						<p class="large">Another thing I enjoyed:</p>
+						IMAGE: Lego
+					</section>
+
+					<section>
+						IMAGE: space lego
+					</section>
+
+					<section>
+						IMAGE: enormous lego statue
+					</section>
+
+					<section>
+						IMAGE: furious person in lego mess
+					</section>
+
+					<section>
+						IMAGE: mind storm
+					</section>
+				</section>
+
+				<section>
+					<p>A more compact hobby</p>
+					IMAGE: my notebook
+					<p>FOSS: be creative, enrich your life/career, and others</p>
+					<p>also, productively exercise your privilege</p>
+				</section>
+
+				<section>
+					<p>Puppet and its Ruby code base are not unlike LEGO</p>
+					<ul>
+					<li>a number of differently styled elements</li>
+					<li>parts fit together more or less seamlessly</li>
+					<li>make new constructs from existing atoms</li>
+					<li>become part of a large international community</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">Puppet is successful because of
+					its powerful core and rich extension points</p>
+				</section>
+
+				<section>
+					<p>There is a number of ways to extend Puppet.</p>
+					<p>Let's talk about each in turn.</p>
+					IMAGE: bored Simpsons?
+					<p>Except that would be super boring</p>
+				</section>
+
+				<section>
+					<p>Let's answer a few questions instead:
+					How can you allow Puppet to...</p>
+					<ol>
+					<li>install and manage your new FOSS tool</li>
+					<li>use map/reduce algorithms to compute config settings</li>
+					<li>bring your cloud infrastructure under version control</li>
+					<li>show you what is being managed</li>
+					<li>make you a sandwich</li>
+					<li>interface with other tooling</li>
+					<li>do really weird and/or amazing things</li>
+					</ol>
+				</section>
+
+				<section>
+					<section>
+						<h1>I - Teaching Puppet to handle a new kind of service</h1>
+					</section>
+
+					<section>
+						<p>It should work kind of like this</p>
+						<pre><code class="lang-puppet">
+class { "zooraxis":
+  port =&gt; 9791,
+  user =&gt; "www-data",
+  queues =&gt; 27,
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<p class="large">The common Puppet module</p>
+						<p>Add helpful classes and defines for common use.</p>
+						<p>Basically a library for Puppet DSL code<p>
+					</section>
+
+					<section>
+						<p>Arguably not an actual Puppet extension.</p>
+						IMAGE? a snob
+						<p>Regardless, these are the backbone of the
+						module ecosystem and integral part of Puppet's success.</p>
+					</section>
+
+					<section>
+						<p>By the way</p>
+						<p>The majority of the</p>
+						<p class="large">~100 modules maintained by
+						<a href="https://voxpupuli.org/">Vox Pupuli</a></p>
+						<p>are this kind of module.</p>
+					</section>
+
+					<section>
+						<p class="large">Modules are also the way
+						to ship any kind of extension to the user.</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">How to use map/reduce or other
+					complex algorithms with Puppet?</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Puppet functions</h2>
+						<p>A powerful way to run arbitrary Ruby code
+						from the catalog builder.</p>
+					</section>
+
+					<section>
+						<p>...</p>
+					</section>
+				</section>
+
+	<!-- ---------------------------------------------------------------------------------------------------- -->
+
+				<section>
+					<p>Before we close:</p>
+					<img class="plain" src="careers.png"/>
+					<p>We are hiring in Berlin!</p>
+				</section>
+			</div>
+
+			<div id="footer" style="background: #0085ac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felis_rex / ffrank
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					Puppet and mgmt
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					Gent 2017
+				</span>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 34px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
