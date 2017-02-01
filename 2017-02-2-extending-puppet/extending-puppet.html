@@ -237,6 +237,198 @@ class { "zooraxis":
 						<p>by example of the amazing AWS module
 						by Puppet's own Gareth Rushgrove</p>
 					</section>
+
+					<section>
+						<p>Introducing handy new types for `aws` resources.</p>
+						<pre><code class="lang-puppet">
+ec2_instance { 'keats':
+  ensure        =&gt; present,
+  region        =&gt; 'us-west-1',
+  image_id      =&gt; 'ami-ef560a81',
+  instance_type =&gt; 't1.micro',
+}
+						</code></pre>
+						<p>supports EC2 instances, VPC, Route52, RDS etc.</p>
+					</section>
+
+					<section>
+						<p>This is a good fit for Puppet resources
+						because the AWS API implements CR(U)D.</p>
+						<ul>
+						<li>check whether an instance exists</li>
+						<li>create or destroy it as desired</li>
+						<li>if possible, apply changes to managed properties</li>
+						</ul>
+						<p>With custom types/providers, Puppet can take advantage
+						of its optimizations like prefetching etc.</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">How can I find out what config files are
+					managed?</p>
+					<p>Any profiles missing?</p>
+					<p>What can I touch manually?</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Puppet Faces</h2>
+						<p>a very convenient way to implement new Puppet subcommands</p>
+						IMAGE: masks or something?
+					</section>
+
+					<section>
+						<p>Community example</p>
+						<p class="large">The dalen-puppetls module</p>
+						<p>adding the <b>puppet ls</b> subcommand.</p>
+						<pre><code class="lang-bash">
+$ puppet module install dalen-puppetls
+$ puppet ls /tmp
+Notice: Scope(Class[main]): compiling site.pp
+Notice: Compiled catalog for fflaptop.local in environment production in 2.39 seconds
+this-is-a-file
+  /home/ffrank/.puppetlabs/etc/puppet/env/production/manifests/site.pp:4
+  ffrank:www-data 
+$ puppet ls /tmp --catalog_terminus=json
+						</code></pre>
+					</section>
+
+					<section>
+						<p>The <b>puppet ls</b> subcommand will</p>
+						<ol>
+						<li>retrieve a catalog if necessary</li>
+						<li>make a list of file resources</li>
+						<li>filter by path prefix</li>
+						</ol>
+						<p>Simple and elegant, so let's talk code</p>
+					</section>
+
+					<section>
+						<p>Why the long face?</p>
+						IMAGE: something with a creepy horse mask
+					</section>
+
+					<section>
+						<p>Easy subcommand: short boilerplate code</p>
+						<pre><code>
+require 'puppet/application/face_base'
+
+class Puppet::Application::Ls &lt; Puppet::Application::FaceBase
+end
+						</code></pre>
+					</section>
+
+					<section>
+						<p>...in principle. In this case:
+						<pre><code style="max-height:80%">
+require 'puppet/application/face_base'
+
+class Puppet::Application::Ls &lt; Puppet::Application::FaceBase
+  def app_defaults
+    super.merge({
+      :catalog_terminus =&gt; :rest,
+      :catalog_cache_terminus =&gt; :json,
+    })
+  end
+
+  def setup
+    if Puppet[:catalog_cache_terminus]
+      Puppet::Resource::Catalog.indirection.cache_class =
+                                Puppet[:catalog_cache_terminus]
+    end
+    super
+  end
+end
+						</code></pre>
+					</section>
+
+					<section>
+						<p>The face itself has a number of elements:</p>
+						<ul>
+						<li>meta information (author etc.)</li>
+						<li>a SemVer compliant API version</li>
+						<li>inline documentation</li>
+						<li>a number of verbs that can form sub-subcommands</li>
+						<li>all of this written in a Ruby DSL</li>
+						<li>it can make use of other faces</li>
+						</ul>
+					</section>
+
+					<section>
+						<p>Basic structure and metadata</p>
+						<pre><code>
+require 'puppet/face'
+
+Puppet::Face.define(:ls, '1.0.1') do
+  license "Apache-2.0"
+  copyright "Erik Dalén", 2016
+  author "Erik Dalén &lt;__redacted__@gmail.com&gt;"
+
+  summary "List files managed by Puppet"
+  action :list do
+    ...
+  end
+end
+						</code></pre>
+					</section>
+
+					<section>
+						<p>Action structure</p>
+						<pre><code style="max-height:80%">
+  action :list do
+    default
+    summary "List files and directories"
+    description &lt;&lt;-'EOT'
+      Reads and lists file resources from the catalog.
+      The source of the catalog can be managed with the `--catalog_terminus` and
+      the `--catalog_cache_terminus` option.
+    EOT
+    notes # ...
+    returns # ...
+    arguments "[&lt;path&gt;]"
+    option "--recursive", "-r" do
+      summary 'Recursively list files and directories'
+    end
+    when_invoked do |*args|
+      ...
+      nil
+    end
+  end
+						</code></pre>
+					</section>
+
+					<section>
+						IMAGE: Bender "Your face can interface with my ass...by biting it"
+					</section>
+
+					<section>
+<!-- TODO later with mgmtgraph? -->
+						<p>Inter<b>facing</b> with other faces</p>
+						<p style="font-size: small">(get it?)</p>
+						<pre><code style="max-height:80%">
+when_invoked do |*args|
+  options = args.pop
+  if args.empty?
+    path = Dir.pwd
+  else
+    path = File.expand_path args.pop
+  end
+  path = path[0..-2] if path.end_with? File::SEPARATOR
+
+  catalog = Puppet::Face[:catalog, "0.0"].find
+
+  catalog.filter { ... }.resources.sort do |x,y|
+    ...
+  end.each do |file|
+    ...
+  end
+  nil
+end
+						</code></pre>
+						<p>(actually this is another lie)</p>
+					</section>
+					
 				</section>
 
 	<!-- ---------------------------------------------------------------------------------------------------- -->
@@ -261,7 +453,7 @@ class { "zooraxis":
 					@felis_rex / ffrank
 				</span>
 				<span style="float: left; left: 33%; width: 33%; text-align: center;">
-					Puppet and mgmt
+					Extending Puppet
 				</span>
 				<span style="float: left; right: 0px; width: 33%; text-align: right;">
 					Gent 2017
