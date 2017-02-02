@@ -376,25 +376,25 @@ end
 					<section>
 						<p>Action structure</p>
 						<pre><code style="max-height:80%">
-  action :list do
-    default
-    summary "List files and directories"
-    description &lt;&lt;-'EOT'
-      Reads and lists file resources from the catalog.
-      The source of the catalog can be managed with the `--catalog_terminus` and
-      the `--catalog_cache_terminus` option.
-    EOT
-    notes # ...
-    returns # ...
-    arguments "[&lt;path&gt;]"
-    option "--recursive", "-r" do
-      summary 'Recursively list files and directories'
-    end
-    when_invoked do |*args|
-      ...
-      nil
-    end
+action :list do
+  default
+  summary "List files and directories"
+  description &lt;&lt;-'EOT'
+    Reads and lists file resources from the catalog.
+    The source of the catalog can be managed with the `--catalog_terminus` and
+    the `--catalog_cache_terminus` option.
+  EOT
+  notes # ...
+  returns # ...
+  arguments "[&lt;path&gt;]"
+  option "--recursive", "-r" do
+    summary 'Recursively list files and directories'
   end
+  when_invoked do |*args|
+    ...
+    nil
+  end
+end
 						</code></pre>
 					</section>
 
@@ -406,7 +406,7 @@ end
 <!-- TODO later with mgmtgraph? -->
 						<p>Inter<b>facing</b> with other faces</p>
 						<p style="font-size: small">(get it?)</p>
-						<pre><code style="max-height:80%">
+						<pre style="width: 100%"><code style="max-height:80%">
 when_invoked do |*args|
   options = args.pop
   if args.empty?
@@ -416,11 +416,9 @@ when_invoked do |*args|
   end
   path = path[0..-2] if path.end_with? File::SEPARATOR
 
-  catalog = Puppet::Face[:catalog, "0.0"].find
+  catalog = Puppet::Face[:catalog, "0.0"].find # &lt;-------------------
 
-  catalog.filter { ... }.resources.sort do |x,y|
-    ...
-  end.each do |file|
+  catalog.filter { ... }.resources.sort { |x,y| ... }.each do |file|
     ...
   end
   nil
@@ -428,7 +426,66 @@ end
 						</code></pre>
 						<p>(actually this is another lie)</p>
 					</section>
-					
+				</section>
+
+				<section>
+					<p class="large">So what's so cool about Faces?</p>
+					<p class="fragment">Subcommands are good UX in this age of git.</p>
+					<p class="fragment">DSL code is maintainable and comoposable.</p>
+				</section>
+
+				<section>
+					<p>See what other cool Faces are out there!</p>
+					<img src="find-faces.png"/>
+					<br/>
+					i.e. search for:
+					<pre style="padding: 5px">puppet::face.define site:github.com</pre>
+					<p>e.g. <a href="https://github.com/binford2k/binford2k-puppet_infrastructure">
+						"Infrastructure"</a> by Ben Ford</p>
+				</section>
+
+				<section>
+					<p class="large">So how can Puppet make me a sandwich?</p>
+				</section>
+
+				<section>
+					<p>Well, it cannot.</p>
+					<p>But once you build an IoT sandwich maker,
+					you can easily build a Face for it!</p>
+					<pre><code>$ puppet sandwich make --vegan --whole-corn</code></pre>
+				</section>
+
+				<section>
+					<p class="large">How can I connect Puppet with other tools?</p>
+					<p>No cheating this time!</p>
+				</section>
+
+				<section>
+					<p>I'd go with a Face for this one.<p>
+					<ul>
+					<li>you get a CLI to shell out to</li>
+					<li>you also get a Ruby API</li>
+					</ul>
+					<p>What you don't just get is a HTTP API.</p>
+				</section>
+
+				<section>
+					<p>Example for a Face that links Puppet to
+					another software:</p>
+					<p class="large">ffrank-mgmtgraph</p>
+					<p>Come see me tomorrow on the mgmt track :-)</p>
+				</section>
+
+				<section>
+					<p class="large">How crazy can I go
+					with these Faces?</p>
+				</section>
+
+				<section>
+					<p>Free idea</p>
+					<ul>
+						<li></li>
+					</ul>
 				</section>
 
 	<!-- ---------------------------------------------------------------------------------------------------- -->
