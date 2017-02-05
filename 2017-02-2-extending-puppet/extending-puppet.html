@@ -492,17 +492,23 @@ end
 				</section>
 
 				<section>
-					<p>Free idea for a tool</p>
-					<ul>
-					<li>ssh to remote system</li>
-					<li>make a GEM_HOME in /tmp and get Puppet</li>
-					<li>copy the pre-compiled catalog to remote</li>
-					<li>run <b>puppet apply --catalog</b> on remote</li>
-					</ul>
-					(IMAGE? diagram of what's going on)
-					<p>Essentially a glorified shell script.</p>
-					<p>Why make a Face</p>
-					<p>Because those are available via <b>puppet module install</b></p>
+					<section>
+						<p>Free idea for a tool</p>
+						<ul>
+						<li>ssh to remote system</li>
+						<li>make a GEM_HOME in /tmp and get Puppet</li>
+						<li>copy the pre-compiled catalog to remote</li>
+						<li>run <b>puppet apply --catalog</b> on remote</li>
+						</ul>
+						<img src="push.png"/>
+					</section>
+
+					<section>
+						<p>Essentially a glorified shell script.</p>
+						<p>Why make a Face</p>
+						<p>Because those are available via <b>puppet module install</b></p>
+						<img src="push.png"/>
+					</section>
 				</section>
 
 				<section>
@@ -510,7 +516,6 @@ end
 					<p class="fragment">make types and providers because they make puppet more powerful</p>
 					<p class="fragment">make functions for more convenience</p>
 					<p class="fragment">but also don't forget to make faces</p>
-					</div>
 				</section>
 
 	<!-- ---------------------------------------------------------------------------------------------------- -->
