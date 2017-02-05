@@ -66,7 +66,9 @@
 					<li>ask me about mgmt (soon)</li>
 					<li>...or ask my employer if I can help with your project</li>
 					</ul>
-					<br/><br/>
+				</section>
+
+				<section>
 					<p>In my younger days, I'd play with my computers,
 					read a lot, and write a little code.</p>
 					<img src="hobbies.png"/>
@@ -80,7 +82,7 @@
 					</section>
 
 					<section>
-						<img src="robot.jpg"/>
+						<img src="robot.jpg" height="489"/>
 						<p class="source">http://brickset.com/sets/theme-Space/subtheme-Spyrius</p>
 					</section>
 
@@ -132,7 +134,7 @@
 				</section>
 
 				<section>
-					<p>Let's answer a few questions instead:
+					<p>Let's answer a few questions instead:<br/>
 					How can you allow Puppet to...</p>
 					<ol>
 					<li>install and manage your new FOSS tool</li>
@@ -147,7 +149,7 @@
 
 				<section>
 					<section>
-						<h1>I - Teaching Puppet to handle a new kind of service</h1>
+						<p class="large">How can teach Puppet about this new tool I wrote?</p>
 					</section>
 
 					<section>
@@ -163,7 +165,7 @@ class { "zooraxis":
 
 					<section>
 						<p class="large">The common Puppet module</p>
-						<p>Add helpful classes and defines for common use.</p>
+						<p>Add helpful classes (and maybe some defines)<br/>for common use.</p>
 						<p>Basically a library for Puppet DSL code<p>
 					</section>
 
@@ -197,23 +199,21 @@ class { "zooraxis":
 				<section>
 					<section>
 						<h2>Puppet functions</h2>
-						<p>A powerful way to run arbitrary Ruby code
+						<p>A powerful way to run arbitrary Ruby code<br/>
 						from the catalog builder.</p>
 					</section>
 
 					<section>
-						<p>With Puppet 4, you can also write functions in Puppet DSL.</p>
-						<p>This is cool for teams with insular or missing Ruby knowledge.</p>
+						<p>With Puppet 4, you can also write functions<br/>in Puppet DSL.</p>
+						<p>This is cool for teams with insular<br/>or missing Ruby knowledge.</p>
 					</section>
 
 					<section>
 						<p>Ruby functions are still worthwhile.</p>
 						<ol>
 						<li>They can take lambda arguments.<br/>
-							<span style="font-size: small">
-								You win this session if you can come up
-								with a sensible use for this before its end.
-							</span>
+							(You win this session if you can come up
+							with a sensible use for this.)
 						</li>
 						<li>They can invoke arbitrary Ruby or REST APIs.</li>
 						</ol>
@@ -227,7 +227,7 @@ class { "zooraxis":
 
 					<section>
 						<p class="large">The cool community example</p>
-						<p><b>query_resources</b> and friends from
+						<p><b>query_resources</b> and friends<br/>from
 						<a href="https://github.com/dalen/puppet-puppetdbquery">dalen-puppetdbquery</a>
 						</p>
 					</section>
@@ -247,7 +247,7 @@ class { "zooraxis":
 					</section>
 
 					<section>
-						<p>Introducing handy new types for `aws` resources.</p>
+						<p>Introducing handy new types for <b>aws</b> resources.</p>
 						<pre><code class="lang-puppet">
 ec2_instance { 'keats':
   ensure        =&gt; present,
@@ -260,8 +260,8 @@ ec2_instance { 'keats':
 					</section>
 
 					<section>
-						<p>This is a good fit for Puppet resources
-						because the AWS API implements CR(U)D.</p>
+						<p>These are a good fit for Puppet resources because<br/>
+						the AWS API implements CR(U)D.</p>
 						<ul>
 						<li>check whether an instance exists</li>
 						<li>create or destroy it as desired</li>
@@ -505,7 +505,7 @@ end
 
 					<section>
 						<p>Essentially a glorified shell script.</p>
-						<p>Why make a Face</p>
+						<p>Why make a Face?</p>
 						<p>Because those are available via <b>puppet module install</b></p>
 						<img src="push.png"/>
 					</section>
