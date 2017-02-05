@@ -137,13 +137,13 @@
 					<p>Let's answer a few questions instead:<br/>
 					How can you allow Puppet to...</p>
 					<ol>
-					<li>install and manage your new FOSS tool</li>
-					<li>use map/reduce algorithms to compute config settings</li>
-					<li>bring your cloud infrastructure under version control</li>
-					<li>show you what is being managed</li>
-					<li>make you a sandwich</li>
-					<li>interface with other tooling</li>
-					<li>do really weird and/or amazing things</li>
+					<li class="fragment">install and manage your new FOSS tool</li>
+					<li class="fragment">use map/reduce algorithms to compute config settings</li>
+					<li class="fragment">bring your cloud infrastructure under version control</li>
+					<li class="fragment">show you what is being managed</li>
+					<li class="fragment">make you a sandwich</li>
+					<li class="fragment">interface with other tooling</li>
+					<li class="fragment">do really weird and/or amazing things</li>
 					</ol>
 				</section>
 
@@ -234,14 +234,15 @@ class { "zooraxis":
 				</section>
 
 				<section>
-					<p class="large">How to provision and manage
-					your cloud infrastructure with Puppet</p>
+					<p class="large">How to provision and manage<br/>
+					your cloud infrastructure<br/>with Puppet</p>
 					<p>Because Terraform can be brutally literal</p>
 				</section>
 
 				<section>
 					<section>
 						<p class="large">Custom Puppet Types and Providers</p>
+						<!-- TODO link to the module -->
 						<p>by example of the amazing AWS module
 						by Puppet's own Gareth Rushgrove</p>
 					</section>
@@ -267,8 +268,8 @@ ec2_instance { 'keats':
 						<li>create or destroy it as desired</li>
 						<li>if possible, apply changes to managed properties</li>
 						</ul>
-						<p>With custom types/providers, Puppet can take advantage
-						of its optimizations like prefetching etc.</p>
+						<p>With custom types/providers, Puppet will take advantage
+						of optimizations like prefetching etc.</p>
 					</section>
 				</section>
 
@@ -282,7 +283,7 @@ ec2_instance { 'keats':
 				<section>
 					<section>
 						<h2>Puppet Faces</h2>
-						<p>a very convenient way to implement new Puppet subcommands</p>
+						<p>a very convenient way to implement<br/>new Puppet subcommands</p>
 						<img src="faces.jpg"/>
 						<p class="source">http://nathanst-mo.tumblr.com/post/115601535211/replacement-puppet-faces</p>
 					</section>
@@ -314,17 +315,31 @@ $ puppet ls /tmp --catalog_terminus=json
 					</section>
 
 					<section>
-						<p>Why the face?</p>
+						<p>Why the long face?</p>
 						<img src="horse.jpg"/>
 						<p class="source">http://www.spendcrazy.net/horse-mask</p>
 					</section>
 
 					<section>
 						<p>Easy subcommand: short boilerplate code</p>
-						<pre><code>
+						<pre><code style="max-height: 80%">
 require 'puppet/application/face_base'
 
 class Puppet::Application::Ls &lt; Puppet::Application::FaceBase
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 end
 						</code></pre>
 					</section>
@@ -460,7 +475,7 @@ end
 
 				<section>
 					<p>Well, it cannot.</p>
-					<p>But once you build an IoT sandwich maker,
+					<p>But once you build an IoT sandwich maker,<br/>
 					you can easily build a Face for it!</p>
 					<pre><code>$ puppet sandwich make --vegan --whole-corn</code></pre>
 				</section>
@@ -482,7 +497,7 @@ end
 				<section>
 					<p>Example for a Face that links Puppet to
 					another software:</p>
-					<p class="large">ffrank-mgmtgraph</p>
+					<p class="large"><a href="https://forge.puppet.com/ffrank/mgmtgraph">ffrank-mgmtgraph</a></p>
 					<p>Come see me tomorrow on the mgmt track :-)</p>
 				</section>
 
@@ -500,6 +515,7 @@ end
 						<li>copy the pre-compiled catalog to remote</li>
 						<li>run <b>puppet apply --catalog</b> on remote</li>
 						</ul>
+						<!-- TODO yed this one -->
 						<img src="push.png"/>
 					</section>
 

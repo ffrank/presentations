@@ -90,7 +90,7 @@
 				<section>
 					<section>
 						<p class="large">So let's talk about game development</p>
-						<img src="games.jpg"/>
+						<img src="games.jpg" height="300"/>
 						<p class="source">http://7te.org/retro-game-collage-wallpaper.html</p>
 					</section>
 
@@ -162,7 +162,8 @@ $ mgmt run --allow-tmp-prefix \
 $ mgmt run --allow-tmp-prefix \
    --puppet 'file { "/etc/ntp.conf":
                content =&gt; template("/etc/ntp.conf.erb")
-	     } ~&gt;
+	     }
+	     ~&gt;
              service { "ntp": ensure =&gt; running }'
 						</code></pre>
 					</section>
@@ -203,7 +204,7 @@ $ mgmt run --allow-tmp-prefix --puppet agent
 					</section>
 
 					<section>
-						<p class="large">Side note: the Puppet compiler
+						<p class="large">Side note:<br/>the Puppet compiler<br/>
 						is not actually a compiler</p>
 					</section>
 				</section>
@@ -341,6 +342,22 @@ $ mgmt run --allow-tmp-prefix --puppet agent
 				</section>
 
 				<section>
+					<p>The <b>mgmt</b> interface you saw:</p>
+					<pre><code class="lang-bash">
+$ mgmt run --allow-tmp-prefix \
+   --puppet 'package { "cowsay": ensure =&gt; installed }'
+					</code></pre>
+					<p>Internally, this invokes a <b>puppet</b> subcommand:
+					<pre><code class="lang-bash">
+$ puppet mgmtgraph print \
+   --code 'package { "cowsay": ensure =&gt; installed }'
+					</code></pre>
+					<p>This works courtesy of the
+						<a href="https://forge.puppet.com/ffrank/mgmtgraph">ffrank-mgmtgraph</a> module
+					</p>
+				</section>
+
+				<section>
 					<p class="large">Transformation</p>
 					<div style="float: left; width: 45%;">
 						<pre><code class="lang-json">
@@ -375,7 +392,7 @@ file:
 				</section>
 
 				<section>
-					<div style="float: left; width: 45%;">
+					<div style="float: left; width: 60%;">
 						<pre><code class="lang-json">
 {
   "type": "File",
@@ -397,31 +414,22 @@ file:
   content:
 						</code></pre>
 					</div>
-					<div style="float: right; width: 55%;">
-						Getting from A to B requires<br/>
+					<div style="float: right; width: 40%;">
+						Getting from A to B
 						<ul>
 						<li>translating type <b>File</b> to <b>file</b></li>
 						<li>using the <b>title</b> as <b>path</b></li>
-						<li>translating the vaule from <b>parameters[ensure]</b> from <b>present</b> to <b>exists</b></li>
-						<li>use the result as the value for <b>state</b></li>
+						<li>renaming the <b>ensure</b> parameter to <b>state</b></li>
+						<li>translating its vaule from <b>present</b> to <b>exists</b></li>
 						</ul>
 					</div>
 					<p class="fragment fade-up">
-					<br/><br/><br/>
-					let's convert that to code
+					...let's convert that<br/>to code
 					</p>
 				</section>
 
 				<section>
-					<div style="float: left; width: 40%;">
-						<ul>
-						<li>translating type <b>File</b> to <b>file</b></li>
-						<li>using the <b>title</b> as <b>path</b></li>
-						<li>translating the vaule from <b>parameters[ensure]</b> from <b>present</b> to <b>exists</b></li>
-						<li>use the result as the value for <b>state</b></li>
-						</ul>
-					</div>
-					<div style="float: right; width: 60%;">
+					<div style="float: left; width: 60%;">
 						<pre><code class="lang-ruby" style="max-height: 90%">
 module PuppetX::CatalogTranslation
   Type.new :file do
@@ -444,6 +452,15 @@ module PuppetX::CatalogTranslation
       end
     end
 						</code></pre>
+					</div>
+					<div style="float: right; width: 40%;">
+						Getting from A to B
+						<ul>
+						<li>translating type <b>File</b> to <b>file</b></li>
+						<li>using the <b>title</b> as <b>path</b></li>
+						<li>renaming the <b>ensure</b> parameter to <b>state</b></li>
+						<li>translating its vaule from <b>present</b> to <b>exists</b></li>
+						</ul>
 					</div>
 				</section>
 
@@ -472,11 +489,13 @@ file:
   path: /etc/ntpd.conf
   content:
 					</code></pre>
-					<p>in Puppet, <b>name</b> and <b>title</b> are quite distinct:</p>
+					<p>The name is chosen independently of the path.</p>
+					<p>In Puppet, <b>name</b> and <b>title</b> are distinct but related:</p>
 					<ul>
 					<li>the title is chosen freely</li>
 					<li>the name gets its value from the <b>namevar</b> of the resource (for files: <i>path</i>)</li>
-					<li>the namevar can use the title if not otherwise specified (as in <i>file { "/etc": }</i>)</li>
+					<li>the namevar can use the title if not otherwise specified<br/>
+					(as in <i>file { "/etc": }</i>)</li>
 					</ul>
 				</section>
 
@@ -541,7 +560,7 @@ Class['ntp'] -&gt; Class['kerberos']
 				<section>
 					<p class="large">Too Weird; Didn't Listen?</p>
 					<p>the translation will just deal with
-					classes, defines, and relationships between them</p>
+					classes, defines,<br/>and relationships between them</p>
 				</section>
 
 				<section>
@@ -550,7 +569,7 @@ Class['ntp'] -&gt; Class['kerberos']
 					<li>static validation by Puppet's agent engine</li>
 					<li>Puppet magic like autorequire Just Works</li>
 					<li>the usual convenience from Puppet's munging rules applies</li>
-					<ul>
+					</ul>
 					<div class="fragment">
 						<p>on the flipside:</p>
 						<ul>
@@ -558,14 +577,15 @@ Class['ntp'] -&gt; Class['kerberos']
 						<li>getting an abstract catalog from a master using REST would work as well</li>
 						<li>but then you lose all the advantages mentioned above</li>
 						</ul>
-						<p>Perhaps <b>you</b> will find a better compromise?</p>
+					<p>Perhaps <b>you</b> will find a better compromise?</p>
 					</div>
 				</section>
 
 				<section>
 					<p class="large">
 					All that being said, there are some
-					general restrictions when running from Puppet code.
+					general restrictions when running from<br/>
+					Puppet code.
 					</p>
 				</section>
 
@@ -580,12 +600,13 @@ Class['ntp'] -&gt; Class['kerberos']
 				</section>
 
 				<section>
+				<!-- TODO: this slide is clunky -->
 					<p>The catalog builder derives</p>
 					<ul>
 					<li>a consistent graph that represents</li>
 					<li>the desired state of the (complete) system</li>
 					<li>as of the time of requesting the catalog</li>
-					<li>is suited to converge in a single transaction</li>
+					<li>and which is suited<br/>to converge in a single transaction</li>
 					</ul>
 				</section>
 
@@ -614,7 +635,7 @@ Class['ntp'] -&gt; Class['kerberos']
 					<pre><code class="lang-puppet">
 class { "apache": mpm_module =&gt; "prefork" }
 
-$process_cap = Integer( $memfree_mb / 125.0 - 10.0 )
+$process_cap = Integer( $memorysize_mb / 125.0 - 10.0 )
 class { "apache::mod::prefork":
   maxclients =&gt; $process_cap
 }
@@ -663,15 +684,15 @@ nagios_host { 'mail01':
 
 				<section>
 					<p class="large">Solution</p>
-					<p>Yet another Puppet module that introduces the <b>puppet yamlresource</b> face:</p>
+					<p>Yet another Puppet module that introduces<br/>the <b>puppet yamlresource</b> face:</p>
 					<pre><code class="lang-bash">
 $ puppet yamlresource nagios_host \
     mail01 '{ "ensure": "absent" }'
 $ puppet yamlresource nagios_host \
     mail01 '{ "host_groups": [ "mailservers", "legacy" ] }'
 					</code></pre>
-					<p>Now the translator can emit an <b>exec</b> resource
-					that makes Puppet to the legwork</p>
+					<p>Now the translator can emit an <b>exec</b> resource<br/>
+					that makes Puppet do the legwork</p>
 				</section>
 
 				<section>
@@ -729,6 +750,8 @@ PuppetX::CatalogTranslation::Type.new :default_translation do
     pollint: 0
 					</code></pre>
 				</section>
+
+				<!-- TODO: another slide with the cookie monster waiting for puppet -->
 			</div>
 
 			<div id="footer" style="background: #0085ac;
