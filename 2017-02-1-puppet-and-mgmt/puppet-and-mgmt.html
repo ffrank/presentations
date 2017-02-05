@@ -83,19 +83,20 @@
 
 				<section>
 					<p class="large">Welcome!</p>
-					<p>IMAGES: mgmt, tux, puppet</p>
+					<img src="topics.png"/>
 					<p>Many cool things to talk about</p>
 				</section>
 
 				<section>
 					<section>
 						<p class="large">So let's talk about game development</p>
-						IMAGE? Game memes
+						<img src="games.jpg"/>
+						<p class="source">http://7te.org/retro-game-collage-wallpaper.html</p>
 					</section>
 
 					<section>
 						<p>Games: stateful systems with <i>really</i> great UI</p>
-						IMAGE: Mario? annotated with some numbers and vectors
+						<img src="mario.png"/>
 					</section>
 
 					<section>
@@ -111,13 +112,14 @@
 						<p>Larger game productions not unlike enterprise tools</p>
 						<div class="fragment fade-in">
 							<p>e.g. European Air War</p>
-							IMAGE: game cover
+							<img src="air-war.jpg"/>
+							<p class="source">https://en.wikipedia.org/wiki/European_Air_War</p>
 						</div>
 					</section>
 
 					<section>
 						<p>It was doomed<p>
-						IMAGE: money, bugs, leaving developers
+						<img src="issues.png"/>
 					</section>
 
 					<section>
@@ -132,6 +134,9 @@
 
 					<section>
 						<p>Ultimately an early gimmick feature saved the project</p>
+						<iframe width="560" height="315"
+			  				src="https://www.youtube.com/embed/kt-7hwMZAJo#t=1m1s"
+							frameborder="0" allowfullscreen></iframe>
 					</section>
 				</section>
 
@@ -190,11 +195,11 @@ $ mgmt run --allow-tmp-prefix --puppet agent
 					</div>
 
 					<section>
-						IMAGE: broad view of agent/facter + master
+						<img src="puppet-overview.png"/>
 					</section>
 				
 					<section>
-						IMAGE: zoom - compiler vs. configurer
+						<img src="puppet-detail.png"/>
 					</section>
 
 					<section>
@@ -205,7 +210,7 @@ $ mgmt run --allow-tmp-prefix --puppet agent
 
 				<section>
 					<p>catalog representation</p>
-					IMAGE: colorful bubbles represent nodes
+					<img src="resources.png"/>
 				</section>
 
 				<section>
@@ -214,28 +219,125 @@ $ mgmt run --allow-tmp-prefix --puppet agent
 				</section>
 
 				<section>
-					CODE SEGMENT: catalog from REST API
+					<div style="float: left; width: 45%;">
+						<pre><code class="lang-json" style="max-height: 90%">
+{
+  "tags": ["settings","fflaptop.local","node"],
+  "name": "fflaptop.local",
+  "version": 1486222644,
+  "code_id": null,
+  "catalog_uuid": "8bd0ee21-8ac9-4393-9ad3-01f8639f4e2c",
+  "catalog_format": 1,
+  "environment": "production",
+  "resources": [
+    {
+      "type": "Stage",
+      "title": "main",
+      "tags": ["stage","main"],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Settings",
+      "tags": ["class","settings"],
+      "exported": false
+    },
+						</code></pre>
+					</div>
+					<div style="float: right; width: 53%;">
+						<pre><code class="lang-json" style="max-height: 90%">...
+{
+  "type": "File",
+  "title": "/tmp/this-is-a-file",
+  "tags": ["file","class"],
+  "file": "/home/ffrank/.puppetlabs/etc/puppet/env/production/manifests/site.pp",
+  "line": 4,
+  "exported": false,
+  "parameters": {
+    "ensure": "present",
+    "owner": "ffrank",
+    "group": "www-data"
+  }
+},
+{
+  "type": "Exec",
+  "title": "/usr/games/cowsay mooo",
+  "tags": ["exec","node","fflaptop.local","class"],
+  "file": "/home/ffrank/.puppetlabs/etc/puppet/env/production/manifests/site.pp",
+  "line": 14,
+  "exported": false
+}
+						</code></pre>
+					</div>
 				</section>
 
 				<section>
-					PSEUDO CODE: classes/defines, resources, parameters/metaparameters
+					<div style="float: left; width: 45%;">
+						<pre><code class="lang-json" style="max-height: 90%">
+# class { "demo":
+#   arg =&gt; [
+#   "complex", "value",
+#   { sensible =&gt; false } ]
+# }
+
+{
+  "type": "Class",
+  "title": "Demo",
+  "tags": ["class","demo"],
+  "file": "",
+  "line": 1,
+  "exported": false,
+  "parameters": {
+    "arg": [
+      "complex",
+      "value",
+      { "sensible": false }
+    ]
+  }
+}
+
+						</code></pre>
+					</div>
+					actual metaparameters:
+					<div style="float: right; width: 50%;">
+						<pre><code class="lang-json" style="max-height: 90%">
+# object { "/tmp/something":
+#   content =&gt; "things-to-store"
+# }
+
+{
+  "type": "Object",
+  "title": "/tmp/storage",
+  "tags": ["object","class"],
+  "file": "",
+  "line": 1,
+  "exported": false,
+  "parameters": {
+    "before": [
+      "Service[ostor]"
+    ],
+    "content": "things-to-store"
+  }
+},
+
+						</code></pre>
+					</div>
 				</section>
 
 				<section> 
 					<p>From catalog to Resource Abstraction Layer</p>
-					IMAGE: json representation --) actual type instance
-						+ munge, validate, autorequire
+					<img src="bless.png"/>
 				</section> 
 
 				<section>
 					<p>Finally the RAL catalog emerges</p>
-					IMAGE: type instances and edges
+					<img src="ral-catalog.png"/>
 					<p>Puppet will hand this to the configurer</p>
 				</section>
 
 				<section>
 					<p>We remodel it into an mgmt graph instead</p>
-					IMAGE: highlight two related file resources, transitions to data structure for mgmt
+					<img src="catalog-to-graph.png"/>
 				</section>
 
 				<section>
@@ -373,8 +475,8 @@ file:
 					<p>in Puppet, <b>name</b> and <b>title</b> are quite distinct:</p>
 					<ul>
 					<li>the title is chosen freely</li>
-					<li>the name gets its value from the <b>namevar</b> of the resource</li>
-					<li>the namevar can use the title if not otherwise specified</li>
+					<li>the name gets its value from the <b>namevar</b> of the resource (for files: <i>path</i>)</li>
+					<li>the namevar can use the title if not otherwise specified (as in <i>file { "/etc": }</i>)</li>
 					</ul>
 				</section>
 
@@ -427,11 +529,11 @@ end
 						<pre><code class="lang-puppet">
 Class['ntp'] -&gt; Class['kerberos']
 						</code></pre>
-						IMAGE: classes with resources, arrow and question mark in between
+						<img src="class-relation.png"/>
 					</section>
 
 					<section>
-						IMAGE: zoom in to a class, add whit resources in gray
+						<img src="whits.png"/>
 						<p>edges to containers become edges to their <b>whit</b> boundaries</p>
 					</section>
 				</section>
