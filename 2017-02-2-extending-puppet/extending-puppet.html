@@ -121,16 +121,19 @@
 				</section>
 
 				<section>
-					<p class="large">Puppet is successful because of
-					its powerful core and rich extension points</p>
+					<p class="large">Puppet is successful<br/>
+					because of its powerful core<br/>
+					and rich extension points</p>
 				</section>
 
 				<section>
 					<p>There is a number of ways to extend Puppet.</p>
 					<p>Let's talk about each in turn.</p>
-					<img src="bored.jpg"/>
-					<p class="source">http://cuteotters.com/wordpress/?m=200607</p>
-					<p>Except that would be super boring</p>
+					<div class="fragment">
+						<img src="bored.jpg"/>
+						<p class="source">http://cuteotters.com/wordpress/?m=200607</p>
+						<p>Except that would be super boring</p>
+					</div>
 				</section>
 
 				<section>
@@ -149,7 +152,7 @@
 
 				<section>
 					<section>
-						<p class="large">How can teach Puppet about this new tool I wrote?</p>
+						<p class="large">How can I teach Puppet about this new tool I wrote?</p>
 					</section>
 
 					<section>
@@ -242,8 +245,8 @@ class { "zooraxis":
 				<section>
 					<section>
 						<p class="large">Custom Puppet Types and Providers</p>
-						<!-- TODO link to the module -->
-						<p>by example of the amazing AWS module
+						<p>by example of the amazing
+						<a href="https://forge.puppet.com/puppetlabs/aws">AWS module</a>
 						by Puppet's own Gareth Rushgrove</p>
 					</section>
 
@@ -428,7 +431,6 @@ end
 					</section>
 
 					<section>
-<!-- TODO later with mgmtgraph? -->
 						<p>Inter<b>facing</b> with other faces</p>
 						<p style="font-size: small">(get it?)</p>
 						<pre style="width: 100%"><code style="max-height:80%">
@@ -515,21 +517,21 @@ end
 						<li>copy the pre-compiled catalog to remote</li>
 						<li>run <b>puppet apply --catalog</b> on remote</li>
 						</ul>
-						<!-- TODO yed this one -->
-						<img src="push.png"/>
+						<img src="push-model.png"/>
 					</section>
 
 					<section>
 						<p>Essentially a glorified shell script.</p>
+						<img src="push-model.png"/>
 						<p>Why make a Face?</p>
 						<p>Because those are available via <b>puppet module install</b></p>
-						<img src="push.png"/>
 					</section>
 				</section>
 
 				<section>
 					<h2>Summarizing</h2>
-					<p class="fragment">make types and providers because they make puppet more powerful</p>
+					<p class="fragment">make manifest modules to make Puppet more powerful</p>
+					<p class="fragment">make types and providers because they enhance performance</p>
 					<p class="fragment">make functions for more convenience</p>
 					<p class="fragment">but also don't forget to make faces</p>
 				</section>
