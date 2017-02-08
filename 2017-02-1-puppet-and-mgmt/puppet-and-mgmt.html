@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Puppet and mgmt; Better Together - Config Management Camp Gent 2017 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Puppet and mgmt presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white-light-code.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/tomorrow.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; }
+		/* custom classes */
+		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
+		div.title { position: absolute; top: 50px }
+		</style>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Puppet and mgmt</h1>
+					<h2>better together</h2>
+					<p>Felix Frank</p>
+					<p>CfgMgmtCamp.eu Gent 2017</p>
+				</section>
+
+				<section>
+					<section>
+						<p>Felix - trying to automate all the things since 2004</p>
+						<ul>
+							<li>ask me about Puppet</li>
+							<li>ask me about Ansible</li>
+							<li>ask me about mgmt (soon)</li>
+							<li>...or ask my employer if I can help with your project</li>
+						</ul>
+					</section>
+
+					<section>
+						<p>Speaking of...</p>
+						<img class="plain" src="careers.png"/>
+						<p>...we are hiring in Berlin</p>
+						<p><a href="https://www.unbelievable-machine.com/en/careers/">
+							unbelievable-machine.com/en/careers</a></p>
+					</section>
+				</section>
+
+				<section>
+					<h1>Warning!</h1>
+					<p class="large">Major Puppet spoilers ahead</p>
+				</section>
+
+				<section>
+					<p class="large">Welcome!</p>
+					<img src="topics.png"/>
+					<p>Many cool things to talk about</p>
+				</section>
+
+				<section>
+					<section>
+						<p class="large">So let's talk about game development</p>
+						<img src="games.jpg" height="300"/>
+						<p class="source">http://7te.org/retro-game-collage-wallpaper.html</p>
+					</section>
+
+					<section>
+						<p>Games: stateful systems with <i>really</i> great UI</p>
+						<img src="mario.png"/>
+					</section>
+
+					<section>
+						<p>Game design lessons for utility software</p>
+						<ul>
+							<li class="fragment fade-up">intuitive UI is everything</li>
+							<li class="fragment fade-up">do lots of play testing</li>
+							<li class="fragment fade-up">rapid prototyping</li>
+						</ul>
+					</section>
+
+					<section>
+						<p>Larger game productions not unlike enterprise tools</p>
+						<div class="fragment fade-in">
+							<p>e.g. European Air War</p>
+							<img src="air-war.jpg"/>
+							<p class="source">https://en.wikipedia.org/wiki/European_Air_War</p>
+						</div>
+					</section>
+
+					<section>
+						<p>It was doomed<p>
+						<img src="issues.png"/>
+					</section>
+
+					<section>
+						<p>New staff faced dozens of bugs</p>
+						<p>Hence first task:<br/><br/></p>
+						<div class="fragment fade-in">
+							<p>add the</p>
+							<p class="large">Cool Cam</p>
+							feature
+						</div>
+					</section>
+
+					<section>
+						<p>Ultimately an early gimmick feature saved the project</p>
+						<iframe width="560" height="315"
+			  				src="https://www.youtube.com/embed/kt-7hwMZAJo#t=1m1s"
+							frameborder="0" allowfullscreen></iframe>
+					</section>
+				</section>
+
+				<section>
+					<div style="text-align: left;">
+						<p>An early gimmick feature:</p>
+						<h2>Puppet support in mgmt</h2>
+					</div>
+				</section>
+
+				<section>
+					<div class="title">
+						<h3>Puppet+mgmt examples</h3>
+					</div>
+
+					<section>
+						<pre><code class="lang-bash">
+$ mgmt run --allow-tmp-prefix \
+   --puppet 'package { "cowsay": ensure =&gt; installed }'
+						</code></pre>
+
+						<pre class="fragment fade-in lang-bash"><code>
+$ mgmt run --allow-tmp-prefix \
+   --puppet 'file { "/etc/ntp.conf":
+               content =&gt; template("/etc/ntp.conf.erb")
+	     }
+	     ~&gt;
+             service { "ntp": ensure =&gt; running }'
+						</code></pre>
+					</section>
+
+					<section>
+						<pre><code class="lang-bash">
+$ mgmt run --allow-tmp-prefix \
+   --puppet 'class { "puppetdb": database =&gt; "embedded" }'
+						</code></pre>
+
+						<pre class="fragment fade-in lang-bash"><code>
+$ mgmt run --allow-tmp-prefix \
+   --puppet /var/local/manifests/hardening.pp
+						</code></pre>
+
+						<pre class="fragment fade-in lang-bash"><code>
+$ mgmt run --allow-tmp-prefix --puppet agent
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">So how does this work?</p>
+					<p class="fragment fade-up">let's take a quick deep dive</p>
+				</section>
+
+				<section>
+					<div class="title">
+						<p>Two principal parts of Puppet</p>
+					</div>
+
+					<section>
+						<img src="puppet-overview.png"/>
+					</section>
+				
+					<section>
+						<img src="puppet-detail.png"/>
+					</section>
+
+					<section>
+						<p class="large">Side note:<br/>the Puppet compiler<br/>
+						is not actually a compiler</p>
+					</section>
+				</section>
+
+				<section>
+					<p>catalog representation</p>
+					<img src="resources.png"/>
+				</section>
+
+				<section>
+					<p class="large">On the wire, the catalog
+					looks very similar to the manifest</p>
+				</section>
+
+				<section>
+					<div style="float: left; width: 45%;">
+						<pre><code class="lang-json" style="max-height: 90%">
+{
+  "tags": ["settings","fflaptop.local","node"],
+  "name": "fflaptop.local",
+  "version": 1486222644,
+  "code_id": null,
+  "catalog_uuid": "8bd0ee21-8ac9-4393-9ad3-01f8639f4e2c",
+  "catalog_format": 1,
+  "environment": "production",
+  "resources": [
+    {
+      "type": "Stage",
+      "title": "main",
+      "tags": ["stage","main"],
+      "exported": false
+    },
+    {
+      "type": "Class",
+      "title": "Settings",
+      "tags": ["class","settings"],
+      "exported": false
+    },
+						</code></pre>
+					</div>
+					<div style="float: right; width: 53%;">
+						<pre><code class="lang-json" style="max-height: 90%">...
+{
+  "type": "File",
+  "title": "/tmp/this-is-a-file",
+  "tags": ["file","class"],
+  "file": "/home/ffrank/.puppetlabs/etc/puppet/env/production/manifests/site.pp",
+  "line": 4,
+  "exported": false,
+  "parameters": {
+    "ensure": "present",
+    "owner": "ffrank",
+    "group": "www-data"
+  }
+},
+{
+  "type": "Exec",
+  "title": "/usr/games/cowsay mooo",
+  "tags": ["exec","node","fflaptop.local","class"],
+  "file": "/home/ffrank/.puppetlabs/etc/puppet/env/production/manifests/site.pp",
+  "line": 14,
+  "exported": false
+}
+						</code></pre>
+					</div>
+				</section>
+
+				<section>
+					<div style="float: left; width: 45%;">
+						<pre><code class="lang-json" style="max-height: 90%">
+# class { "demo":
+#   arg =&gt; [
+#   "complex", "value",
+#   { sensible =&gt; false } ]
+# }
+
+{
+  "type": "Class",
+  "title": "Demo",
+  "tags": ["class","demo"],
+  "file": "",
+  "line": 1,
+  "exported": false,
+  "parameters": {
+    "arg": [
+      "complex",
+      "value",
+      { "sensible": false }
+    ]
+  }
+}
+
+						</code></pre>
+					</div>
+					actual metaparameters:
+					<div style="float: right; width: 50%;">
+						<pre><code class="lang-json" style="max-height: 90%">
+# object { "/tmp/something":
+#   content =&gt; "things-to-store"
+# }
+
+{
+  "type": "Object",
+  "title": "/tmp/storage",
+  "tags": ["object","class"],
+  "file": "",
+  "line": 1,
+  "exported": false,
+  "parameters": {
+    "before": [
+      "Service[ostor]"
+    ],
+    "content": "things-to-store"
+  }
+},
+
+						</code></pre>
+					</div>
+				</section>
+
+				<section> 
+					<p>From catalog to Resource Abstraction Layer</p>
+					<img src="bless.png"/>
+				</section> 
+
+				<section>
+					<p>Finally the RAL catalog emerges</p>
+					<img src="ral-catalog.png"/>
+					<p>Puppet will hand this to the configurer</p>
+				</section>
+
+				<section>
+					<p>We remodel it into an mgmt graph instead</p>
+					<img src="catalog-to-graph.png"/>
+				</section>
+
+				<section>
+					<p>The <b>mgmt</b> interface you saw:</p>
+					<pre><code class="lang-bash">
+$ mgmt run --allow-tmp-prefix \
+   --puppet 'package { "cowsay": ensure =&gt; installed }'
+					</code></pre>
+					<p>Internally, this invokes a <b>puppet</b> subcommand:
+					<pre><code class="lang-bash">
+$ puppet mgmtgraph print \
+   --code 'package { "cowsay": ensure =&gt; installed }'
+					</code></pre>
+					<p>This works courtesy of the
+						<a href="https://forge.puppet.com/ffrank/mgmtgraph">ffrank-mgmtgraph</a> module
+					</p>
+				</section>
+
+				<section>
+					<p class="large">Transformation</p>
+					<div style="float: left; width: 45%;">
+						<pre><code class="lang-json">
+{
+  "type": "File",
+  "title": "/etc/ntpd.conf",
+  "tags": ["file","class"],
+  "file": "",
+  "line": 1,
+  "exported": false,
+  "parameters": {
+    "ensure": "present"
+  }
+}
+						</code></pre>
+					</div>
+					<div style="float: right; width: 45%;">
+						<pre><code class="lang-yaml">
+
+
+
+file:
+- name: /etc/ntpd.conf
+  path: /etc/ntpd.conf
+  state: exists
+  content:
+
+
+
+						</code></pre>
+					</div>
+				</section>
+
+				<section>
+					<div style="float: left; width: 60%;">
+						<pre><code class="lang-json">
+{
+  "type": "File",
+  "title": "/etc/ntpd.conf",
+  "tags": ["file","class"],
+  "file": "",
+  "line": 1,
+  "exported": false,
+  "parameters": {
+    "ensure": "present"
+  }
+}
+						</code></pre>
+						<pre><code class="lang-yaml">
+file:
+- name: /etc/ntpd.conf
+  path: /etc/ntpd.conf
+  state: exists
+  content:
+						</code></pre>
+					</div>
+					<div style="float: right; width: 40%;">
+						Getting from A to B
+						<ul>
+						<li>translating type <b>File</b> to <b>file</b></li>
+						<li>using the <b>title</b> as <b>path</b></li>
+						<li>renaming the <b>ensure</b> parameter to <b>state</b></li>
+						<li>translating its vaule from <b>present</b> to <b>exists</b></li>
+						</ul>
+					</div>
+					<p class="fragment fade-up">
+					...let's convert that<br/>to code
+					</p>
+				</section>
+
+				<section>
+					<div style="float: left; width: 60%;">
+						<pre><code class="lang-ruby" style="max-height: 90%">
+module PuppetX::CatalogTranslation
+  Type.new :file do
+    spawn :name do
+      @resource.title
+    end
+
+    spawn :path do
+      @resource[:name]
+    end
+
+    rename :ensure, :state do |value|
+      case value
+      when :present, :file, :directory
+        :exists
+      when :absent
+        :absent
+      else
+        raise "cannot translate file ensure:#{value}"
+      end
+    end
+						</code></pre>
+					</div>
+					<div style="float: right; width: 40%;">
+						Getting from A to B
+						<ul>
+						<li><strike>translating type <b>File</b> to <b>file</b></strike></li>
+						<li>using the <b>title</b> as <b>path</b></li>
+						<li>renaming the <b>ensure</b> parameter to <b>state</b></li>
+						<li>translating its vaule from <b>present</b> to <b>exists</b></li>
+						</ul>
+					</div>
+				</section>
+
+				<section>
+					<p class="large">Puppet name vs. title</p>
+					<pre><code class="lang-puppet">
+file { "the-ntp-configuration":
+  path =&gt; "/etc/ntpd.conf",
+  owner =&gt; "root",
+}
+
+file { "the-other-ntp-configuration-you-see":
+  path =&gt; "/etc/ntpd.conf",
+  mode =&gt; "0644",
+}
+					</code></pre>
+					<p class="fragment fade-in">This is the same file, twice!</p>
+					<p class="fragment fade-in">Puppet knows this (it's not dumb).</p>
+				</section>
+
+				<section>
+					<p>This is how mgmt will see the former</p>
+					<pre><code>
+file:
+- name: the-ntp-configuration
+  path: /etc/ntpd.conf
+  content:
+					</code></pre>
+					<p>The name is chosen independently of the path.</p>
+					<p>In Puppet, <b>name</b> and <b>title</b> are distinct but related:</p>
+					<ul>
+					<li>the title is chosen freely</li>
+					<li>the name gets its value from the <b>namevar</b> of the resource (for files: <i>path</i>)</li>
+					<li>the namevar can use the title if not otherwise specified<br/>
+					(as in <i>file { "/etc": }</i>)</li>
+					</ul>
+				</section>
+
+				<section>
+					<p>Hence the rule:</p>
+					<pre><code class="lang-ruby">
+spawn :path do
+  @resource[:name]
+end
+					</code></pre>
+					<p>It always picks up the actual path thanks to the namevar semantics.</p>
+					<p>This is much safer than looking at the <b>path</b> parameter.</p>
+				</section>
+
+				<section>
+					<p>I lied about that rule, by the way.</b>
+					<div class="fragment fade-in">
+						<p>Here's what it actually looks like:</p>
+						<pre><code class="lang-ruby">
+spawn :path do
+  if @resource[:ensure] == :directory
+    @resource[:name] + "/"
+  else
+    @resource[:name]
+  end
+end
+						</code></pre>
+						<p>mgmt has no <b>state=directory</b>.</p>
+						<p>It uses a trailing slash on the path.</p>
+					</div>
+				</section>
+
+				<section>
+					<section>
+						<p>Here's the rule(s) for another resource type</p>
+						<pre><code class="lang-ruby">
+PuppetX::CatalogTranslation::Type.new :whit do
+  emit :noop
+
+  spawn :name do
+    @resource[:name]
+  end
+end
+						</code></pre>
+						<p>What, you never heard of the <b>whit</b> resource?</p>
+					</section>
+
+					<section>
+						<p>Let's talk about containment</p>
+						<pre><code class="lang-puppet">
+Class['ntp'] -&gt; Class['kerberos']
+						</code></pre>
+						<img src="class-relation.png"/>
+					</section>
+
+					<section>
+						<img src="whits.png"/>
+						<p>edges to containers become edges to their <b>whit</b> boundaries</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">Too Weird; Didn't Listen?</p>
+					<p>the translation will just deal with
+					classes, defines,<br/>and relationships between them</p>
+				</section>
+
+				<section>
+					<p>Advantages of this approach</p>
+					<ul>
+					<li>static validation by Puppet's agent engine</li>
+					<li>Puppet magic like autorequire Just Works</li>
+					<li>the usual convenience from Puppet's munging rules applies</li>
+					</ul>
+					<div class="fragment">
+						<p>on the flipside:</p>
+						<ul>
+						<li>a full agent installation on every node is needed</li>
+						<li>getting an abstract catalog from a master using REST would work as well</li>
+						<li>but then you lose all the advantages mentioned above</li>
+						</ul>
+					<p>Perhaps <b>you</b> will find a better compromise?</p>
+					</div>
+				</section>
+
+				<section>
+					<p class="large">
+					All that being said, there are some
+					general restrictions when running from<br/>
+					Puppet code.
+					</p>
+				</section>
+
+				<section>
+					<p>Puppet will always create a catalog using
+					point-in-time input</p>
+					<ul>
+					<li>facts seen on the node</li>
+					<li>values from PuppetDB</li>
+					<li>manifest code</li>
+					</ul>
+				</section>
+
+				<section>
+				<!-- TODO: this slide is clunky -->
+					<p>The catalog builder derives</p>
+					<ul>
+					<li>a consistent graph that represents</li>
+					<li>the desired state of the (complete) system</li>
+					<li>as of the time of requesting the catalog</li>
+					<li>and which is suited<br/>to converge in a single transaction</li>
+					</ul>
+				</section>
+
+				<section>
+					<p>mgmt can actually update the graph
+					of a running agent</p>
+					<p>However, adding support for triggered
+					Puppet graph rebuilds does not seem sensible</p>
+				</section>
+
+				<section>
+					<p class="large">So what <b>can</b> you expect?</p>
+				</section>
+
+				<section>
+					<p>A sensible goal is to make it possible to run
+					(the) most (popular) Puppet modules through mgmt.</p>
+					<p class="fragment">For mgmt to become effective, however,
+					a custom DSL is much more important.</p>
+					<p class="fragment">That's because Puppet's DSL
+					has some built-in assumptions.</p>
+				</section>
+
+				<section>
+					<p>Example: facts are static values</p>
+					<pre><code class="lang-puppet">
+class { "apache": mpm_module =&gt; "prefork" }
+
+$process_cap = Integer( $memorysize_mb / 125.0 - 10.0 )
+class { "apache::mod::prefork":
+  maxclients =&gt; $process_cap
+}
+					</code></pre>
+					<p class="fragment">In a VM, the memory size could change on the fly.</p>
+					<p class="fragment">mgmt could receive an event about that and initiate action.</p>
+					<p class="fragment">But Puppet cannot emit a structure that reflects this.</p>
+				</section>
+
+				<section>
+					<p class="large">In summary</p>
+					<p>Support for Puppet manifests is neat, it eases testing right now
+					and will help wider adoption.</p>
+					<p>On the other hand, a custom DSL for mgmt will allow actual new
+					config management practices that a translated catalog cannot implement.</p>
+				</section>
+
+				<section>
+					<div style="height: 400px"><h2>Questions</h2></div>
+					<p class="source">
+					"The Cool Cam" originally published at http://thedailywtf.com/articles/The-Cool-Cam
+					</p>
+				</section>
+
+				<section>
+					<p class="large">Bonus content</p>
+					<p>But what about Puppet resources that mgmt does not have?</p>
+					<div class="fragment">
+						<p>Consider the <b>puppet resource</b> command</p>
+						<pre><code class="lang-bash">
+$ puppet resource nagios_host mail01 ensure=absent
+						</code></pre>
+						<p>It allows simple resource management from the shell.</p>
+					</div>
+				</section>
+
+				<section>
+					<p>There's just one problem:</p>
+					<pre><code class="lang-puppet">
+nagios_host { 'mail01':
+  host_groups =&gt; [ "mailservers", "legacy" ]
+}
+					</code></pre>
+					<p>Non-trivial values like hashes and arrays are not supported.</p>
+				</section>
+
+				<section>
+					<p class="large">Solution</p>
+					<p>Yet another Puppet module that introduces<br/>the <b>puppet yamlresource</b> face:</p>
+					<pre><code class="lang-bash">
+$ puppet yamlresource nagios_host \
+    mail01 '{ "ensure": "absent" }'
+$ puppet yamlresource nagios_host \
+    mail01 '{ "host_groups": [ "mailservers", "legacy" ] }'
+					</code></pre>
+					<p>Now the translator can emit an <b>exec</b> resource<br/>
+					that makes Puppet do the legwork</p>
+				</section>
+
+				<section>
+					<pre><code class="lang-ruby" style="max-height: 90%">
+PuppetX::CatalogTranslation::Type.new :default_translation do
+  emit :exec
+
+  catch_all
+
+  spawn :name do
+    @resource.type.to_s.capitalize + ":" + @resource[:name]
+  end
+
+  def command(resource)
+    r_type = @resource.type.to_s
+    r_title = @resource[:name]
+    r_params = @resource.to_hash.reject { |attr,value|
+      attr == :name
+    }
+    "puppet yamlresource #{r_type} '#{r_title}' " +
+      "'#{Psych.to_json(r_params).chomp}'"
+  end
+
+  spawn :cmd do
+    command(@resource)
+  end
+					</code></pre>
+				</section>
+
+				<section>
+					<pre><code class="lang-yaml" style="max-height: 90%">
+# puppet mgmtgraph print --code \
+#   'nagios_host { "mail01": ensure =&gt; absent }'
+  exec:
+  - name: Nagios_host:mail01
+    cmd: |-
+      puppet yamlresource nagios_host 'mail01' '{
+        "host_name": "mail01", "provider": "naginator",
+        "ensure": "absent", "target": "/etc/nagios/nagios_host.cfg",
+        "loglevel": "notice"}'
+    timeout: 30
+    shell: /bin/bash
+    watchshell: /bin/bash
+    ifshell: /bin/bash
+    watchcmd: 'while : ;
+      do echo "puppet run interval passed" ; /bin/sleep 1800 ;
+      done'
+    ifcmd: |-
+      puppet yamlresource nagios_host 'mail01' '{
+        "host_name": "mail01", "provider": "naginator",
+        "ensure": "absent", "target": "/etc/nagios/nagios_host.cfg",
+        "loglevel": "notice"}' --noop --color=false \
+        | grep -q ^Notice:
+    state: present
+    pollint: 0
+					</code></pre>
+				</section>
+
+				<section>
+					<p>Starting lots of puppet processes though...well...</p>
+					<img src="http://i.imgur.com/gsM3Lt5.gif"/>
+					<p class="source">http://imgur.com/gallery/gsM3Lt5</p>
+				</section>
+			</div>
+
+			<div id="footer" style="background: #0085ac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felis_rex / ffrank
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					Puppet and mgmt
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					Gent 2017
+				</span>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 34px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

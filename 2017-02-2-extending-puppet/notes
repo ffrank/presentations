@@ -1,0 +1,89 @@
+- title slide
+- intro slide
+- lego slide
+- space sets
+-> vs plain blocks
+- not enough for elaborate statues
+- no time to play anymore
+ -> also problematic to mess up the flat
+- feeling of having missed out on Mind Storm
+- software + creativity -> <3
+
+- Puppet + Ruby = similar deal
+- core puppet already quite versatile
+- various extension points on top
+
+- let's talk about each in turn
+ -> bo-oring
+- let's see how you allow Puppet to
+# TODO: these should be funnier
+ * install and manage your new FOSS tool
+ * use map/reduce
+ * bring your cloud infrastructure under version control
+ * show you what is being managed
+ * make you a sandwich
+ * interface with other tooling
+ * do really weird and/or amazing things
+
+- adding management capabilities -> the Puppet Module
+- supplies classes and defines
+ -> not necessarily extension - does a Gem extend Ruby?
+- still noteworthy -> good general purpose modules empower Puppet for more users
+- also delivery mechanism is significant: identical for all forms of extension
+- quick look at the Forge, comment on quality rating
+
+- using map/reduce in Puppet, or really any more complex computation
+- functions generally serve to make manifests more readable
+- now can be written in Puppet DSL
+ -> cool for teams with a strict no-Ruby rule
+ -> must wrap your head around declarative structure though
+- Ruby functions still worthwhile: now with lambda support
+- also simple access to external data sources -> hadoop?
+
+- make puppet manage cloud infrastructure
+ -> because Terraform can be you painfully literal
+- one of the coolest set of providers: puppet-aws
+- cloud satisfies the resource abstraction
+ -> enumerable objects that can be created and destroyed
+ -> managed entities have properties, some of them mutable
+- providers allow to translate queries and actions to API calls
+
+- but what parts of my system are managed
+ -> what can I handle manually?
+ -> is an important part missing from my manifest?
+- enter Puppet faces: the puppet-ls module
+- puppet ls /etc
+ -> uses the compiled catalog
+ -> inspects file resources
+ -> shows path matches
+- why is this so cool?
+ -> intuitive UX (think git subcommands)
+ -> elegant code:
+   1. faces implementation takes care of CLI details (API provides a DSL)
+   2. relies on other faces (i.e. catalog face) through Ruby API
+- find more cool faces: google `puppet::face.define site:github.com`
+- e.g. `infrastructure` by Ben Ford
+ -> OSS orchestrator
+- add your own
+ -> `puppet sandwich make --vegan --whole-corn`
+
+- embedding Puppet in other software
+ -> make faces
+ -> provide API to needed functionality
+ -> share data cross-language using JSON or YAML
+ -> see: puppet-mgmtgraph
+
+- is more fun with faces even possible?
+- free idea: provide ansible-like push functionality
+ - connect via ssh
+ - make a GEM_HOME in temp and get puppet
+ - push-copy the cached catalog for the node
+ - run puppet `apply --catalog`
+- more or less a shell script
+- why make it a face? because `puppet module install`
+ - can also use Puppet library code to look up catalogs, trigger compiler if necessary...
+
+- summarizing:
+- make types and providers because they make puppet more powerful
+- make functions for more convenience
+- but never forget to make faces

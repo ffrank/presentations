@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Extending Puppet within reason and beyond - Config Management Camp Gent 2017 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Puppet extensions presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; }
+		/* custom classes */
+		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
+		div.title { position: absolute; top: 50px }
+		</style>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Extending Puppet</h1>
+					<h2>within reason - and beyond</h2>
+					<p>Felix Frank</p>
+					<p>CfgMgmtCamp.eu Gent 2017</p>
+				</section>
+
+				<section>
+					<p>Felix - trying to automate all the things since 2004</p>
+					<ul>
+					<li>ask me about Puppet</li>
+					<li>ask me about Ansible</li>
+					<li>ask me about mgmt (soon)</li>
+					<li>...or ask my employer if I can help with your project</li>
+					</ul>
+				</section>
+
+				<section>
+					<p>In my younger days, I'd play with my computers,
+					read a lot, and write a little code.</p>
+					<img src="hobbies.png"/>
+				</section>
+
+				<section>
+					<section>
+						<p class="large">Another thing I enjoyed:</p>
+						<img src="lego-parts.jpg"/>
+						<p class="source">https://www.toysperiod.com/images/lego-parts.jpg</p>
+					</section>
+
+					<section>
+						<img src="robot.jpg" height="489"/>
+						<p class="source">http://brickset.com/sets/theme-Space/subtheme-Spyrius</p>
+					</section>
+
+					<section>
+						<img src="statue.jpg"/>
+						<p class="source">http://www.fbtb.net/2014/07/25/sdcc-lego-smaugh-statue-details/</p>
+					</section>
+
+					<section>
+						<img src="lego-mess.jpg"/>
+						<p class="source">http://www.spydergrrl.com/2015/12/homemade-lego-advent-calendar-2015-day_9.html</p>
+					</section>
+
+					<section>
+						<img src="mind-storm.png"/>
+						<p class="source">https://www.lego.com/en-us/mindstorms/about-ev3</p>
+					</section>
+				</section>
+
+				<section>
+					<p>A more compact hobby</p>
+					<img src="thinkpad.jpg"/>
+					<p class="source">http://www.techspot.com/review/254-lenovo-thinkpad-edge/</p>
+					<p>FOSS: be creative, enrich your life/career, and others</p>
+					<p>also, productively exercise your privilege</p>
+				</section>
+
+				<section>
+					<p>Puppet and its Ruby code base are not unlike LEGO</p>
+					<ul>
+					<li>a number of differently styled elements</li>
+					<li>parts fit together more or less seamlessly</li>
+					<li>make new constructs from existing atoms</li>
+					<li>become part of a large international community</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">Puppet is successful<br/>
+					because of its powerful core<br/>
+					and rich extension points</p>
+				</section>
+
+				<section>
+					<p>There is a number of ways to extend Puppet.</p>
+					<p>Let's talk about each in turn.</p>
+					<div class="fragment">
+						<img src="bored.jpg"/>
+						<p class="source">http://cuteotters.com/wordpress/?m=200607</p>
+						<p>Except that would be super boring</p>
+					</div>
+				</section>
+
+				<section>
+					<p>Let's answer a few questions instead:<br/>
+					How can you allow Puppet to...</p>
+					<ol>
+					<li class="fragment">install and manage your new FOSS tool</li>
+					<li class="fragment">use map/reduce algorithms to compute config settings</li>
+					<li class="fragment">bring your cloud infrastructure under version control</li>
+					<li class="fragment">show you what is being managed</li>
+					<li class="fragment">make you a sandwich</li>
+					<li class="fragment">interface with other tooling</li>
+					<li class="fragment">do really weird and/or amazing things</li>
+					</ol>
+				</section>
+
+				<section>
+					<section>
+						<p class="large">How can I teach Puppet about this new tool I wrote?</p>
+					</section>
+
+					<section>
+						<p>It should work kind of like this</p>
+						<pre><code class="lang-puppet">
+class { "zooraxis":
+  port =&gt; 9791,
+  user =&gt; "www-data",
+  queues =&gt; 27,
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<p class="large">The common Puppet module</p>
+						<p>Add helpful classes (and maybe some defines)<br/>for common use.</p>
+						<p>Basically a library for Puppet DSL code<p>
+					</section>
+
+					<section>
+						<p>Arguably not an actual Puppet extension.</p>
+						<img src="arrogance.jpg"/>
+						<p class="source">http://www.notable-quotes.com/a/arrogance_quotes.html</p>
+						<p>Regardless, these are the backbone of the
+						module ecosystem and integral part of Puppet's success.</p>
+					</section>
+
+					<section>
+						<p>By the way</p>
+						<p>The majority of the</p>
+						<p class="large">~100 modules maintained by
+						<a href="https://voxpupuli.org/">Vox Pupuli</a></p>
+						<p>are this kind of module.</p>
+					</section>
+
+					<section>
+						<p class="large">Modules are also the way
+						to ship any kind of extension to the user.</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">How to use map/reduce or other
+					complex algorithms with Puppet?</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Puppet functions</h2>
+						<p>A powerful way to run arbitrary Ruby code<br/>
+						from the catalog builder.</p>
+					</section>
+
+					<section>
+						<p>With Puppet 4, you can also write functions<br/>in Puppet DSL.</p>
+						<p>This is cool for teams with insular<br/>or missing Ruby knowledge.</p>
+					</section>
+
+					<section>
+						<p>Ruby functions are still worthwhile.</p>
+						<ol>
+						<li>They can take lambda arguments.<br/>
+							(You win this session if you can come up
+							with a sensible use for this.)
+						</li>
+						<li>They can invoke arbitrary Ruby or REST APIs.</li>
+						</ol>
+					</section>
+
+					<section>
+						<p>In summary, Puppet functions have two uses.</p>
+						<p class="large">Make your code more DRY and readable.</p>
+						<p class="large">Call out to external software.</p>
+					</section>
+
+					<section>
+						<p class="large">The cool community example</p>
+						<p><b>query_resources</b> and friends<br/>from
+						<a href="https://github.com/dalen/puppet-puppetdbquery">dalen-puppetdbquery</a>
+						</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">How to provision and manage<br/>
+					your cloud infrastructure<br/>with Puppet</p>
+					<p>Because Terraform can be brutally literal</p>
+				</section>
+
+				<section>
+					<section>
+						<p class="large">Custom Puppet Types and Providers</p>
+						<p>by example of the amazing
+						<a href="https://forge.puppet.com/puppetlabs/aws">AWS module</a>
+						by Puppet's own Gareth Rushgrove</p>
+					</section>
+
+					<section>
+						<p>Introducing handy new types for <b>aws</b> resources.</p>
+						<pre><code class="lang-puppet">
+ec2_instance { 'keats':
+  ensure        =&gt; present,
+  region        =&gt; 'us-west-1',
+  image_id      =&gt; 'ami-ef560a81',
+  instance_type =&gt; 't1.micro',
+}
+						</code></pre>
+						<p>supports EC2 instances, VPC, Route52, RDS etc.</p>
+					</section>
+
+					<section>
+						<p>These are a good fit for Puppet resources because<br/>
+						the AWS API implements CR(U)D.</p>
+						<ul>
+						<li>check whether an instance exists</li>
+						<li>create or destroy it as desired</li>
+						<li>if possible, apply changes to managed properties</li>
+						</ul>
+						<p>With custom types/providers, Puppet will take advantage
+						of optimizations like prefetching etc.</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">How can I find out what config files are
+					managed?</p>
+					<p>Any profiles missing?</p>
+					<p>What can I touch manually?</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Puppet Faces</h2>
+						<p>a very convenient way to implement<br/>new Puppet subcommands</p>
+						<img src="faces.jpg"/>
+						<p class="source">http://nathanst-mo.tumblr.com/post/115601535211/replacement-puppet-faces</p>
+					</section>
+
+					<section>
+						<p>Community example</p>
+						<p class="large">The dalen-puppetls module</p>
+						<p>adding the <b>puppet ls</b> subcommand.</p>
+						<pre><code class="lang-bash">
+$ puppet module install dalen-puppetls
+$ puppet ls /tmp
+Notice: Scope(Class[main]): compiling site.pp
+Notice: Compiled catalog for fflaptop.local in environment production in 2.39 seconds
+this-is-a-file
+  /home/ffrank/.puppetlabs/etc/puppet/env/production/manifests/site.pp:4
+  ffrank:www-data 
+$ puppet ls /tmp --catalog_terminus=json
+						</code></pre>
+					</section>
+
+					<section>
+						<p>The <b>puppet ls</b> subcommand will</p>
+						<ol>
+						<li>retrieve a catalog if necessary</li>
+						<li>make a list of file resources</li>
+						<li>filter by path prefix</li>
+						</ol>
+						<p>Simple and elegant, so let's talk code</p>
+					</section>
+
+					<section>
+						<p>Why the long face?</p>
+						<img src="horse.jpg"/>
+						<p class="source">http://www.spendcrazy.net/horse-mask</p>
+					</section>
+
+					<section>
+						<p>Easy subcommand: short boilerplate code</p>
+						<pre><code style="max-height: 80%">
+require 'puppet/application/face_base'
+
+class Puppet::Application::Ls &lt; Puppet::Application::FaceBase
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+end
+						</code></pre>
+					</section>
+
+					<section>
+						<p>...in principle. In this case:
+						<pre><code style="max-height:80%">
+require 'puppet/application/face_base'
+
+class Puppet::Application::Ls &lt; Puppet::Application::FaceBase
+  def app_defaults
+    super.merge({
+      :catalog_terminus =&gt; :rest,
+      :catalog_cache_terminus =&gt; :json,
+    })
+  end
+
+  def setup
+    if Puppet[:catalog_cache_terminus]
+      Puppet::Resource::Catalog.indirection.cache_class =
+                                Puppet[:catalog_cache_terminus]
+    end
+    super
+  end
+end
+						</code></pre>
+					</section>
+
+					<section>
+						<p>The face itself has a number of elements:</p>
+						<ul>
+						<li>meta information (author etc.)</li>
+						<li>a SemVer compliant API version</li>
+						<li>inline documentation</li>
+						<li>a number of verbs that can form sub-subcommands</li>
+						<li>all of this written in a Ruby DSL</li>
+						<li>it can make use of other faces</li>
+						</ul>
+					</section>
+
+					<section>
+						<p>Basic structure and metadata</p>
+						<pre><code>
+require 'puppet/face'
+
+Puppet::Face.define(:ls, '1.0.1') do
+  license "Apache-2.0"
+  copyright "Erik Dalén", 2016
+  author "Erik Dalén &lt;__redacted__@gmail.com&gt;"
+
+  summary "List files managed by Puppet"
+  action :list do
+    ...
+  end
+end
+						</code></pre>
+					</section>
+
+					<section>
+						<p>Action structure</p>
+						<pre><code style="max-height:80%">
+action :list do
+  default
+  summary "List files and directories"
+  description &lt;&lt;-'EOT'
+    Reads and lists file resources from the catalog.
+    The source of the catalog can be managed with the `--catalog_terminus` and
+    the `--catalog_cache_terminus` option.
+  EOT
+  notes # ...
+  returns # ...
+  arguments "[&lt;path&gt;]"
+  option "--recursive", "-r" do
+    summary 'Recursively list files and directories'
+  end
+  when_invoked do |*args|
+    ...
+    nil
+  end
+end
+						</code></pre>
+					</section>
+
+					<section>
+						<img src="interface.jpg"/>
+					</section>
+
+					<section>
+						<p>Inter<b>facing</b> with other faces</p>
+						<p style="font-size: small">(get it?)</p>
+						<pre style="width: 100%"><code style="max-height:80%">
+when_invoked do |*args|
+  options = args.pop
+  if args.empty?
+    path = Dir.pwd
+  else
+    path = File.expand_path args.pop
+  end
+  path = path[0..-2] if path.end_with? File::SEPARATOR
+
+  catalog = Puppet::Face[:catalog, "0.0"].find # &lt;-------------------
+
+  catalog.filter { ... }.resources.sort { |x,y| ... }.each do |file|
+    ...
+  end
+  nil
+end
+						</code></pre>
+						<p>(actually this is another lie)</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">So what's so cool about Faces?</p>
+					<p class="fragment">Subcommands are good UX in this age of git.</p>
+					<p class="fragment">DSL code is maintainable and comoposable.</p>
+				</section>
+
+				<section>
+					<p>See what other cool Faces are out there!</p>
+					<img src="find-faces.png"/>
+					<br/>
+					i.e. search for:
+					<pre style="padding: 5px">puppet::face.define site:github.com</pre>
+					<p>e.g. <a href="https://github.com/binford2k/binford2k-puppet_infrastructure">
+						"Infrastructure"</a> by Ben Ford</p>
+				</section>
+
+				<section>
+					<p class="large">So how can Puppet make me a sandwich?</p>
+				</section>
+
+				<section>
+					<p>Well, it cannot.</p>
+					<p>But once you build an IoT sandwich maker,<br/>
+					you can easily build a Face for it!</p>
+					<pre><code>$ puppet sandwich make --vegan --whole-corn</code></pre>
+				</section>
+
+				<section>
+					<p class="large">How can I connect Puppet with other tools?</p>
+					<p>No cheating this time!</p>
+				</section>
+
+				<section>
+					<p>I'd go with a Face for this one.<p>
+					<ul>
+					<li>you get a CLI to shell out to</li>
+					<li>you also get a Ruby API</li>
+					</ul>
+					<p>What you don't just get is a HTTP API.</p>
+				</section>
+
+				<section>
+					<p>Example for a Face that links Puppet to
+					another software:</p>
+					<p class="large"><a href="https://forge.puppet.com/ffrank/mgmtgraph">ffrank-mgmtgraph</a></p>
+					<p>Come see me tomorrow on the mgmt track :-)</p>
+				</section>
+
+				<section>
+					<p class="large">How crazy can I go
+					with these Faces?</p>
+				</section>
+
+				<section>
+					<section>
+						<p>Free idea for a tool</p>
+						<ul>
+						<li>ssh to remote system</li>
+						<li>make a GEM_HOME in /tmp and get Puppet</li>
+						<li>copy the pre-compiled catalog to remote</li>
+						<li>run <b>puppet apply --catalog</b> on remote</li>
+						</ul>
+						<img src="push-model.png"/>
+					</section>
+
+					<section>
+						<p>Essentially a glorified shell script.</p>
+						<img src="push-model.png"/>
+						<p>Why make a Face?</p>
+						<p>Because those are available via <b>puppet module install</b></p>
+					</section>
+				</section>
+
+				<section>
+					<h2>Summarizing</h2>
+					<p class="fragment">make manifest modules to make Puppet more powerful</p>
+					<p class="fragment">make types and providers because they enhance performance</p>
+					<p class="fragment">make functions for more convenience</p>
+					<p class="fragment">but also don't forget to make faces</p>
+				</section>
+
+	<!-- ---------------------------------------------------------------------------------------------------- -->
+
+				<section>
+					<p>Before we close:</p>
+					<img class="plain" src="careers.png"/>
+					<p>We are hiring in Berlin!</p>
+					<p><a href="https://www.unbelievable-machine.com/en/careers/">
+						unbelievable-machine.com/en/careers</a></p>
+				</section>
+
+				<section>
+					<p class="large">Questions?</p>
+				</section>
+			</div>
+
+			<div id="footer" style="background: #0085ac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felis_rex / ffrank
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					Extending Puppet
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					Gent 2017
+				</span>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 34px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,28 @@
+manifest code
+  -> relationships per resource
+
+compiler
+  + other input: facts, puppetdb
+
+agent -- GRAPH -- mgmt
+
+individual resources <- puppet magic
+
+complexer graphs -> whits
+
+
+------------------------------------------
+
+presentation order:
+- result: what you can do
+- manifest code
+- compiler
+- agent
+- graph (simplified)
+- mgmt graph
+- classes and whits
+- individual resources
+- unsupported resources
+- puppet magic -> need agent on each mgmt machine
+- compiler input: facts, puppetdb -> also pins graph in time
+- outlook: what a DSL will bring to the table
