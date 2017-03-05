@@ -1,0 +1,29 @@
+Needed:
+- Story
+- Software Eng. metaphor(s) for the core concepts (and others?)
+
+Topics:
+
+- Config Management Goals
+  * no manual mucking on shells / WebUIs / GUIs
+  * repeatability
+  * infrastructure as code
+
+- architectural components
+  * Puppet: master, manifest, agent, facter, puppetdb, hiera
+  * Ansible: playbooks, ssh, inventory
+
+- day-to-day: Puppet
+
+- day-to-day: Ansible
+
+- language differences
+  -> module, role, resource/task
+
+- Testing
+  * Puppet: noop run, catalog-diff, rspec-puppet, beaker
+  * Puppet: check run, infra-test
+
+- Conceptual basis
+  * Puppet: Provide way to form single-transaction convergence iteration for each single machine
+  * Ansible: Provide arbitrary views and distributed scripts to apply certain aspects of the inventory
