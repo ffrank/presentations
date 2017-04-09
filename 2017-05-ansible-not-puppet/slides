@@ -72,6 +72,13 @@ Theatre metaphor (3min)
 - Ansible: directs groups of actors at a time, during play
 - mgmt: go-pros and headsets
 
+- proper Ansible use (3min)
+  - site.yml is nice to have, but not primarily useful
+  - running whole site code often too slow
+  - tags not very flexible
+  - therefor specialized playbooks needed
+  - don't hesitate to build ad hoc playbooks
+
 - How to choose? (2min)
   - Puppet for pure OS platform and/or very heterogenous environments (Ruby!)
   - Ansible for deployment, simple switch management, interactive tasks (Python!)
