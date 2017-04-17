@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Is that an Ansible? Stop Using It Like a Puppet - OSDC 2017 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Ansible vs. Puppet presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white-light-code.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/tomorrow.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; }
+		/* custom classes */
+		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
+		p.smaller { font-size: 75%; }
+		div.title { position: absolute; top: 50px }
+		span.odd { color: #8a8a8a; }
+		</style>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<h2>Is that an Ansible?</h2>
+					<h3>Stop holding it like a Puppet.</h3>
+					<p>OSDC 2017, Berlin</p>
+					<p class="smaller" style="margin-top: 2em;">
+						Felix Frank, Systems Architect<br/>
+						The unbelievable Machine Company GmbH
+					</p>
+				</section>
+
+				<section>
+					<h3 style="text-align: left;">What? Who now?</h3>
+					<p>Felix (probably not literally a cat)</p>
+					<ul>
+						<li>old command line geezer</li>
+						<li>open source vagabond</li>
+						<li>config management nerd</li>
+						<li>came here by bicycle</li>
+					</ul>
+				</section>
+
+				<section>
+					<section><p class="large">A text</p></section>
+
+					<section>
+						The pig go.
+						<span class="odd">
+						Go is to the fountain.
+						</span>
+						The pig put foot.  Grunt.
+						<span class="odd">
+						Foot in what? ketchup.
+						</span>
+						The dove fly.
+						<span class="odd">
+						Fly is in sky.
+						</span>
+						The dove drop something.
+						<span class="odd">
+						The something on the pig.
+						</span>
+						The pig  disgusting.
+						<span class="odd">
+						The pig rattle.
+						</span>
+						Rattle with dove.
+						<span class="odd">
+						The dove angry.
+						</span>
+						The pig leave.
+						<span class="odd">
+						The dove produce.
+						</span>
+						Produce is chicken wing.
+						<span class="odd">
+						With wing bark.
+						</span>
+						No Quack.
+					</section>
+
+					<section><p class="large">Guess the author?</p></section>
+
+					<section>TODO: comic illustration of the No Quack story</section>
+
+					<section>
+						<p class="large">When all you have<br/>
+						is a hammer,<br/>
+						everything looks like a nail</p>
+					</section>
+
+					<section><h1>No quack.</h1></section>
+				</section>
+
+				<section>
+					<p>Now for some items in the</p>
+					<p class="large">config management<br/>tool chain</p>
+				</section>
+
+				<section>
+					TODO: collage of tool logos
+					puppet ansible chef salt cfengine
+				</section>
+
+				<section>TODO: zoom in to ansible, puppet</section>
+
+				<section>
+					<div class="title">Benefits of config management</div>
+
+					<section>
+						<p class="large">No manual tinkering</p>
+						TODO: fabricate a wiki screenshot
+					</section>
+
+					
+					<section>
+						<p class="large">Repeatable setup</p>
+					</section>
+
+					<section>
+						<p class="large">Infrastructure as Code</p>
+						TODO: logos for git, jenkins, openstack, gerrit + ellipses
+					</section>
+				</section>
+
+				<section>
+					<p class=large>Let's model a webserver</p>
+				</section>
+
+				<section>
+					<div class="title">In Puppet</div>
+
+					<section>
+						TODO: diagram with three classes varnish, apache, jvm
+					</section>
+
+					<section>
+						TODO: diagram with added package/file/service resources (+vhost defines)
+					</section>
+
+					<section>
+						TODO: add dependencies
+					</section>
+
+					<section>
+						TODO: add execution path
+					</section>
+				</section>
+
+				<section>
+					<p class=large>Ansible: Similar but different</p>
+				</section>
+
+				<section>
+					<div class="title">In Ansible</div>
+
+					<section>
+						TODO: diagram with three roles varnish, apache, jvm
+					</section>
+
+					<section>
+						TODO: add tasks
+					</section>
+
+					<section>
+						TODO: add dependencies but grayed
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Architecture: Puppet</div>
+					
+					<section>
+						TODO: diagram with master, manifest, puppetdb, hiera + agents, facter
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Architecture: Ansible</div>
+					
+					<section>
+						TODO: diagram with playbook, inventory, variables + ssh, target
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Naming Things is Hard</div>
+					
+					<section>
+						<table>
+							<tr><th>Puppet</th><th>Ansible</th></tr>
+							<tr><td style="padding-right: 3em">resource type</td><td>module</td></tr>
+							<tr><td>module</td><td>role</td></tr>
+							<tr><td>role</td><td>group (more or less)</td></tr>
+							<tr><td>resource</td><td>task</td></tr>
+						</table>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Working with: Puppet</div>
+					
+					<section>
+						<p>Mostly: editing manifests and hiera data</p>
+						TODO: screenshot with editors with puppet code + YAML
+					</section>
+
+					<section>
+						<p>Modules are available from the Puppet Forge</p>
+						TODO: screenshot of a VP module
+					</section>
+
+					<section>
+						<p>Custom code organized into Roles and Profiles</p>
+						TODO: diagram of roles/profiles (Ger's?)
+					</section>
+
+					<section>
+						<p>Optionally use ENCs like the Foreman</p>
+						TODO: Foreman screenshot
+					</section>
+
+					<section>
+						<p>orchestration through MCollective</p>
+						TODO: diagram of mcollective architecture
+					</section>
+
+					<section>
+						<p>visualization with e.g. PuppetBoard</p>
+						TODO: screenshot!
+					</section>
+				</section>
+
+				<section>
+					TODO: wholesome relaxing image
+				</section>
+
+				<section>
+					<div class="title">Working with: Ansible</div>
+					
+					<section>
+						Write code in Ansible's <b>YAML language</b>
+						<ul>
+							<li>structure things into <b>roles</b></li>
+							<li>orchestrate roles across your infrastructure
+								in <b>playbooks</b></li>
+						</ul>
+					</section>
+
+					<section>
+						Open Source Roles from Ansible Galaxy
+						TODO: screenshot
+					</section>
+
+					<section>
+						customize machines and groups using <b>variables</b>
+						TODO: variables example
+					</section>
+
+					<section>
+						run from anywhere using <b>ssh</b>
+						TODO: diagram of initiator, nodes
+					</section>
+
+					<section>
+						not comfortable without Tower
+						TODO: representative "Sparta" shot from 300
+					</section>
+				</section>
+
+				<section>
+					<p class="large">We've seen the parallels</p>
+					<p class="large fragment fade-in" style="transform: rotateZ(180deg);">
+					Now for the differences</p>
+				</section>
+
+				<section>
+					<p class="large">Puppet models systems</p>
+					<ul>
+						<li>system state will (should) converge</li>
+						<li>equilibrium often after single transaction</li>
+						<li>each machine has a definitive catalog of state</li>
+					</ul>
+					TODO: diagram with Puppet beaming state at machines
+				</section>
+
+				<section>
+					<p class="large">Ansible models<br/>distributed activity</p>
+					<ul>
+						<li>structured like a script, convergence is up to the user</li>
+						<li>a play in a playbook is like a view or projection</li>
+						<li>assigns tasks to hosts, rather than state</li>
+					</ul>
+					TODO: diagram with Ansible sending tasks to groups of machines
+				</section>
+
+				<section>
+					<p class="large">Imagine your infrastructure was a theatre stage</p>
+				</section>
+
+				<section>
+					TODO: drawing of puppet writing scripts for everyone
+				</section>
+
+				<section>
+					TODO: drawing of Ansible waving everyone around, shouting
+				</section>
+
+				<section>
+					TODO: drawing of actors with cameras, headphones, mgmt shirts
+				</section>
+
+				<section>
+					<p>So don't try to push Ansible into a Puppet-shaped box.</p>
+					TODO: photo of cute animal fitting into something
+				</section>
+
+				<section>
+					<div class="title">Some Ansible tips</div>
+
+					<section>
+						<p>Having a site.yml is nice, but it should not be the primary use case.</p>
+						<p>Running the code for all machines will become too slow sooner or later.</p>
+					</section>
+
+					<section>
+						<p>Tags aren't very flexible.</p>
+						<p>Better to rely on single-purpose playbooks.</p>
+						<p>Create ad-hoc playbooks whenever you need.</p>
+					</section>
+
+					<section>
+						<p>Don't shoot for DRY on <b>playbook</b> level.</p>
+						<p>But do make DRY <b>roles</b>.</p>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">When to choose Ansible over Puppet</div>
+
+					<section>
+						<ul>
+							<li>need to cover code deployments?</li>
+							<li class="fragment">primarily managing switches and similar gear?</li>
+							<li class="fragment">many use cases for "ad hoc" management?</li>
+							<li class="fragment">ubiquitous Python but no Ruby?</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">When to choose Puppet over Ansible</div>
+
+					<section>
+						<ul>
+							<li>managing only OS level system properties?</li>
+							<li class="fragment">very heterogeneous environment?</li>
+							<li class="fragment">power values over simplicity?</li>
+							<li class="fragment">ubiquitous Ruby but no Python?</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Should I combine both?</div>
+
+					<section>
+						<p style="margin-bottom: 2em">Only if you know what you are doing.</p>
+						<p>There is value in limiting your tool chain.</p>
+					</section>
+				</section>
+
+				<section>
+					TODO: sage image
+				</section>
+				
+				<section>
+					<p class="large">Thanks for listening!</p>
+				</section>
+
+				<section>
+					We are filling many (not only tech) roles!
+					TODO: careers image
+				</section>
+
+				<section>
+					<p class="large">Questions?</p>
+				</section>
+
+				<section>
+					<div class="title">Testing tools</div>
+
+					<section>
+						<table>
+							<tr><th>Style</th><th>Puppet</th><th>Ansible</th></tr>
+							<tr><td>Preview</td><td>--noop</td><td>--check</td></tr>
+							<tr><td>Unit</td><td>rspec-puppet</td><td>N/A</td></tr>
+							<tr><td>Static</td><td>catalog-diff</td><td>N/A</td></tr>
+							<tr><td>Acceptance</td><td>beaker</td><td>testinfra</td></tr>
+						</table>
+					</section>
+				</section>
+			</div>
+
+			<div id="footer" style="background: #0085ac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felis_rex / ffrank
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					Puppet vs. Ansible
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					OSDC 2017
+				</span>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 34px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+
+			<div id="myLogo" style="background: url(osdc-logo.png);
+						position: absolute;
+						bottom: 34px;
+						left: 10px;
+						width: 205px;
+						height: 95px;">
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

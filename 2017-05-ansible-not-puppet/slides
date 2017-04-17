@@ -25,8 +25,15 @@
   = tasks
   - dependencies less flexible
 
-- puppet architecture: master, manifest, puppetdb, hiera + agents, facter (5min)
-- ansible architecture: playbooks, inventory + ssh (3min)
+- puppet architecture: master, manifest, puppetdb, hiera + agents, facter (3min)
+- ansible architecture: playbooks, inventory + ssh (2min)
+
+- glossary table: (3min)
+  puppet / ansible
+  resource type / module
+  module / role
+  role / group*
+  resource / task
 
 - a day with puppet (7min)
   - editing manifests and hiera data
@@ -41,21 +48,6 @@
   - configure roles through variables per host, host group
   - run from anywhere using ssh
   - not comfortable w/o Tower (shot of sparta?)
-
-- glossary table: (3min)
-  puppet / ansible
-  resource type / module
-  module / role
-  role / group*
-  resource / task
-
-- testing tools
-  - Puppet: noop run (2min)
-    + catalog-diff
-    + rspec-puppet
-    + beaker
-  - Ansible: ceck run (2min)
-    + infra-test
 
 - the real difference (3min)
   Puppet
@@ -87,3 +79,13 @@ Theatre metaphor (3min)
 End (2min)
 - we are hiring
 - questions?
+
+BONUS:
+- testing tools
+  - Puppet: noop run (2min)
+    + catalog-diff
+    + rspec-puppet
+    + beaker
+  - Ansible: ceck run (2min)
+    + infra-test
+
