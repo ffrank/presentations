@@ -234,10 +234,54 @@
 
 				<section>
 					<div class="title">Working with: Puppet</div>
+
+					<section>
+						<p>Editing code and data</p>
+						<ul>
+							<li>Puppet manifests</li>
+							<li>Hiera data stores</li>
+						</ul>
+					</section>
 					
 					<section>
-						<p>Mostly: editing manifests and hiera data</p>
-						<img src="puppet-editors.png"/>
+						<pre><code>class nodejs::install {
+
+  $npmrc_auth = $::nodejs::npmrc_auth
+
+  if $caller_module_name != $module_name {
+    fail("Use of private class ${name} by ${caller_module_name}")
+  }
+
+  # npm is a Gentoo USE flag
+  if $::operatingsystem == 'Gentoo' {
+    package_use { $nodejs::nodejs_package_name:
+      ensure => present,
+      target => 'nodejs-flags',
+      use    => $nodejs::use_flags,
+      before => Package[$nodejs::nodejs_package_name],
+    }
+  }
+
+  # nodejs
+  package { $nodejs::nodejs_package_name:
+    ensure => $nodejs::nodejs_package_ensure,
+    tag    => 'nodesource_repo',
+  }
+						</code></pre>
+					</section>
+
+					<section>
+						<pre><code>---
+nodejs::npm_path: /opt/osdc/npm/bin/npm
+nodejs::manage_package_repo: false
+nodejs::repo_proxy: "10.17.81.121"
+nodejs::repo_proxy_username: sys
+nodejs::repo_proxy_password: o0psThisisS3cre3t
+
+apache::default_vhost: stage_site
+apache::user: fitz
+
+						</code></pre>
 					</section>
 
 					<section>
