@@ -269,39 +269,87 @@
 				</section>
 
 				<section>
-					TODO: wholesome relaxing image
+					<img src="drowzy.jpg"/>
+					<p class="source">http://www.dailymail.co.uk/news/article-3152277/Dog-tor-Doolittle-Pet-pooch-friends-animals-loves-snuggling-hamster-bird-pals.html</p>
 				</section>
 
 				<section>
 					<div class="title">Working with: Ansible</div>
 					
 					<section>
-						Write code in Ansible's <b>YAML language</b>
+						<p>Write code in Ansible's <b>YAML language</b>:</p>
 						<ul>
 							<li>structure things into <b>roles</b></li>
-							<li>orchestrate roles across your infrastructure
-								in <b>playbooks</b></li>
+							<li>orchestrate roles across your infrastructure in <b>playbooks</b></li>
 						</ul>
 					</section>
 
 					<section>
+						<pre><code>---
+# roles/varnish/tasks/main.yml
+
+- name: Install the varnish package
+  apt: name=varnish state=installed
+
+- name: Write varnish config files
+  template: src={{ item.template }} dest={{ item.dest }} mode=0644
+  with_items:
+    - dest: /etc/default/varnish
+      src: etc_default_varnish.j2
+
+    - dest: /etc/varnish/default.vcl
+      src: etc_varnish_default.vcl.j2
+
+- name: Manage varnish service
+  service: name=varnish state={{ varnish_service_state }}
+						</code></pre>
+					</section>
+
+					<section>
+						<pre><code>---
+# playbooks/webtier.yml
+
+- name: Provision webservers
+  hosts: web
+  roles:
+    - common
+    - apache
+      
+- name: Provision reverse proxies
+  hosts: proxies
+  roles:
+    - common
+    - varnish
+						</code></pre>
+					</section>
+
+					<section>
+						<img src="galaxy.png"/>
 						Open Source Roles from Ansible Galaxy
-						TODO: screenshot
 					</section>
 
 					<section>
+						<pre><code>---                                 | ---
+# inventory/group_vars/all/vars.yml | # inventory/group_vars/web/vars.yml
+ssh_enabled: true                   | ssh_root_login: true
+ssh_root_login: false               |
+                                    | password_hashes:
+password_hashes:                    |   root: ""
+  root: "$6$deadbeef"               |   felix: "{{ password_hashes.felix }}"
+  felix: "$6$acceff00"              | gitlab_ssh_key: "{{ vault_gitlab_ssh_key }}"
+						</code></pre>
 						customize machines and groups using <b>variables</b>
-						TODO: variables example
 					</section>
 
 					<section>
-						run from anywhere using <b>ssh</b>
-						TODO: diagram of initiator, nodes
+						<img src="ansible-arch.svg" style="width: 75%"/>
+						<p>run from anywhere using <b>ssh</b></p>
 					</section>
 
 					<section>
-						not comfortable without Tower
-						TODO: representative "Sparta" shot from 300
+						<img src="difficult.png"/>
+						<p class="source">https://img.memecdn.com/youre-doing-it-wrong_o_195760.jpg</p>
+						<p>not very comfortable without <b>Ansible Tower</b></p>
 					</section>
 				</section>
 
@@ -349,15 +397,16 @@
 
 				<section>
 					<p>So don't try to push Ansible into a Puppet-shaped box.</p>
-					TODO: photo of cute animal fitting into something
+					<img src="liquid-cat.jpg"/>
+					<p class="source">https://img.memecdn.com/youre-doing-it-wrong_o_195760.jpg</p>
 				</section>
 
 				<section>
 					<div class="title">Some Ansible tips</div>
 
 					<section>
-						<p>Having a site.yml is nice, but it should not be the primary use case.</p>
-						<p>Running the code for all machines will become too slow sooner or later.</p>
+						<p>Having a site.yml is nice, but it should not be<br/>the primary use case.</p>
+						<p>Running the code for all machines will become<br/>too slow sooner or later.</p>
 					</section>
 
 					<section>
@@ -392,7 +441,7 @@
 						<ul>
 							<li>managing only OS level system properties?</li>
 							<li class="fragment">very heterogeneous environment?</li>
-							<li class="fragment">power values over simplicity?</li>
+							<li class="fragment">you value power over simplicity?</li>
 							<li class="fragment">ubiquitous Ruby but no Python?</li>
 						</ul>
 					</section>
@@ -408,7 +457,15 @@
 				</section>
 
 				<section>
-					TODO: sage image
+					<p>Finally, what's the best way to lead discussions about
+					config management codes?</p>
+					<p class="fragment">Well...</p>
+				</section>
+
+				<section data-background-image="hugs.jpg" style="background-position: center">
+					<!-- <div style="position: absolute; bottom: 0px; height: 32px; right: 0px"> -->
+					<p class="source" style="margin-top: 70%">http://www.mrwallpaper.com/wallpapers/man-tiger-hug-1024x1024.jpg</p>
+					<!-- </div> -->
 				</section>
 				
 				<section>
@@ -441,10 +498,10 @@
 				<section>
 					<div class="title">Attributions</div>
 					<section>
-						<p class="source">
-						The Git logo, available under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0</a>.<br/>
-						The Jenkins logo: <a href="https://jenkins.io/">https://jenkins.io/</a>
-						</p>
+						<ul>
+							<li>The Git logo, available under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0</a>.</li>
+							<li>The Jenkins logo: <a href="https://jenkins.io/">https://jenkins.io/</a></li>
+						</ul>
 					</section>
 				</section>
 			</div>
