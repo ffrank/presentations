@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>News from the Puppet-Mgmt Translator - CfgMgmtCamp 2018 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Puppet/Mgmt presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white-light-code.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/tomorrow.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; }
+		/* custom classes */
+		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
+		p.smaller { font-size: 75%; }
+		div.title { position: absolute; top: 50px }
+		span.odd { color: #8a8a8a; }
+		</style>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<h2>News from the Puppet-Mgmt Translator</h2>
+					<p>CfgMgmtCamp 2018, Gent</p>
+					<p class="smaller" style="margin-top: 2em;">
+						Felix Frank, Systems Architect<br/>
+						The unbelievable Machine Company GmbH
+					</p>
+				</section>
+
+				<section>
+					<p class="large">Look who's talking</p>
+					<p>Felix (not an actual feline)</p>
+					<ul>
+						<li>codes things, but ops-es for a living</li>
+						<li>Puppet nerd, writes things</li>
+						<li>Berlin-izen, somehow not an expat</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">But why</p>
+					<p>enthused by mgmt since the initial presentations</p>
+					<p>James is a good chap</p>
+					<p>let ops tools be a happy family</p>
+				</section>
+
+				<section>
+					<p class="large">Looking back on Part I</p>
+
+					<section>
+						<p>we were looking for a way to run mgmt from Puppet code</p>
+					</section>
+
+					<section>
+						<p>pro-tip: don't even bother<br/>
+							parsing Puppet code "manually"</p>
+						<pre class="fragment"><code>range("0", "93").each |$index| {
+  if $index % 3 == 0 and $index % 5 == 0 {
+    file { "/tmp/fizzbuzz/$index": ensure => present }
+  } elsif $index % 3 == 0 {
+    file { "/tmp/fizz/$index": ensure => present }
+  } elsif $index % 5 == 0 {
+    file { "/tmp/buzz/$index": ensure => present }
+  }
+}</code></pre>
+					</section>
+
+					<section>
+						<p>Everyday Puppet (apply)</p>
+						<img src="puppet-structure.svg"/>
+					</section>
+					
+					<section>
+						<p>The approach</p>
+						<img src="puppet-translator.svg"/>
+					</section>
+
+					<section>
+						<p>The implementation</p>
+						<pre class="fragment"><code style="max-height: 300px;">PuppetX::CatalogTranslation::Type.new :package do
+  emit :pkg
+
+  spawn :name do
+    @resource[:name]
+  end
+
+  rename :ensure, :state do |value|
+    case value
+    when :installed, :present
+      :installed
+    when :purged, :absent
+      :uninstalled
+    else
+      ...  </code></pre>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">Demo! (Good!)</p>
+					<img src="napster.png"/>
+				</section>
+
+				<section>
+					<p class="large">So what's new?</p>
+				</section>
+
+				<section>
+					<p>Now translating augeas resources</p>
+					<pre><code>augeas {
+  "enable replication":
+    incl => "/etc/mysql/my.cnf",
+    lens => "mysql.lns",
+    changes => [
+      "set target[3]/port 3307",
+      "set target[3]/bind-address 127.0.0.1",
+    ],
+}</code></pre>
+				</section>
+
+				<section>
+					<p>...except like this</p>
+					<pre><code>augeas {
+  "re-enable dns":
+    incl => "/etc/mysql/my.cnf",
+    lens => "mysql.lns",
+    changes => [
+      "rm target[3]/skip_name_resolve",
+    ],
+}</code></pre>
+				</section>
+
+				<section>
+					<p>...or this...</p>
+					<pre style="width: 120%"><code>augeas {
+  "ensure InnoDB":
+    changes => [
+      "set /files/etc/mysql/my.cnf/target[3]/default_storage_engine InnoDB",
+    ],
+}</code></pre>
+				</section>
+
+				<section>
+					<p>Otherwise, translator code<br/>
+						would look like this</p>
+					<pre class="fragment"><code>  rename :incl, :file</code></pre>
+				</section>
+
+				<section>
+					<p>Instead this happens</p>
+					<pre><code>  spawn :file do
+    if @resource[:incl]
+      @resource[:incl]
+    else
+      translation_failure "does not use the 'incl' parameter, which mgmt needs"
+      nil
+    end
+  end
+  ignore :incl</code></pre>
+				</section>
+
+				<section>
+					<p>Let's see some more demo (good!)</p>
+					<img src="napster2.png"/>
+				</section>
+
+				<section>
+					<p class="large">Also, AWS</p>
+				</section>
+
+				<section>
+					<p>mgmt now has native support<br/>
+						for managing EC2 instances</p>
+					<p>Puppet gets this through the
+						<a href="https://forge.puppet.com/puppetlabs/aws/types#ec2_instance">
+							puppetlabs/aws
+						</a>
+						module
+					</p>
+				</section>
+
+				<section>
+					<p>The translator copes</p>
+					<pre><code>PuppetX::CatalogTranslation::Type.new :ec2_instance do
+  emit :"aws:ec2"
+  ...</code></pre>
+				</section>
+
+				<section>
+					<p>Let's look at the list of supported parameters</p>
+				</section>
+
+				<section>
+					<p>mgmt EC2 parameters</p>
+					<ul>
+						<li>State</li>
+						<li>Region</li>
+						<li>Type</li>
+						<li>ImageID</li>
+						<li>WatchListenAddr (for SNS)</li>
+						<li>UserData</li>
+					</ul>
+				</section>
+
+				<section>
+					<p>Puppet EC2 parameters</p>
+					<p>
+						<a href="https://forge.puppet.com/puppetlabs/aws/types#ec2_instance">
+							well...
+						</a>
+					</p>
+				</section>
+
+				<section>
+					<p>Translator input is potentially<br/>
+						rather more elaborate than the output</p>
+				</section>
+
+				<section>
+					<p>This must be communicated to the user</p>
+				</section>
+
+				<section>
+					<p>Let's see things break (bad!)</p>
+					<img src="napster3.png"/>
+				</section>
+
+				<section>
+					<p>Severity levels</p>
+					<p class="fragment"><b>Warning:</b> mgmt won't do it all,<br/>
+						but manage the essentials</p>
+					<p class="fragment"><b>Error:</b> mgmt won't behave quite like Puppet</p>
+				</section>
+
+				<section>
+					<p>Works with small manifests and one-liners</p>
+					<p>Overwhelming at scale</p>
+				</section>
+
+				<section>
+					<p>It's about to get weird, folks</p>
+					<img src="napster-weird.png"/>
+				</section>
+
+				<section>
+					<p>In light of this, let's take a step back</p>
+				</section>
+
+				<section>
+					<p>Do we want to run arbitrary manifests?</p>
+					<p>Do we want an established language?</p>
+					<p class="fragment">Is it even feasible for mgmt<br/>
+						to become a Puppet stand-in?</p>
+				</section>
+
+				<section>
+					<p class="large">Let's figure it out</p>
+					<p>See you at the hack day</p>
+					<p class="fragment">Thanks</p>
+				</section>
+
+				<section>
+					<div class="title">Attributions</div>
+					<!-- <section> -->
+						<ul>
+							<li>"Napster Bad" by Camp Chaos</li>
+						</ul>
+					<!-- </section> -->
+				</section>
+			</div>
+
+			<div id="footer" style="background: #0085ac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felis_rex / ffrank
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					Puppet & mgmt - Part II
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					cfgmgmtcamp 2018
+				</span>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 34px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+
+			<div id="myLogo" style="background: url(osdc-logo.png);
+						position: absolute;
+						bottom: 40px;
+						left: 0px;
+						width: 200px;
+						height: 90px;">
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
