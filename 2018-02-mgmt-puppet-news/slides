@@ -1,0 +1,31 @@
+- title
+- about me
+- my mgmt story
+- synopsis of basics
+- demo time! (do some translation, run mgmt from manifest)
+
+= review of the tech (last year)
+- puppet is hard -> example w/ each loop + array
+- compiler emits resource catalog
+- have auto-require and friends -> agent component
+- finally, go resource by resource
+- demo time (single file? res example)
+
+= news - new types + semantic feedback
+- augeas
+- aws
+- both way less features than in puppet
+ -> demo: remove one ignore rule, show warnings
+
+- semantics: example resource with
+  1. cosmetic translation miss
+  2. serious translation loss
+
+- all fun and games with single resources
+- at scale, problematic
+- mini-demo: translate complex module to /dev/null
+
+- reflection: what is this doing anyway?
+- where should this be going?
+
+- thanks + come to the hack day

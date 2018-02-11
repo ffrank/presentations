@@ -1,0 +1,91 @@
+# intro part: 5min
+- title
+- whoami
+- story hook
+- story
+- hammer vs. nail
+- "no quack"
+
+# primer: 4min
+- (hammers for) config management
+- puppet, chef, salt, ansible, cfengine -> zoom in
+- benefits:
+  - no manual tinkering (+ wiki hell)
+  - repeatable
+  - infra code
+
+- the puppet model: represent state as resources (6min)
+  - varnish + apache + jvm
+  - package / file / service
+  - dependencies
+  - execution path
+- ansible model: same but just write it (4min)
+  - varnish + apache + jvm
+  = roles
+  = tasks
+  - dependencies less flexible
+
+- puppet architecture: master, manifest, puppetdb, hiera + agents, facter (3min)
+- ansible architecture: playbooks, inventory + ssh (2min)
+
+- glossary table: (3min)
+  puppet / ansible
+  resource type / module
+  module / role
+  role / group*
+  resource / task
+
+- a day with puppet (7min)
+  - editing manifests and hiera data
+  - code is from the Forge (screen shot - vox pupupuli!)
+  - roles and profiles
+  - optionally Foreman
+  - orchestration MCollective (or PE I guess)
+  - PuppetBoard for visualization
+- a day with Ansible (6min)
+  - code structured in roles, orchestrated with playbooks
+  - roles available from Galaxy (screenshot)
+  - configure roles through variables per host, host group
+  - run from anywhere using ssh
+  - not comfortable w/o Tower (shot of sparta?)
+
+- the real difference (3min)
+  Puppet
+  - makes config converge
+  - in single transaction(?)
+  - catalog per machine
+  Ansible
+  - scripted convergence
+  - plays are like views / projections
+  - hosts x tasks
+
+Theatre metaphor (3min)
+- Puppet: writes personalized scripts per actor
+- Ansible: directs groups of actors at a time, during play
+- mgmt: go-pros and headsets
+
+- proper Ansible use (3min)
+  - site.yml is nice to have, but not primarily useful
+  - running whole site code often too slow
+  - tags not very flexible
+  - therefor specialized playbooks needed
+  - don't hesitate to build ad hoc playbooks
+
+- How to choose? (2min)
+  - Puppet for pure OS platform and/or very heterogenous environments (Ruby!)
+  - Ansible for deployment, simple switch management, interactive tasks (Python!)
+  - Combine both? Think twice. Knowledge requirements, disciplined layering, possible conflicts, etc
+
+End (2min)
+- we are hiring
+- questions?
+
+BONUS:
+- testing tools
+  - Puppet: noop run (2min)
+    + catalog-diff
+    + rspec-puppet
+    + beaker
+  - Ansible: ceck run (2min)
+    + infra-test
+

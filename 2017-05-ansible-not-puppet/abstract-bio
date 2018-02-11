@@ -1,0 +1,33 @@
+In the configuration management space, Puppet has positioned itself as the de facto industry standard. In recent years, however, competition has been growing, with Ansible taking a prominent place.
+
+Both tools share some commonalities, but there are quite severe differences in the respective user experience. Many operations professionals feel drawn to one over the other.
+
+But which is the right tool for you? How do you choose? And how do you get most out of your tool of choice?
+
+This session systematically gives you the insight needed to answer these questions for your organization.
+
+--
+
+Felix has been managing *NIX systems since before Puppet or Ansible were around.
+
+His love for tinkering and automation has inspired him to develop a very keen understanding of Puppet's concepts and implementation. Through the years, he helped out many a fellow user, and authored a number of useful features and fixed bugs all over the place.
+
+It turns out that this experience is also an excellent foundation for a running start with Ansible, both in terms of using and extending it. On the other hand, he tries and devotes his free time to open source development on mgmt, yet another config management tool.
+
+Felix lives and learns in Berlin. He is a systems architect at The unbelievable Machine Company.
+
+--
+
+Configuration management software has come a long way. In the wake of Puppet, a few basic concepts have become the norm, such as the element of idempotent resources.
+
+However, the current generation of popular tools shares some limitations in terms of scalability and availability, among others.
+
+mgmt is a new config management tool in the works, improving on the state of the art. This session gives a quick introduction and demonstration.
+
+--
+
+Felix enjoys automating all the things you find in a datacenter. Except cabeling. That's art.
+
+He has used and done consulting for different config management softwares, and likes to spend his free time improving open source tools.
+
+Felix is a systems architect for The unbelievable Machine Company.

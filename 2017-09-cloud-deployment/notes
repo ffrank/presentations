@@ -1,0 +1,50 @@
+- *um intro
+- buzzword ballet
+- cloud is major offender
+- ended up being quite fond of it
+- essence of cloud: software defined intrastructure
+- natural fit for the paradigm of "infrastructure as code"
+- why do we love that so much?
+- scenario: code commit moves important index to redis
+  -> passes all tests, but breaks in production
+  -> reason is, deployment requires firewall change
+  => classically not part of the test cycle
+  - outlook: will cover test example later
+
+writing infrastructure as code
+ 1. puppet
+  - de-facto standard
+  - master/agent structure
+  - typically manages config files, packages etc.
+  - modules manage VMs on AWS, GCE, Azure etc.
+ 2. Ansible
+  - younger tool
+  - push-centric
+  - made full presentation Puppet v Ansible
+  - can manage most clouds as well
+  - code example coming up
+ 3. Terraform
+  - similar code structure
+  - designed to create cloud based infrastructure
+  - sophisticated reporting and execution
+  - powerful modules
+  - won't fit into CM chain so easily
+how to choose? out of scope ;p
+
+let's look at a specific example
+- eCommerce application
+- hosted on OpenStack
+- Java Code Base
+- Ansible deploys code to webservers
+- config for DB, cache, LB, all deployable through Ansible as well
+- cloud tenants for test, prelive, prod
+- Ansible creates WAS on every deployment (show code)
+- infrastructure changes are part of deployment
+- CI tenant: daily deployment of the whole cloud
+
+a word on devops
+
+summary
+- automation: infra as code
+- allows CI cycle to include configs
+- cloud: full stack infra in code

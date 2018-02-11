@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Is that an Ansible? Stop Using It Like a Puppet - CfgMgmtCamp 2018 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Ansible vs. Puppet presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white-light-code.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/tomorrow.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; }
+		/* custom classes */
+		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
+		p.smaller { font-size: 75%; }
+		div.title { position: absolute; top: 50px }
+		span.odd { color: #8a8a8a; }
+		</style>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<h2>Is that an Ansible?</h2>
+					<h3>Stop holding it like a Puppet.</h3>
+					<p>CfgMgmtCamp 2018, Gent</p>
+					<p class="smaller" style="margin-top: 2em;">
+						Felix Frank, Systems Architect<br/>
+						The unbelievable Machine Company GmbH
+					</p>
+				</section>
+
+				<section>
+					<h3 style="text-align: left;">What? Who now?</h3>
+					<p>Felix (probably not literally a cat)</p>
+					<ul>
+						<li>old command line geezer</li>
+						<li>open source vagabond</li>
+						<li>config management nerd</li>
+						<li>would've come here by bicycle</li>
+					</ul>
+				</section>
+
+				<section><p class="large">A text</p></section>
+
+				<section>
+					The pig go.
+					<span class="odd">
+					Go is to the fountain.
+					</span>
+					The pig put foot.  Grunt.
+					<span class="odd">
+					Foot in what? ketchup.
+					</span>
+					The dove fly.
+					<span class="odd">
+					Fly is in sky.
+					</span>
+					The dove drop something.
+					<span class="odd">
+					The something on the pig.
+					</span>
+					The pig  disgusting.
+					<span class="odd">
+					The pig rattle.
+					</span>
+					Rattle with dove.
+					<span class="odd">
+					The dove angry.
+					</span>
+					The pig leave.
+					<span class="odd">
+					The dove produce.
+					</span>
+					Produce is chicken wing.
+					<span class="odd">
+					With wing bark.
+					</span>
+					No Quack.
+				</section>
+			
+
+				<section><p class="large">Guess the author?</p></section>
+
+				<section>
+					<section>
+						<p class="large">The story goes as follows.</p>
+					</section>
+					<section><img src="noquack1.png"/></section>
+					<section><img src="noquack2.png"/></section>
+					<section><img src="noquack3.png"/></section>
+					<section><img src="noquack4.png"/></section>
+					<section><img src="noquack5.png"/></section>
+					<section><img src="noquack6.png"/></section>
+					<section><img src="noquack7.png"/></section>
+					<section><img src="noquack8.png"/></section>
+					<section><img src="noquack9.png"/></section>
+					<section><img src="noquack10.png"/></section>
+					<section><img src="noquack11.png"/></section>
+					<section><img src="noquack12.png"/></section>
+					<section><img src="noquack13.png"/></section>
+					<section><img src="noquack14.png"/></section>
+					<section>
+						<p>Don't use blatantly wrong tools.</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">When all you have<br/>
+					is a hammer,<br/>
+					everything looks like a nail</p>
+				</section>
+
+				<section><h1>No quack.</h1></section>
+
+				<section>
+					<p class="large">Welcome to Ansible session 2</p>
+				</section>
+
+				<section>
+					<img src="puppet-ansible.png"/>
+				</section>
+
+				<section>
+					<div class="title">Benefits of config management</div>
+
+					<section>
+						<img src="wiki-doc.png"/>
+						<p>No manual tinkering.
+						No wiki install guides.</p>
+					</section>
+
+					
+					<section>
+						<p class="large">Repeatable setup</p>
+					</section>
+
+					<section>
+						<img src="infra-code-tools.png"/>
+						<p>Infrastructure as Code</p>
+					</section>
+				</section>
+
+				<section>
+					<p class=large>Let's model a webserver</p>
+				</section>
+
+				<section>
+					<div class="title">In Puppet</div>
+
+					<section>
+						<img src="ws-puppet-01.svg"/>
+					</section>
+
+					<section>
+						<img src="ws-puppet-02.svg"/>
+					</section>
+
+					<section>
+						<img src="ws-puppet-03.svg"/>
+					</section>
+
+					<section>
+						<img src="ws-puppet-04.svg"/>
+					</section>
+				</section>
+
+				<section>
+					<p class=large>Ansible: Similar but different</p>
+				</section>
+
+				<section>
+					<div class="title">In Ansible</div>
+
+					<section>
+						<img src="ws-ansible-01.svg"/>
+					</section>
+
+					<section>
+						<img src="ws-ansible-02.svg"/>
+					</section>
+
+					<section>
+						<img src="ws-ansible-03.svg"/>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Architecture: Puppet</div>
+					
+					<section>
+						<img src="puppet-arch.svg"/>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Architecture: Ansible</div>
+					
+					<section>
+						<img src="ansible-arch.svg"/>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Naming Things is Hard</div>
+					
+					<section>
+						<table>
+							<tr><th>Puppet</th><th>Ansible</th></tr>
+							<tr><td style="padding-right: 3em">resource type</td><td>module</td></tr>
+							<tr><td>module</td><td>role</td></tr>
+							<tr><td>role</td><td>group (more or less)</td></tr>
+							<tr><td>resource</td><td>task</td></tr>
+						</table>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Working with: Puppet</div>
+
+					<section>
+						<p>Editing code and data</p>
+						<ul>
+							<li>Puppet manifests</li>
+							<li>Hiera data stores</li>
+						</ul>
+					</section>
+					
+					<section>
+						<pre><code>class nodejs::install {
+
+  $npmrc_auth = $::nodejs::npmrc_auth
+
+  if $caller_module_name != $module_name {
+    fail("Use of private class ${name} by ${caller_module_name}")
+  }
+
+  # npm is a Gentoo USE flag
+  if $::operatingsystem == 'Gentoo' {
+    package_use { $nodejs::nodejs_package_name:
+      ensure => present,
+      target => 'nodejs-flags',
+      use    => $nodejs::use_flags,
+      before => Package[$nodejs::nodejs_package_name],
+    }
+  }
+
+  # nodejs
+  package { $nodejs::nodejs_package_name:
+    ensure => $nodejs::nodejs_package_ensure,
+    tag    => 'nodesource_repo',
+  }
+						</code></pre>
+					</section>
+
+					<section>
+						<pre><code>---
+nodejs::npm_path: /opt/osdc/npm/bin/npm
+nodejs::manage_package_repo: false
+nodejs::repo_proxy: "10.17.81.121"
+nodejs::repo_proxy_username: sys
+nodejs::repo_proxy_password: o0psThisisS3cre3t
+
+apache::default_vhost: stage_site
+apache::user: fitz
+
+						</code></pre>
+					</section>
+
+					<section>
+						<img src="forge.png"/>
+						<p>Modules are available from the Puppet Forge</p>
+					</section>
+
+					<section>
+						<img src="roles-profiles.svg"/>
+						<p>Custom code organized into Roles and Profiles</p>
+					</section>
+
+					<section>
+						<img src="foreman.png"/>
+						<p class="source">http://projects.theforeman.org/projects/foreman/wiki/Screenshots</p>
+						<p>Optionally use ENCs like the Foreman</p>
+					</section>
+
+					<section>
+						<img src="unicorn.png" style="width: 25%"/>
+						<p class="source">http://maxpixel.freegreatpicture.com/Dream-Space-Sky-Galaxy-Magic-Unicorn-Fantasy-2035174</p>
+						<p>orchestration through MCollective</p>
+					</section>
+
+					<section>
+						<img src="puppetboard.png"/>
+						<p>visualization with e.g. PuppetBoard</p>
+					</section>
+				</section>
+
+				<section>
+					<img src="drowzy.jpg"/>
+					<p class="source">http://www.dailymail.co.uk/news/article-3152277/Dog-tor-Doolittle-Pet-pooch-friends-animals-loves-snuggling-hamster-bird-pals.html</p>
+				</section>
+
+				<section>
+					<div class="title">Working with: Ansible</div>
+					
+					<section>
+						<p>Write code in Ansible's <b>YAML language</b>:</p>
+						<ul>
+							<li>structure things into <b>roles</b></li>
+							<li>orchestrate roles across your infrastructure in <b>playbooks</b></li>
+						</ul>
+					</section>
+
+					<section>
+						<pre><code>---
+# roles/varnish/tasks/main.yml
+
+- name: Install the varnish package
+  apt: name=varnish state=installed
+
+- name: Write varnish config files
+  template: src={{ item.template }} dest={{ item.dest }} mode=0644
+  with_items:
+    - dest: /etc/default/varnish
+      src: etc_default_varnish.j2
+
+    - dest: /etc/varnish/default.vcl
+      src: etc_varnish_default.vcl.j2
+
+- name: Manage varnish service
+  service: name=varnish state={{ varnish_service_state }}
+						</code></pre>
+					</section>
+
+					<section>
+						<pre><code>---
+# playbooks/webtier.yml
+
+- name: Provision webservers
+  hosts: web
+  roles:
+    - common
+    - apache
+      
+- name: Provision reverse proxies
+  hosts: proxies
+  roles:
+    - common
+    - varnish
+						</code></pre>
+					</section>
+
+					<section>
+						<img src="galaxy.png"/>
+						Open Source Roles from Ansible Galaxy
+					</section>
+
+					<section>
+						<pre><code>---                                 | ---
+# inventory/group_vars/all/vars.yml | # inventory/group_vars/web/vars.yml
+ssh_enabled: true                   | ssh_root_login: true
+ssh_root_login: false               |
+                                    | password_hashes:
+password_hashes:                    |   root: ""
+  root: "$6$deadbeef"               |   felix: "{{ password_hashes.felix }}"
+  felix: "$6$acceff00"              | gitlab_ssh_key: "{{ vault_gitlab_ssh_key }}"
+						</code></pre>
+						customize machines and groups using <b>variables</b>
+					</section>
+
+					<section>
+						<img src="ansible-arch.svg" style="width: 75%"/>
+						<p>run from anywhere using <b>ssh</b></p>
+					</section>
+
+					<section>
+						<img src="foreman.png"/>
+						<p class="source">http://projects.theforeman.org/projects/foreman/wiki/Screenshots</p>
+						<p>Foreman supports Ansible as well</p>
+					</section>
+
+					<section>
+						<img src="difficult.png"/>
+						<p class="source">https://img.memecdn.com/youre-doing-it-wrong_o_195760.jpg</p>
+						<p>not very comfortable without <b>Ansible Tower</b><br/>
+							(now <b>awx</b>)</p>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">We've seen the parallels</p>
+					<p class="large fragment fade-in" style="transform: rotateZ(180deg);">
+					Now for the differences</p>
+				</section>
+
+				<section>
+					<p class="large">Puppet models systems</p>
+					<ul>
+						<li>system state will (should) converge</li>
+						<li>equilibrium often after single transaction</li>
+						<li>each machine has a definitive catalog of state</li>
+					</ul>
+				</section>
+
+				<section>
+					<div class="title">The Puppet Model</div>
+
+					<section><img src="demo-infra.png"/></section>
+					<section><img src="demo-infra-puppet1.png"/></section>
+					<section><img src="demo-infra-puppet2.png"/></section>
+					<section><img src="demo-infra-puppet3.png"/></section>
+					<section><img src="demo-infra-puppet4.png"/></section>
+					<section><img src="demo-infra-puppet5.png"/></section>
+					<section><img src="demo-infra-puppet6.png"/></section>
+					<section><img src="demo-infra-puppet7.png"/></section>
+				</section>
+
+				<section>
+					<p class="large">Ansible models<br/>distributed activity</p>
+					<ul>
+						<li>structured like a script, convergence is up to the user</li>
+						<li>a play in a playbook is like a view or projection</li>
+						<li>assigns tasks to hosts, rather than state</li>
+					</ul>
+				</section>
+
+				<section>
+					<div class="title">The Ansible Model</div>
+
+					<section><img src="demo-infra.png"/></section>
+					<section><img src="demo-infra-ansible1.png"/></section>
+					<section><img src="demo-infra-ansible2.png"/></section>
+					<section><img src="demo-infra-ansible3.png"/></section>
+					<section><img src="demo-infra-ansible4.png"/></section>
+					<section><img src="demo-infra-ansible5.png"/></section>
+					<section><img src="demo-infra-ansible6.png"/></section>
+					<section><img src="demo-infra-ansible7.png"/></section>
+					<section><img src="demo-infra-ansible8.png"/></section>
+					<section><img src="demo-infra-ansible9.png"/></section>
+					<section><img src="demo-infra-ansible10.png"/></section>
+					<section><img src="demo-infra-ansible11.png"/></section>
+					<section><img src="demo-infra-ansible12.png"/></section>
+				</section>
+
+				<section>
+					<p class="large">In Summary</p>
+				</section>
+
+				<section>
+					<div class="title">Ansible v Puppet</div>
+					<section><img src="demo-infra-ansible-v-puppet.png"/></section>
+				</section>
+
+				<section>
+					<p>Or let's use a metaphor</p>
+				</section>
+
+				<section>
+					<p class="large">Imagine your infrastructure was a theatre stage</p>
+				</section>
+
+				<section>
+					<img src="theatre-puppet.png"/>
+				</section>
+
+				<section>
+					<img src="theatre-ansible.png"/>
+				</section>
+
+<!--
+				<section>
+					TODO: drawing of actors with cameras, headphones, mgmt shirts
+				</section>
+-->
+
+				<section>
+					<p>So don't try to push Ansible into a Puppet-shaped box.</p>
+					<img src="liquid-cat.jpg"/>
+					<p class="source">https://img.memecdn.com/youre-doing-it-wrong_o_195760.jpg</p>
+				</section>
+
+				<section>
+					<div class="title">Some Ansible tips</div>
+
+					<section>
+						<p>Having a site.yml is nice, but it should not be<br/>the primary use case.</p>
+						<p>Running the code for all machines will become<br/>too slow sooner or later.</p>
+					</section>
+
+					<section>
+						<p>Tags aren't very flexible.</p>
+						<p>Better to rely on single-purpose playbooks.</p>
+						<p>Create ad-hoc playbooks whenever you need.</p>
+					</section>
+
+					<section>
+						<p>Don't shoot for DRY on <b>playbook</b> level.</p>
+						<p>But do make DRY <b>roles</b>.</p>
+					</section>
+
+					<section>
+						<p>Take advice on best practices<br/>
+						from the upstream Ansible documentation<br/>
+						with a grain of salt.</p>
+					</section>
+				</section>
+
+				<section><p class="large">Let's look at site.yml</p></section>
+
+				<section>
+					<div class="title">Ansible in Puppet-like mode</div>
+					<section><img src="siteyml1.png"/></section>
+					<section><img src="siteyml2.png"/></section>
+					<section><img src="siteyml3.png"/></section>
+					<section><img src="siteyml4.png"/></section>
+					<section><img src="siteyml5.png"/></section>
+					<section><img src="siteyml6.png"/></section>
+					<section><img src="siteyml7.png"/></section>
+				</section>
+
+				<section>
+					<p>Use the tooling.</p>
+					<p class="large">Orchestrate</p>
+				</section>
+
+				<section>
+					<div class="title">Proper Ansible</div>
+					<section><img src="orchestrate1.png"/></section>
+					<section><img src="orchestrate2.png"/></section>
+					<section><img src="orchestrate3.png"/></section>
+					<section><img src="orchestrate4.png"/></section>
+					<section><img src="orchestrate5.png"/></section>
+					<section><img src="orchestrate6.png"/></section>
+					<section><img src="orchestrate7.png"/></section>
+					<section><img src="orchestrate8.png"/></section>
+					<section><img src="orchestrate9.png"/></section>
+				</section>
+
+				<section>
+					<div class="title">When to choose Ansible over Puppet</div>
+
+					<section>
+						<ul>
+							<li>need to cover code deployments?</li>
+							<li class="fragment">primarily managing switches and similar gear?</li>
+							<li class="fragment">many use cases for "ad hoc" management?</li>
+							<li class="fragment">ubiquitous Python but no Ruby?</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">When to choose Puppet over Ansible</div>
+
+					<section>
+						<ul>
+							<li>managing only OS level system properties?</li>
+							<li class="fragment">very heterogeneous environment?</li>
+							<li class="fragment">you value power over simplicity?</li>
+							<li class="fragment">ubiquitous Ruby but no Python?<br/>
+								(or Python 3 only?)</li>
+							<li class="fragment">you are certain that scale will be huge</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Should I combine both?</div>
+
+					<section>
+						<p style="margin-bottom: 2em">Only if you know what you are doing.</p>
+						<p>There is value in limiting your tool chain.</p>
+					</section>
+				</section>
+
+				<section>
+					<p>Finally, what's the best way to lead discussions about
+					config management tools?</p>
+					<p class="fragment">Well...</p>
+				</section>
+
+				<section data-background-image="hugs.jpg" style="background-position: center">
+					<!-- <div style="position: absolute; bottom: 0px; height: 32px; right: 0px"> -->
+					<p class="source" style="margin-top: 70%">http://www.mrwallpaper.com/wallpapers/man-tiger-hug-1024x1024.jpg</p>
+					<!-- </div> -->
+				</section>
+				
+				<section>
+					<p class="large">Thanks for listening!</p>
+				</section>
+
+				<section>
+					<p>We are filling many (not only tech) roles!</p>
+					<img src="careers.png"/>
+					<p>Check out our <a href="https://www.unbelievable-machine.com/en/careers/">careers page</a></p>
+				</section>
+
+				<section>
+					<p class="large">Questions?</p>
+				</section>
+
+				<section>
+					<div class="title">Testing tools</div>
+
+					<section>
+						<table>
+							<tr><th>Style</th><th>Puppet</th><th>Ansible</th></tr>
+							<tr><td>Preview</td><td>--noop</td><td>--check</td></tr>
+							<tr><td>Unit</td><td>rspec-puppet</td><td>N/A</td></tr>
+							<tr><td>Static</td><td>catalog-diff</td><td>N/A</td></tr>
+							<tr><td>Acceptance</td><td>beaker</td><td>testinfra</td></tr>
+						</table>
+					</section>
+				</section>
+
+				<section>
+					<div class="title">Attributions</div>
+					<section>
+						<ul>
+							<li>The Git logo, available under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0</a>.</li>
+							<li>The Jenkins logo: <a href="https://jenkins.io/">https://jenkins.io/</a></li>
+						</ul>
+					</section>
+				</section>
+			</div>
+
+			<div id="footer" style="background: #0085ac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felis_rex / ffrank
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					Puppet vs. Ansible
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					CfgMgmtCamp 2018
+				</span>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 34px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
