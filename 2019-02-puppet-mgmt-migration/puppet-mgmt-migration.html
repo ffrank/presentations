@@ -89,51 +89,138 @@
 				</section>
 
 				<section>
-					- problems
-						* puppet "lock-in"
-						* many great mgmt features only accessible through mcl
-						* Puppet integration also has performance implications
-					- therefor clear: users will want to migrate to mcl
-						-- ted joke
-					- so why even still talk about this?
-					- Puppet support can ease migration
-					- but how to move away from Puppet DSL?
-						-o rewrites are scary
-						* esp in configmanagement, latent errors hard to catch
-						* extra scary: the switch-over weekend
-
-					- much less scary: babystep approach
-						1. old code, new agents
-						2. rewrite a single module
-						3. repeat step 2
-						4. remove Puppet
-
-					- technical prerequirement: mgmt needs to do both at once
-						* Demo II
-
-					- how to deal with dependencies and order?
-						* Demo III = removing a module from Puppet
-
-					- allow both Puppet and mgmt to express "external" edges
-						* remember: puppet codes becomes nodes/edges becomes mgmt graph
-						* how to add edge from A (Puppet) to B (mgmt)?
-						* introduce C/C' so that A--C and C'--B
-							+ merge C with C'
-							
-					- Demo IV = solution to the issue from Demo III
-
-					- what's next?
-						1. making the translator better
-							* needs community input
-							* will involve extending mgmt resources
-						2. making hold-over resources faster
-
-					- how to get involved
-						* IRC
-						* mgmt and translator feature requests
-						* add mgmt to your home Puppet setup
+					<p class="large">Problems with this</p>
+					<ul>
+					<li class="fragment">stuck with Puppet on the agent</li>
+					<li class="fragment">cooler features only via mcl</li>
+					<li class="fragment">performance of translated graphs</li>
+					</ul>
 				</section>
 
+				<section>
+					<p class="large">We are actually quite sure<br/>
+					that users will<br/>
+					want to switch to mcl.</p>
+				</section>
+
+				<section>
+					<p class="large">But switching is not fun</p>
+					<ul>
+					<li class="fragment">rewrites are scary</li>
+					<li class="fragment">latent errors in infra code can ruin your day</li>
+					<li class="fragment">fear of switch-over day</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">What can we do about that?</p>
+				</section>
+
+				<section>
+					<p class="large">Enable baby-steps approach</p>
+					<ol>
+					<li class="fragment">replace agents only</li>
+					<li class="fragment">rewrite one Puppet module</li>
+					<li class="fragment">go back to 2 until you run out of modules</li>
+					<li class="fragment">remove Puppet from the setup</li>
+					</ol>
+				</section>
+
+				<section>
+					<p class="large">How do we enable this?</p>
+					<p>Demo II</p>
+				</section>
+
+				<section>
+					<p class="large">What about order<br/>and dependencies?</p>
+					<p>Demo III</p>
+				</section>
+
+				<section>
+					<p class="large">Missing: Ability to express<br/>
+					"external" edges<br/>
+					in both<br/>
+					Puppet and mgmt</p>
+				</section>
+
+				<section>
+					<p>Relating nodes between graphs</p>
+					<section>
+						<img class="plain" src="graph-merge1.png"/>
+					</section>
+					<section>
+						<img class="plain" src="graph-merge2.png"/>
+					</section>
+					<section>
+						<img class="plain" src="graph-merge3.png"/>
+					</section>
+					<section>
+						<img class="plain" src="graph-merge4.png"/>
+					</section>
+				</section>
+
+				<section>
+					<p>In code</p>
+					<pre><code># in Puppet
+File["/etc"] -&gt; Class["mgmt_handover"]
+					</code></pre>
+					<pre><code># in mcl
+Noop["puppet_handover"] -&gt; File["/etc/ntpd.conf"]
+					</code></pre>
+					<ul class="fragment">
+					<li>selected by prefix <b>mgmt_</b> and <b>puppet_</b></li>
+					<li>matched by suffix (here: "handover")</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">Let's see it in practice</p>
+					<p>Demo IV</p>
+				</section>
+
+				<section>
+					<p class="large">In summary</p>
+					<ol>
+					<li class="fragment">Remove code from manifest and</p>
+					<li class="fragment">add proxy classes for relationships</p>
+					<li class="fragment">Ensure proxy <b>noop</b>s in mcl code</p>
+					</ol>
+				</section>
+
+				<section>
+					<p class="large">What's next?</p>
+				</section>
+
+				<section>
+					<p class="large">Improving the translator</p>
+					<ul>
+					<li>community input appreciated</li>
+					<li>will involve adding features to mgmt resources</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">Enhancing performance<br/>
+					for resources that<br/>
+					get run through Puppet</p>
+				</section>
+
+				<section>
+					<p class="large">Want to get involced?</p>
+					<ul>
+					<li>#mgmtconfig on Freenode</li>
+					<li><a href="https://github.com/purpleidea/mgmt">mgmt</a>
+					and <a href="https://github.com/ffrank/puppet-mgmt">translator</a> feature requests</li>
+					<li>add mgmt to your home Puppet setup</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">Thanks for listening</p>
+					<p class="large">Come to the hackday</p>
+					<p>also</p>
+					<p class="large">My employer's hiring</p>
+				</section>
 			</div>
 
 			<div id="footer" style="background: #0085ac;
