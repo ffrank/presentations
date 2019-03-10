@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Tool Migration from Puppet to Mgmt and back - CfgMgmtCamp 2019 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the Puppet/Mgmt presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white-light-code.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/tomorrow.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; }
+		/* custom classes */
+		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
+		p.smaller { font-size: 75%; }
+		div.title { position: absolute; top: 50px }
+		span.odd { color: #8a8a8a; }
+		</style>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<h1>Tool Migration</h1>
+					<h2>From Puppet to Mgmt and back</h2>
+					<p>CfgMgmtCamp 2019, Gent</p>
+					<p class="smaller" style="margin-top: 2em;">
+						Felix Frank, Systems Architect<br/>
+						The unbelievable Machine Company GmbH
+					</p>
+				</section>
+
+				<section>
+					<p class="large">I'm back</p>
+					<p>Felix (@felis_rex - there's and egg squatting @ffrank)</p>
+					<ul>
+						<li>ops professional for longer than<br/>
+						he's comfortable admitting</li>
+						<li>recovering Open Source addict</li>
+						<li>has the last affordable flat in Berlin</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">Now what</p>
+					<p>Puppet support in mgmt has evolved another level</p>
+					<p>you should really see it for yourself</p>
+					<p>let's also talk about how you can help</p>
+				</section>
+
+				<section>
+					<p class="large">Let's review the old stuff</p>
+					<p>Demo I</p>
+				</section>
+
+				<section>
+					<img class="plain" src="mgmt-agents-puppet-master.png"/>
+				</section>
+
+				<section>
+					<p class="large">Problems with this</p>
+					<ul>
+					<li class="fragment">stuck with Puppet on the agent</li>
+					<li class="fragment">cooler features only via mcl</li>
+					<li class="fragment">performance of translated graphs</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">We are actually quite sure<br/>
+					that users will<br/>
+					want to switch to mcl.</p>
+				</section>
+
+				<section>
+					<p class="large">But switching is not fun</p>
+					<ul>
+					<li class="fragment">rewrites are scary</li>
+					<li class="fragment">latent errors in infra code can ruin your day</li>
+					<li class="fragment">fear of switch-over day</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">What can we do about that?</p>
+				</section>
+
+				<section>
+					<p class="large">Enable baby-steps approach</p>
+					<ol>
+					<li class="fragment">replace agent software only</li>
+					<li class="fragment">rewrite one Puppet module</li>
+					<li class="fragment">go back to 2 until you run out of modules</li>
+					<li class="fragment">remove Puppet from the setup</li>
+					</ol>
+				</section>
+
+				<section>
+					<p class="large">How do we enable this?</p>
+					<p>Demo II</p>
+				</section>
+
+				<section>
+					<p class="large">What about order<br/>and dependencies?</p>
+					<p>Demo III</p>
+				</section>
+
+				<section>
+					<p class="large">Missing: Ability to express<br/>
+					"external" edges<br/>
+					in both<br/>
+					Puppet and mgmt</p>
+				</section>
+
+				<section>
+					<p>Relating nodes between graphs</p>
+					<section>
+						<img class="plain" src="graph-merge1.png"/>
+					</section>
+					<section>
+						<img class="plain" src="graph-merge2.png"/>
+					</section>
+					<section>
+						<img class="plain" src="graph-merge3.png"/>
+					</section>
+					<section>
+						<img class="plain" src="graph-merge4.png"/>
+					</section>
+				</section>
+
+				<section>
+					<p>In code</p>
+					<pre><code># in Puppet
+File["/etc"] -&gt; Class["mgmt_handover"]
+					</code></pre>
+					<pre><code># in mcl
+Noop["puppet_handover"] -&gt; File["/etc/ntpd.conf"]
+					</code></pre>
+					<ul class="fragment">
+					<li>selected by prefix <b>mgmt_</b> and <b>puppet_</b></li>
+					<li>matched by suffix (here: "handover")</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">Let's see it in practice</p>
+					<p>Demo IV</p>
+				</section>
+
+				<section>
+					<p class="large">In summary</p>
+					<ol>
+					<li class="fragment">Remove code from manifest and</p>
+					<li class="fragment">add proxy classes for relationships</p>
+					<li class="fragment">Ensure proxy <b>noop</b>s in mcl code</p>
+					</ol>
+				</section>
+
+				<section>
+					<p class="large">What's next?</p>
+				</section>
+
+				<section>
+					<p class="large">Improving the translator</p>
+					<ul>
+					<li>community input appreciated</li>
+					<li>will involve adding features to mgmt resources</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">Enhancing performance<br/>
+					for resources that<br/>
+					get run through Puppet</p>
+				</section>
+
+				<section>
+					<p class="large">Want to get involved?</p>
+					<ul>
+					<li>#mgmtconfig on Freenode</li>
+					<li><a href="https://github.com/purpleidea/mgmt">mgmt</a>
+					and <a href="https://github.com/ffrank/puppet-mgmt">translator</a> feature requests</li>
+					<li>add mgmt to your home Puppet setup</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">Thanks for listening</p>
+					<p class="large">Come to the hackday</p>
+					<p>also</p>
+					<p class="large">My employer's hiring</p>
+				</section>
+			</div>
+
+			<div id="footer" style="background: #0085ac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felis_rex / ffrank
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					Tool Migration Puppet / mgmt
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					cfgmgmtcamp 2019
+				</span>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 34px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+
+			<!--
+			<div id="myLogo" style="background: url(osdc-logo.png);
+						position: absolute;
+						bottom: 40px;
+						left: 0px;
+						width: 200px;
+						height: 90px;">
+			</div>
+			-->
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
