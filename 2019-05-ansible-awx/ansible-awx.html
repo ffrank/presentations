@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>AWX - The Free Ansible Tower - OSCamp 2019 - Felix Frank</title>
+
+		<meta name="description" content="Slides for the AWX presentation">
+		<meta name="author" content="Felix Frank">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white-light-code.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/tomorrow.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+		<style>
+		/* override theme */
+		.reveal section img { border: 0px; }
+		.reveal img.plain { box-shadow: none }
+		.reveal a { color: black; text-decoration: underline; }
+		.reveal .controls { right: 130px; bottom: 25px }
+		/* custom classes */
+		p.source { font-size: small; text-align: right }
+		p.large { font-size: 200% }
+		p.smaller { font-size: 75%; }
+		div.title { position: absolute; top: 50px }
+		span.odd { color: #8a8a8a; }
+		</style>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<div>
+						<h1>AWX</h1>
+						<h2>The Free Ansible Tower<br/>
+						In Practice</h2>
+						<p>OSCamp 2019, Berlin</p>
+						<p class="smaller" style="margin-top: 2em;">
+							Felix Frank, Systems Architect<br/>
+							The unbelievable Machine Company GmbH
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<p class="large">Felix Frank</p>
+					<p>@felis_rex</p>
+					<p class="smaller">(there's and egg squatting @ffrank, what are you going to do)</p>
+					<ul>
+						<li>recovering Puppet zealot actually</li>
+						<li>also helping the <a href="https://github.com/purpleidea/mgmt">mgmt project</a></li>
+						<li>Ansible for a living for 2 years<br/>
+						and counting</li>
+						<li class="fragment">sometimes seen w/o a computer<br/>
+						<span class="fragment">according to rumors</span></li>
+					</ul>
+				</section>
+
+				<section>
+					<p>But enough about me</p>
+					<p class="large">Tell me about yourselves</p>
+				</section>
+
+				<section>
+					<p class="large">Why we like Ansible</p>
+
+					<section>
+						<p>Ease of modeling ops automation</p>
+						<pre style="width: 95%;"><code>- name: Install platform software
+  package: name={{ item }}
+  with_items: [ apache2, libapache2-mod-jk, java8, tomcat8 ]
+
+- name: Deploy app artifact
+  unarchive:
+    dest: /opt/apps/{{ application_name }}
+    src: "{{ base_url }}/{{ application_version }}/build.tgz"
+  vars:
+    base_url: https://{{ build_server }}/builds/{{ application_name }}
+						</code></pre>
+					</section>
+
+					<section>
+						<p>Ease of orchestration</p>
+						<pre style="width: 95%;"><code>- name: Deploy virtual infrastructure
+  hosts: localhost
+  roles: [ openstack_network, openstack_vms ]
+
+- name: OS basic setup
+  hosts: all
+  roles: [ common, hardening ]
+
+- name: Set up database
+  hosts: database
+  roles: [ mysql, db_schemas ]
+						
+- name: Set up web application
+  ...
+						</code></pre>
+					</section>
+
+					<section>
+						<p>Powerful set of built-in modules</p>
+						<ul>
+							<li class="fragment">AWS, Azure, GCE, VMware, Openstack...</li>
+							<li class="fragment">Switches, Routers, Loadbalancers, Storage...</li>
+							<li class="fragment">Identity Management, Monitoring...</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">Let's see it in action</p>
+					<p>Demo I</p>
+				</section>
+
+				<section>
+					<p class="smaller">So passwords aren't fun,<br/>but there's more issues e.g.</p>
+
+					<section>
+					</section>
+
+					<section>
+						<p>team members running arbitrary code versions</p>
+						<img src="clones.jpg"/>
+						<p class="source">https://3milliondogs.com/dogbook/this-couple-took-photos-of-their-dog-growing-up-and-its-something-you-really-need-to-see/</p>
+					</section>
+
+					<section>
+						<p>runs can overlap each other</p>
+						<img src="overlap.jpg"/>
+						<p class="source">http://www.heroviral.com/11-puppies-1-mother/</p>
+					</section>
+
+					<section>
+						<p>handling Ansible versions, pip package versions...</p>
+						<img src="versions.jpg"/>
+						<p class="source">https://www.canberratimes.com.au/story/4764096/a-dalmatian-daze-world-record-equalling-litter-born/</p>
+					</section>
+
+					<section>
+						<p>managing extra vars in your bash history?</p>
+						<div class="fragment">
+							<img src="history.jpg"/>
+							<p class="source">https://knowyourmeme.com/memes/i-have-no-idea-what-im-doing</p>
+						</div>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<p class="large">Enter Tower
+							<span style="color: white">AWX</span>
+						</p>
+						<img style="max-width: 85%; opacity: 0.0; filter: alpha(opacity=0);" src="awxlogo.svg"/>
+					</section>
+
+					<section>
+						<p class="large">
+							Enter
+							<span style="text-decoration: line-through;">Tower</span>
+							AWX
+						</p>
+						<img style="max-width: 85%" src="awxlogo.svg"/>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">AWX</p>
+
+					<section>
+						<p>A service that runs your Ansible code from one central place</p>
+						<p>Comes with a web UI and a REST API</p>
+					</section>
+
+					<section>
+						<img src="diagram-awx.png"/>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">Let's see it in action</p>
+					<p>Demo II</p>
+				</section>
+
+				<section>
+					<p class="large">Advantages with AWX</p>
+					<ul>
+						<li class="fragment">stores encrypted credentials</li>
+						<li class="fragment">defines playbook run details</li>
+						<li class="fragment">stores log output</li>
+						<li class="fragment">allows scheduled runs</li>
+						<li class="fragment">queueing and isolation</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">How it works</p>
+					<section>
+						<img src="diagram-architecture.png"/>
+					</section>
+					<section>
+						<img src="diagram-architecture-docker.png"/>
+					</section>
+
+				</section>
+
+				<section>
+					<p class="large">Installation options</p>
+
+					<section>
+						<ul>
+							<li>plain Docker</li>
+							<li>Docker Compose</li>
+							<li>Docker Swarm</li>
+							<li>Kubernetes</li>
+							<li style="color: white">that's it</li>
+						</ul>
+					</section>
+
+					<section>
+						<ul>
+							<li style="text-decoration: line-through;">plain Docker</li>
+							<li>Docker Compose</li>
+							<li style="text-decoration: line-through;">Docker Swarm</li>
+							<li>Kubernetes</li>
+							<li>Openshift</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<p class="large">Let's try Compose</p>
+					<p>Demo III</p>
+				</section>
+
+				<section>
+					<p>Okay so it's running</p>
+					<p class="large">Let's run some code</p>
+					<p>Demo IV</p>
+				</section>
+
+				<section>
+					<p>Okay so that's neat</p>
+					<p>But why not Jenkins? Or Rundeck? Foreman? Or my cool rails app?</p>
+					<ul>
+						<li class="fragment">Jenkins has no real integration</li>
+						<li class="fragment">Rundeck is actually fine<br/>
+							(Ansible integration is 3rd party)<br/>
+							So is Foreman</li>
+						<li class="fragment">don't roll your own though</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">AWX caveats</p>
+					<!-- FIXME add graphics? -->
+					<ul>
+						<li class="fragment" style="text-decoration: line-through">WebUI: cannot launch job from template editor</li>
+						<li class="fragment">WebUI: cannot make schedule from schedule list</li>
+						<li class="fragment">allowing parallel runs is non-trivial</li>
+						<li class="fragment">testing code from branches is non-trivial</li>
+						<li class="fragment">no docker-less option</li>
+						<li class="fragment" style="text-decoration: line-through;">comes with no SSL support</li>
+						<li class="fragment">no vaults in inventories</li>
+						<li class="fragment">CLI silently ignores dead switches</li>
+					</ul>
+				</section>
+
+				<section>
+					<p class="large">In Summary</p>
+					<p>AWX makes running Ansible simple at the cost<br/>of setup overhead</p>
+					<p>Testing becomes especially cumbersome</p>
+					<p>Can automate its own config</p>
+					<p>Securely manages your credentials</p>
+					<p>Adds essential features like log retention</p>
+					<p>Great option for larger teams that need coordination</p>
+				</section>
+
+				<section>
+					<p class="large">Thanks for listening</p>
+					<p class="large">One last thing...</p>
+				</section>
+				
+				<section>
+					<p class="large">We are hiring</p>
+					<img src="careers.png"/>
+					<p><a href="https://www.unbelievable-machine.com/en/careers/">
+						https://www.unbelievable-machine.com/en/careers/
+					</a></p>
+				</section>
+
+				<section>
+					<p class="large">Questions?</p>
+				</section>
+			</div>
+
+			<div id="footer" style="background: #0085ac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felis_rex / ffrank
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					AWX - The free Ansible Tower
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					OSCamp 2019
+				</span>
+			</div>
+
+			<div id="myLogo" style="background: url(um-logo.png);
+						position: absolute;
+						bottom: 34px;
+						right: 10px;
+						width: 125px;
+						height: 103px;">
+			</div>
+
+			<!--
+			<div id="myLogo" style="background: url(osdc-logo.png);
+						position: absolute;
+						bottom: 40px;
+						left: 0px;
+						width: 200px;
+						height: 90px;">
+			</div>
+			-->
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

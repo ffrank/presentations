@@ -1,0 +1,49 @@
+
+- name: Basic settings for the control node
+  hosts: controller
+  tasks:
+    - name: Install Ansible
+      apt: name={{ item }} state=installed
+      with_items: [ ansible, sshpass, ansible-tower-cli ]
+
+    - name: Add private key for root
+      copy:
+        dest: /root/.ssh/id_rsa
+        src: files/id_rsa.oscamp_demo
+        mode: 0600
+
+- name: AWX on the server
+  hosts: awx
+  tasks:
+    - name: Install git, docker
+      apt: name={{ item }} state=installed
+      with_items: [ git, docker.io, docker-compose, ansible ]
+
+- name: Users and keys on the demo host
+  hosts: target
+  tasks:
+    - name: Create management users
+      user: name={{ item }} state=present password={{ password }}
+      with_items: [ a_admin, b_admin, c_admin ]
+      vars:
+        password: "$6$YoApCT9o$gnJZFXQVOnXxO07gU4HPs8oXyLHiSOFoIjr871o.vTgBzP/rfDVs5Zx0vlazyfq4SHOZjp4UwzacFJg56Sr.m."
+
+    - name: Grant sudo privileges
+      copy:
+        dest: /etc/sudoers.d/{{ item.name }}
+        mode: 0440
+        content: "{{ item.content }}"
+      with_items:
+        - name: a_admin
+          content: "a_admin ALL=(root) NOPASSWD: ALL"
+        - name: b_admin
+          content: "b_admin ALL=(root) ALL"
+        - name: c_admin
+          content: "c_admin ALL=(root) ALL"
+
+    - name: Authorize ssh key
+      authorized_key:
+        user: "{{ item }}"
+        state: present
+        key: "{{ lookup('file', 'files/id_rsa.oscamp_demo.pub') }}"
+      with_items: [ a_admin, b_admin ]
