@@ -1,0 +1,74 @@
+Prerequisites
+- Playbook for plain Ansible demo
+- Customer 1 Host: Key and no sudo password
+- Customer 2 Host: Key but sudo password
+- Customer 3 Host: No key, sudo password
+	-> plus existing AWX template
+- Host running AWX
+- tower-cli on Ansible run host
+- Playbook for AWX basics demo
+- Docker+Compose on Ansible host
+
+Slides
+- introduction
+	-> automation stuff
+	-> mgmt
+	-> intense ansible
+- ansible/tower survey
+- ansible love
+	-> simplicity of modeling
+	-> simplicity of orchestration
+	-> power of built-in modules
+	-> ... TODO
+- Demo 1
+	= Ansible Run with key
+	+ key passphrase
+	+ sudo password
+	+ ssh password
+	+ vault passphrase
+	( each in separate inventory )
+	+ final example but with tower-cli
+- other complications
+	-> team members running arbitrary code revisions
+	-> parallel runs quite possible
+	-> issues with different Ansible versions, pip package versions etc.
+	-> extra vars can be chaotic
+- Tower = centralized service that runs Ansible
+	-> WebUI and API
+- Demo 2
+	= Creating and running a Job Template via WebUI
+- AWX advantages
+	-> stores encrypted credentials
+	-> predefines playbook invocations
+	-> stores logs
+	-> schedules playbook runs
+	-> queuing and avoiding parallel runs
+- How it works
+	-> API with Postgres for persistence
+	-> Ansible jobrunner
+	-> everything linked via RabbitMQ
+	-> each component runs in its own Docker container
+- Installation options
+	= Docker / Compose / Swarm / K8s
+- Demo 3
+	= installing AWX using Docker Compose
+	+ Further initialization steps
+		- projects
+		- inventories
+		- templates
+		-> can be automated via API
+- Why not Jenkins/Rundeck/my_little_python_app?
+	-> roll your own at your own risk
+	-> Jenkins does not really integrate Ansible
+	-> Rundeck is fine, but Ansible integration is third party
+- Caveats
+	-> WebUI: cannot launch from Template Editor
+	-> WebUI: cannot create schedule from schedules view
+	-> parallel jobs sometimes desired e.g. among inventories
+	-> no dockerless option
+	-> comes with no TLS support
+- Summary
+	-> Tower makes running Ansible very simple at the cost of setup overhead
+	-> check runs from branches are a lot more expensive
+	-> Adds essential features like log retention
+	-> probably the best option to coordinate larger teams

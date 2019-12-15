@@ -1,0 +1,9 @@
+
+[controller]
+oscamp-ctl.unbelievable-machine.net ansible_host=46.231.178.21
+
+[awx]
+oscamp-demo.unbelievable-machine.net ansible_host=46.231.178.94
+
+[target]
+oscamp-awx.unbelievable-machine.net ansible_host=46.231.178.131
