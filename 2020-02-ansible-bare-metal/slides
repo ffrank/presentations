@@ -1,0 +1,44 @@
+[cover]
+
+[context: hadoop]
+- germany -> suse
+
+[suse manager]
+- essentially RH Satellite?
+
+[bare metal stack]
+- cobbler
+- what else?
+
+[other essentials]
+= ipa etc
+
+[ip address management requirement]
+
+[nipap intro]
+
+[nipap subnet example]
+
+[ansible: tying it all up]
+
+[step one: registering]
+
+[step two: boot image generating]
+
+[step three a: vmware bootstrap]
+
+[step three b: pxe reboot]
+
+[salt hand-off]
+
+[suma <3 salt]
+
+[machine definitions]
+
+[variables per location]
+
+[BUFFER]
+
+[BUFFER]
+
+[closer]
