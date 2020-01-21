@@ -1,0 +1,131 @@
+
+[white]
+[bottom-right]
+[font=Sans 24px]
+
+--- [01-racks.jpg]
+Bare Metal Provisioning
+with Ansible and Cobbler
+
+Felix Frank
+(@felis_rex)
+
+The unbelievable
+Machine Company
+
+--- [02-hadoop.jpg]
+
+--- [03-satellite.jpg]
+SUSE Linux
+
+SUSE Manager
+
+--- [04-stack.jpg]
+Provisioning Stack
+
+Cobbler
+
+HPE ProLiant Gen10
+
+VMWARE + TODO?
+
+--- [04-stack.jpg] 
+Platform Stack
+
+FreeIPA
+ - DNS
+ - LDAP
+
+Kerberos + TODO
+
+--- [06-infra.jpg]
+Aside:
+
+IP address management
+
+--- [07-nipap.png] [right] [font=Sans 32px]
+Introducing
+NIPAP
+
+--- [left] [font=monospace 24px]
+  Hierarchical subnet planning in NIPAP
+
+  - 10.139.0.0/19                           Subnet for Berlin location
+
+    - 10.139.0.0/20                         Location DC Berlin 01
+
+      + 10.139.0.0/26                       VIRTUALIZATION
+      + 10.139.0.64/27                      SERVICE
+      + 10.139.0.96/27                      INTEGRATION CLUSTER 01
+      ...
+
+    - 10.139.16.0/20                        Location DC Berlin 02
+      .
+      .
+      .
+
+  - 10.184.202.0/22                         Subnet for Atlanta location 
+    ...
+
+--- [08-ansible-overview.png] [top]
+(1) generate NIPAP address if needed
+(2) get full CIDR info from NIPAP
+(3) register machine in IPA
+
+--- [08-ansible-overview.png] [top]
+(4) update cobbler profiles
+(5) trigger initial boot
+(6) machine joins Salt
+
+--- [left] [font=monospace 24px]
+ - name: "Register host in nipap"
+   shell: next-host.sh -e -y {{ host_name }} {{ host_net | upper }}
+   delegate_to: "{{ nipap_server }}"
+
+
+ TODO: does nipap's own allocator even apply?
+
+
+ - name: "Get base address information from nipap"
+   shell: nipap address list -c node,prefix | awk '$1 == "{{ nipap_gather_host_info_host_name }}" {print $2}'
+   register: nipap_info
+   <span foreground='grey'>changed_when: False
+   failed_when: nipap_info is failed or nipap_info.stdout == ""
+   check_mode: no</span>
+
+ - name: "Get vlan from nipap"
+   shell: <span foreground='yellow'>nipap address view</span> {{ nipap_info.stdout | ipaddr('network/prefix') }} <span foreground='cyan'>vrf {{ host_vrf }}</span> | awk '/VLAN/ { print $3 }'
+   register: vlan
+   <span foreground='grey'>changed_when: False
+   check_mode: no</span>
+
+
+--- 
+step two: boot image generating
+
+--- 
+step three a: vmware bootstrap
+
+--- 
+step three b: pxe reboot
+
+--- 
+salt hand-off
+
+--- 
+suma + salt
+
+--- 
+machine definitions
+
+--- 
+variables per location
+
+--- 
+BUFFER
+
+--- [right] [font=Sans 12px]
+Photo credits
+
+[1] Photo by Manuel Geissinger from Pexels
+[3] Photo by Skitterphoto from Pexels
