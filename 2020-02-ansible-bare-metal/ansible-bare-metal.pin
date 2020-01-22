@@ -103,14 +103,78 @@ NIPAP
    check_mode: no</span>
 
 
---- [10-gears.jpg]
-step two: boot image generating
+--- [10-gears.jpg] [left] [font=monospace 24px]
+ - name: "mkiso_sles: Create autoyast bootcd with mksusecd"
+   command: >
+     mksusecd
+       --create {{ boot_iso_path }}
+       --nano --uefi --gpt
+        -boot "{{ <span foreground='red'>boot_params</span> }}" {{ suma_iso_path }}
+   vars:
+     <span foreground='green'>ifcfg_option</span>: >-
+       {{ iface }}={{ cidr }},{{ gateway }},{{ nameserver }},{{ domain }}
+     <span foreground='red'>boot_params</span>: >-
+       ksdevice=bootif lang=en_US pt.options=+self_update
+       install={{ cobbler_dist_url }}
+       hostname={{ host_name_short }}
+       self_update=0 text autoyast={{ cobbler_kickstart_url }}
+       ksdevice=bootif textmode=1
+       <span foreground='cyan'>{% if machine_category == 'HW' %}
+       biosdevname=1
+       {% endif %}</span>
+       ifcfg={{ <span foreground='green'>ifcfg_option</span> }}
 
---- [11-gears.jpg]
-step three a: vmware bootstrap
 
---- [12-engine.jpg]
-step three b: pxe reboot
+--- [11-gears.jpg] [left] [font=monospace 24px]
+ # virtual machine: create from scratch
+
+ - name: "install_vm: Create VM using govc"
+   environment:
+     GOVC_USERNAME: "{{ vcenter.user }}"
+     GOVC_PASSWORD: "{{ vcenter.password }}"
+   command: >
+     <span foreground='yellow'>govc vm.create</span>
+       -k=true -debug -u '{{ vcenter.host | quote }}' -on=false
+       -m={{ vm_memory | quote }}
+       -c={{ vm_cpus | quote }}
+       ...
+       -iso={{ bootiso_name | quote }}
+       -iso-datastore={{ vm_isostore | quote }}
+       {{ host_name_short | quote }}
+
+ # for additional disks
+ - name: "install_vm: Query govc for information about the new VM"
+   command: govc vm.info ...
+ - name: "install_vm: Add data disk volume using govc"
+   command: <span foreground='yellow'>govc vm.disk.create</span> ...
+
+--- [12-engine.jpg] [left] [font=monospace 24px]
+ # hardware: make it reboot
+ - name: "install_hw: add {{ ilo_host_name }} to inventory"
+   add_host:
+     hostname: "{{ <span foreground='red'>ilo_host_name</span> }}"
+     ansible_host: "{{ ilo_host_name }}"
+     ansible_port: 22
+     ansible_user: "{{ ilo.user }}"
+     ansible_ssh_pass: "{{ ilo.password }}"
+   no_log: True
+
+ - name: "install_hw: set iLO server name"
+   <span foreground='cyan'>raw: set /system1 oemHPE_server_name={{ host_name_short }}</span>
+   delegate_to: "{{ <span foreground='red'>ilo_host_name</span> }}"
+
+ - name: "install_hw: Power off system"
+   shell: >
+     <span foreground='yellow'>/usr/sbin/ilorest reboot PressAndHold</span>
+     --url {{ <span foreground='red'>ilo_host_name</span> }}
+     -u {{ ilo.user }} -p {{ ilo.password | quote }}
+
+ - name: "install_hw: Create Raid1 on OS disks"
+   ...
+ - name: "install_hw: Mount boot iso image"
+   ...
+ - name: "install_hw: Boot system"
+   ...
 
 --- [13-mesh.jpg]
 salt hand-off
