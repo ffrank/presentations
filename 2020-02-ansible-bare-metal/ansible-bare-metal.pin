@@ -23,10 +23,9 @@ SUSE Manager
 Provisioning Stack
 
 Cobbler
-
 HPE ProLiant Gen10
-
-VMWARE + TODO?
+VMWARE
++ one surprise tool
 
 --- [05-stack.jpg] 
 Platform Stack
@@ -34,8 +33,8 @@ Platform Stack
 FreeIPA
  - DNS
  - LDAP
-
-Kerberos + TODO
+Kerberos
+Salt
 
 --- [06-infra.jpg]
 Aside:
@@ -49,21 +48,21 @@ NIPAP
 --- [07-branches.jpg] [left] [font=monospace 24px]
   Hierarchical subnet planning in NIPAP
 
-  - 10.139.0.0/19                           Subnet for Berlin location
+  - 10.139.0.0/19             Subnet for Berlin location
 
-    - 10.139.0.0/20                         Location DC Berlin 01
+    - 10.139.0.0/20           Location DC Berlin 01
 
-      + 10.139.0.0/26                       VIRTUALIZATION
-      + 10.139.0.64/27                      SERVICE
-      + 10.139.0.96/27                      INTEGRATION CLUSTER 01
+      + 10.139.0.0/26         VIRTUALIZATION
+      + 10.139.0.64/27        SERVICE
+      + 10.139.0.96/27        INTEGRATION CLUSTER 01
       ...
 
-    - 10.139.16.0/20                        Location DC Berlin 02
+    - 10.139.16.0/20          Location DC Berlin 02
       .
       .
       .
 
-  - 10.184.202.0/22                         Subnet for Atlanta location 
+  - 10.184.202.0/22           Subnet for Atlanta location 
     ...
 
 --- [08-ansible-overview.png] [top]
@@ -72,7 +71,7 @@ NIPAP
 (3) register machine in IPA
 
 --- [08-ansible-overview.png] [top]
-(4) update cobbler profiles
+(4) generate boot medium
 (5) trigger initial boot
 (6) machine joins Salt
 
@@ -81,9 +80,7 @@ NIPAP
    shell: next-host.sh -e -y {{ host_name }} {{ host_net | upper }}
    delegate_to: "{{ nipap_server }}"
 
-
  TODO: does nipap's own allocator even apply?
-
 
  - <span foreground='red'>name: "Get base address information from nipap"</span>
    shell: nipap address list -c node,prefix | grep {{ host_name }}
@@ -103,6 +100,8 @@ NIPAP
 
 
 --- [10-gears.jpg] [left] [font=monospace 24px]
+ # generating boot media
+
  - name: "mkiso_sles: Create autoyast bootcd with mksusecd"
    command: >
      mksusecd
@@ -149,6 +148,8 @@ NIPAP
 
 --- [12-engine.jpg] [left] [font=monospace 24px]
  # hardware: make it reboot
+ # step 1 - include the iLO in the inventory
+
  - name: "install_hw: add {{ ilo_host_name }} to inventory"
    add_host:
      hostname: "{{ <span foreground='red'>ilo_host_name</span> }}"
@@ -157,6 +158,10 @@ NIPAP
      ansible_user: "{{ ilo.user }}"
      ansible_ssh_pass: "{{ ilo.password }}"
    no_log: True
+
+--- [12-engine.jpg] [left] [font=monospace 24px]
+ # hardware: make it reboot
+ # step 2 - send commands
 
  - name: "install_hw: set iLO server name"
    <span foreground='cyan'>raw: set /system1 oemHPE_server_name={{ host_name_short }}</span>
@@ -208,27 +213,24 @@ Defining machines
    vm_cpus: 1
    vm_disksize: 40GB</span>
 
---- [16-gears.jpg] [left] [font=monospace 24px]
+--- [16-map.jpg] [left] [font=monospace 24px]
  # e.g. playbooks/group_vars/location_10a/os_install.yml
 
  ---
  # variables for the os_install role
  os_install_vrf: "1:10"
- os_install_nameserver: 10.139.16.74
+ <span foreground='yellow'>os_install_nameserver: 10.139.16.74</span>
  os_install_vm_datacenter: "MYCORP US BD"
  os_install_default_vm_cluster: "US_BD01"
  os_install_vm_clusters:
    US_BD01:
      datastore: "PDX_DSC001"
  os_install_timezone: "US/Eastern"
- os_install_vcenter:
-   host: l10abdpvc001.mycorp.net
+ <span foreground='cyan'>os_install_vcenter:
+   host: l10abdpvc001.mycorp.net</span>
    user: "vmware_auto@europe.my.corp"
    password: "{{ passwords.vsphere['10a'] }}"
  os_install_suma_proxy: l10abdpsm001.mycorp.net
-
---- 
-BUFFER
 
 --- [17-vista.jpg] [right]
 Photo credits
@@ -243,3 +245,7 @@ Photo credits
 [12] Photo by Mike
 [14] Photo by Digital Buggu
 [15] Photo by Christina Morillo
+[16] Photo by Ylanite Koppens
+
+--- [black] [center]
+fin
