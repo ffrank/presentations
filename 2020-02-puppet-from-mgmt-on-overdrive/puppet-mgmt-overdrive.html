@@ -123,8 +123,88 @@
 				</section>
 
 				<section>
-					<p class="large">Demo I</p>
-					<p>A quick look at mgmt basics</p>
+					<section>
+						<p class="large">Demo I</p>
+						<p>A quick look at mgmt basics</p>
+					</section>
+
+					<section>
+						Some very simple mgmt code
+						<pre><code>
+$ cat file-demo.mcl
+
+# simple plain file
+file "/tmp/demo1-file" {
+	state => "exists",
+        content => "basic mgmt operation\n",
+}
+
+						</pre></code>
+					</section>
+
+					<section>
+						Running mgmt
+						<pre><code>
+$ mgmt run --tmp-prefix lang file-demo.mcl
+
+23:55:48.991112 I | cli: lang: lexing/parsing...
+...
+23:55:50 gapi: generating new graph...
+23:55:50 engine: Worker(file[/tmp/demo1-file])
+23:55:50 engine: Watch(file[/tmp/demo1-file])
+23:55:50 engine: file[/tmp/demo1-file]: CheckApply(true)
+...
+23:55:50 main: graph: Vertices(1), Edges(0)
+23:55:50 main: waiting...
+						</pre></code>
+					</section>
+
+					<section>
+						Disturbing managed resources...
+						<pre><code>
+$ cat /tmp/demo1-file
+basic mgmt operation
+
+$ echo broken >/tmp/demo1-file
+$ cat /tmp/demo1-file
+basic mgmt operation
+						</pre></code>
+					</section>
+
+					<section>
+						...with small success
+						<pre><code>
+$ echo broken >/tmp/demo1-file ; cat /tmp/demo1-file
+basic mgmt operation
+
+$ echo broken >/tmp/demo1-file ; cat /tmp/demo1-file
+basic mgmt operation
+						</pre></code>
+					</section>
+
+					<section>
+						Some more complex code
+						<pre><code>
+class apt_repo($name,$url,$key_url) {
+	exec "get key for repo " + $name {
+		cmd => "curl -s " + $key_url + " | apt-key add -",
+		shell => "/bin/bash",
+	}
+	Pkg["curl"] -> Exec["get key for repo " + $name]
+
+	file "/etc/apt/sources.list.d/" + $name + ".list" {
+		state => "exists",
+		content => "deb " + $url + " stable main\n",
+	}
+}
+
+pkg "curl" { state => "installed", }
+
+include apt_repo("elasticsearch",
+	"https://artifacts.elastic.co/packages/7.x/apt",
+	"https://artifacts.elastic.co/GPG-KEY-elasticsearch")
+						</pre></code>
+					</section>
 				</section>
 
 				<section>
@@ -134,8 +214,107 @@
 				</section>
 
 				<section>
-					<p class="large">Demo II</p>
-					<p>Running mgmt from Puppet code</p>
+					<section>
+						<p class="large">Demo II</p>
+						<p>Running mgmt from Puppet code</p>
+					</section>
+
+					<section>
+						A Puppet manifest
+						<pre><code>
+node "dev-app01-ffrank.localdomain" {
+	file { "/tmp/puppet-managed-file":
+		ensure => "file",
+		content => "please don't change too often\n",
+	}
+}
+						</pre></code>
+					</section>
+
+					<section>
+						Running master...
+						<pre><code>
+$ puppet master --no-daemonize
+...
+Notice: Starting Puppet master version 5.5.8
+						</pre></code>
+					</section>
+
+					<section>
+						...and agent
+						<pre><code>
+$ puppet agent --server dev-app01-ffrank.localdomain --no-daemonize -v
+Notice: Starting Puppet client version 5.5.8
+Info: Using configured environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Retrieving locales
+Info: Caching catalog for dev-app01-ffrank.localdomain
+Info: Applying configuration version '1580085107'
+Notice: /Stage[main]/Main/Node[dev-app01-ffrank.localdomain]/File[/tmp/puppet-managed-file]/ensure: defined content as '{md5}e4b750c2c778368e279096aac5318e4d'
+Notice: Applied catalog in 0.02 seconds
+						</pre></code>
+					</section>
+
+					<section>
+						It's a little less fun
+						<pre><code>
+$ cat /tmp/puppet-managed-file
+please don't change too often
+
+$ echo broken >/tmp/puppet-managed-file
+
+$ cat /tmp/puppet-managed-file
+broken
+						</pre></code>
+					</section>
+
+					<section>
+						Easily fixed of course
+						<pre><code>
+$ puppet agent --server dev-app01-ffrank.localdomain --test
+...
+Notice: /Stage[main]/Main/Node[dev-app01-ffrank.localdomain]/File[/tmp/puppet-managed-file]/content:
+--- /tmp/puppet-managed-file    2020-01-27 01:34:42.715148625 +0100
++++ /tmp/puppet-file20200127-10652-j5hfiu       2020-01-27 01:36:04.023449520 +0100
+@@ -1 +1 @@
+-broken
++please don't change too often
+
+Info: Computing checksum on file /tmp/puppet-managed-file
+...
+Notice: Applied catalog in 0.29 seconds
+						</pre></code>
+					</section>
+
+					<section>
+						Huzzah!
+						<pre><code>
+$ cat /tmp/puppet-managed-file
+please don't change too often
+						</pre></code>
+					</section>
+
+					<section>
+						Let's try mgmt
+						<pre><code>
+$ cat puppet.conf
+server=dev-app01-ffrank.localdomain
+
+$ mgmt run --tmp-prefix puppet \
+    --puppet-conf puppet.conf \
+    agent
+						</pre></code>
+					</section>
+
+					<section>
+						Back in business
+						<pre><code>
+$ echo broken >/tmp/puppet-managed-file ; cat /tmp/puppet-managed-file
+please don't change too often
+						</pre></code>
+					</section>
+
 				</section>
 
 				<section>

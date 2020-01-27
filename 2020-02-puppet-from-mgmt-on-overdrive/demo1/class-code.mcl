@@ -1,0 +1,18 @@
+class apt_repo($name,$url,$key_url) {
+	exec "get key for repo " + $name {
+		cmd => "curl -s " + $key_url + " | apt-key add -",
+		shell => "/bin/bash",
+	}
+	Pkg["curl"] -> Exec["get key for repo " + $name]
+
+	file "/etc/apt/sources.list.d/" + $name + ".list" {
+		state => "exists",
+		content => "deb " + $url + " stable main\n",
+	}
+}
+
+pkg "curl" { state => "installed", }
+
+include apt_repo("elasticsearch",
+	"https://artifacts.elastic.co/packages/7.x/apt",
+	"https://artifacts.elastic.co/GPG-KEY-elasticsearch")
