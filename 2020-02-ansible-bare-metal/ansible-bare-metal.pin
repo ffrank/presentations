@@ -80,8 +80,6 @@ NIPAP
    shell: next-host.sh -e -y {{ host_name }} {{ host_net | upper }}
    delegate_to: "{{ nipap_server }}"
 
- TODO: does nipap's own allocator even apply?
-
  - <span foreground='red'>name: "Get base address information from nipap"</span>
    shell: nipap address list -c node,prefix | grep {{ host_name }}
    register: nipap_info
@@ -194,25 +192,6 @@ e.g. SUSE machines: autoyast xml -> post script
 
 --- [14-suma-salt.jpg]
 
---- [15-servers.jpg] [left] [font=monospace 24px]
-Defining machines
-
- # hardware
- l19abdpbll004:
-   machine_type: <span foreground='red'>WORKER</span>
-   os: SLES12-SP2
-   net: prodhdp
- 
- 
- # virtual
- l19abdpprx002:
-   machine_type: <span foreground='yellow'>VM</span>
-   os: SLES12-SP3
-   net: shared
-   <span foreground='cyan'>vm_memory: 1024
-   vm_cpus: 1
-   vm_disksize: 40GB</span>
-
 --- [16-map.jpg] [left] [font=monospace 24px]
  # e.g. playbooks/group_vars/location_10a/os_install.yml
 
@@ -232,6 +211,25 @@ Defining machines
    password: "{{ passwords.vsphere['10a'] }}"
  os_install_suma_proxy: l10abdpsm001.mycorp.net
 
+--- [15-servers.jpg] [left] [font=monospace 24px]
+Defining machines
+
+ # hardware
+ l19abdpbll004:
+   machine_type: <span foreground='red'>WORKER</span>
+   os: SLES12-SP2
+   net: prodhdp
+ 
+ 
+ # virtual
+ l19abdpprx002:
+   machine_type: <span foreground='yellow'>VM</span>
+   os: SLES12-SP3
+   net: shared
+   <span foreground='cyan'>vm_memory: 1024
+   vm_cpus: 1
+   vm_disksize: 40GB</span>
+
 --- [17-vista.jpg] [right]
 Photo credits
 
@@ -244,8 +242,5 @@ Photo credits
 [7] Photo by Min An
 [12] Photo by Mike
 [14] Photo by Digital Buggu
-[15] Photo by Christina Morillo
-[16] Photo by Ylanite Koppens
-
---- [black] [center]
-fin
+[15] Photo by Ylanite Koppens
+[16] Photo by Christina Morillo
