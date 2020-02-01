@@ -85,7 +85,7 @@
 				<section>
 					<p>So let's talk about two of my faves</p>
 				</section>
-				
+
 				<section>
 					<div>
 						<h1>Running Puppet from mgmt</h1>
@@ -360,8 +360,129 @@ edges:
 				</section>
 
 				<section>
-					<p class="large">Demo III</p>
-					<p>Syncing unsupported Puppet resources</p>
+					<section>
+						<p class="large">Demo III</p>
+						<p>Syncing unsupported Puppet resources</p>
+					</section>
+
+					<section>
+						So mgmt will do this easily
+						<pre><code>
+package { "haproxy":
+  ensure => "installed",
+}
+->
+file { "/etc/haproxy/haproxy.conf":
+  mode => "0640",
+}
+->
+service { "haproxy":
+  enable => true,
+}
+						</code></pre>
+					</section>
+
+					<section>
+						Surprisingly, this too (generally)
+						<pre><code>
+ec2_instance { 'name-of-instance':
+  ensure            => running,
+  region            => 'us-east-1',
+  availability_zone => 'us-east-1a',
+  image_id          => 'ami-123456',
+  instance_type     => 't2.micro',
+  key_name          => 'name-of-existing-key',
+  subnet            => 'name-of-subnet',
+  security_groups   => ['name-of-security-group'],
+  tags              => {
+    tag_name => 'value',
+  },
+}
+						</code></pre>
+					</section>
+
+					<section>
+						But not this
+						<pre><code>
+gcompute_instance { 'instance-test':
+  ensure             => present,
+  machine_type       => 'n1-standard-1',
+  disks              => [
+    { auto_delete => true, boot => true,
+      source      => 'instance-test-os-1'
+    }
+  ],
+  metadata           => $metadata_test,
+  network_interfaces => $interfaces_test,
+  zone               => 'us-central1-a',
+  project            => $project,
+  credential         => 'mycred',
+}
+						</code></pre>
+					</section>
+
+					<section>
+						Let's use a more basic example
+						<pre><code>
+cron { "check in":
+  command => "curl https://my.apisrv.org/i/heartbeat#$hostname",
+  minute  => 10,
+}
+						</code></pre>
+						<p class="smaller">We currently don't translate this,
+						because mgmt's cron support is systemd based
+						and thus has different semantics</p>
+					</section>
+
+					<section>
+						We can run it well enough
+						<pre><code>
+$ mgmt run --tmp-prefix puppet demo3/cron-example.pp
+...
+00:49:21 gapi: launching translator
+00:49:28 gapi: (output) Error: Cron[check in] cannot be translated natively, falling back to 'exec puppet resource'
+...
+00:49:30 engine: exec[Cron:check in]: resource: Apply
+00:49:32 engine: exec[Cron:check in]: resource: command output is:
+00:49:32 engine: exec[Cron:check in]: resource: Notice: /Cron[check in]/ensure: created
+--- !ruby/object:Puppet::Resource
+type: Cron
+title: check in
+...
+parameters:
+  ensure: present
+  command: curl https://my.apisrv.org/i/heartbeat#dev-app01-ffrank
+...
+						</code></pre>
+						<p class="smaller">We currently don't translate this,
+						because mgmt's cron support is systemd based
+						and thus has different semantics</p>
+					</section>
+
+					<section>
+						...but consider that I'm pretty dumb
+						<pre><code>
+[0,5,10,15,20,25,30,35,40,45,50,55].each |$minute| {
+  cron { "check in ($minute)":
+    command => "curl https://my.apisrv.org/i/heartbeat#$hostname",
+    minute  => $minute,
+  }
+}
+						</code></pre>
+					</section>
+
+					<section>
+						This will take a lot of time in mgmt
+						<pre><code>
+$ time mgmt run --tmp-prefix puppet demo3/cron-example-multi.pp
+
+...
+
+real    1m8.787s
+user    0m41.484s
+sys     0m18.324s
+						</code></pre>
+					</section>
 				</section>
 
 				<section>
@@ -369,8 +490,29 @@ edges:
 				</section>
 
 				<section>
-					<p class="large">Demo IV</p>
-					<p>Ludicrous speed</p>
+					<section>
+						<p class="large">Demo IV</p>
+						<p>Ludicrous speed</p>
+					</section>
+
+					<section>
+						Let's make sure we're on<br/>
+						the latest mgmt and<br/>
+						the latest translator module
+						<pre><code>
+$ puppet module upgrade ffrank-mgmtgraph
+...
+
+$ time mgmt run --tmp-prefix puppet demo3/cron-example-multi.pp
+
+...
+
+real    0m20.697s
+user    0m5.404s
+sys     0m3.572s
+						</code></pre>
+						(most of this time spent with translating the manifest and graph prep work)
+					</section>
 				</section>
 
 				<section>
@@ -389,17 +531,122 @@ to another process ( MRTG is one example) through a set of pipes.</pre></div>
 				</section>
 
 				<section>
+					Speaking of pipes
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/y1O71OF_kYs?start=79" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+				</section>
+
+				<section>
 					<img src="pippet.png"/>
 				</section>
 
 				<section>
-					<p class="large">Demo V</p>
-					<p>Nuts and bolts</p>
+					<section>
+						<p class="large">Demo V</p>
+						<p>Nuts and bolts</p>
+					</section>
+
+					<section>
+						First: Old translator vs. cron
+						<pre><code>
+$ puppet module upgrade ffrank-mgmtgraph --version 0.5.0
+
+$ puppet mgmtgraph print --code 'cron { "demo": 
+>   command => "echo demo", minute => 1 }'
+...
+exec:
+  - name: Cron:demo                                                                                                                                   [36/1815]
+    cmd: |-
+      puppet yamlresource cron 'demo' '{"provider": "crontab", "command": "echo demo", "minute": ["1"], "ensure": "present",
+        "target": "root", "loglevel": "notice"}'
+    timeout: 30
+    shell: "/bin/bash"
+    ifshell: "/bin/bash"
+    ifcmd: |-
+      puppet yamlresource cron 'demo' '{"provider": "crontab", "command": "echo demo", "minute": ["1"], "ensure": "present",
+        "target": "root", "loglevel": "notice"}' --noop --color=false | grep -q ^Notice:
+    state: present
+    pollint: 1800
+						</pre></code>
+					</section>
+
+					<section>
+						Compare with the new
+						<pre><code>
+$ puppet module upgrade ffrank-mgmtgraph
+
+$ puppet mgmtgraph print --code 'cron { "demo": 
+>   command => "echo demo", minute => 1 }'
+						</pre></code>
+					</section>
+
+
+					<section>
+						But how is pippet implemented? [1]
+						<pre><code>
+# simple resource:
+$ puppet apply -e 'file { "/tmp/myfile": ensure => present, mode => "0644" }'
+
+# faster to type:
+$ puppet resource file /tmp/myfile ensure=present
+
+# but what about
+$ puppet apply -e 'cron { "clidemo": command => "echo hi", minute => [ 10, 40 ] }'
+
+# these will not work
+puppet resource cron clidemo command="echo hi" minute=10,40
+puppet resource cron clidemo command="echo hi" minute='[10,40]'
+						</pre></code>
+					</section>
+
+					<section>
+						But how is pippet implemented? [2]
+						<pre><code>
+
+# how to send this to `puppet resource`
+$ puppet apply -e 'cron { "clidemo": command => "echo hi", minute => [ 10, 40 ] }'
+
+# using ffrank-yamlresource
+$ puppet yamlresource cron clidemo '{ command: "echo hi", minute: [ 10, 40 ] }'
+						</pre></code>
+						Now to make it fast
+					</section>
+
+					<section>
+						But how is pippet implemented? [3]
+						<pre><code>
+$ puppet yamlresource receive
+Notice: ready to receive resources in YAML representation (one per line)...
+
+cron clidemo { minute: [ 10, 30, 50 ] }
+{"resource":"Cron[clidemo]","failed":false,"changed":true,"noop":false,"error":false,"exception":null}
+
+cron clidemo { minute: [ 10, 30, 50 ] }
+{"resource":"Cron[clidemo]","failed":false,"changed":false,"noop":false,"error":false,"exception":null}
+
+# also accepts JSON, useful when used as an API
+{"type":"cron", "title": "clidemo", "params": "{ minute: [ 10, 40 ] }"}
+{"resource":"Cron[clidemo]","failed":false,"changed":true,"noop":false,"error":false,"exception":null}
+						</pre></code>
+					</section>
+
+					<section>
+						Silly shell tricks you can try at home
+						<pre><code>
+$ for i in `seq 1 100`
+do
+  echo file /tmp/loop$i '{ ensure: file }'
+done \
+	| puppet yamlresource receive
+
+# vastly faster than
+for i in `seq 1 100` ; do puppet resource file /tmp/loop$i ensure=file ; done
+						</pre></code>
+					</section>
 				</section>
 
 				<section>
-					<p>We will soon be ready to drop in mgmt
-					as a Puppet agent replacement
+					<p>We aim to soon be ready to drop in mgmt<br/>
+					as a Puppet agent replacement<br/>
 					for testing and learning</p>
 					<p>Come talk to us in #mgmt on Freenode</p>
 				</section>
