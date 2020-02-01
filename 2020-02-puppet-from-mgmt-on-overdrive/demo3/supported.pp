@@ -3,7 +3,7 @@ package { "haproxy":
   ensure => "installed",
 }
 ->
-file { "/etc/haproxy/haproxy.conf":
+file { "/etc/haproxy/haproxy.cfg":
   mode => "0640",
 }
 ->
