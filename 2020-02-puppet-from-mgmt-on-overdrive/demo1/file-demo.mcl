@@ -1,0 +1,5 @@
+# simple plain file
+file "/tmp/demo1-file" {
+	state => "exists",
+	content => "basic mgmt operation\n",
+}
