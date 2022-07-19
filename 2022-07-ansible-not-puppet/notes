@@ -1,0 +1,44 @@
+Needed:
+- Story
+  -> http://thedailywtf.com/articles/Classic-WTF-No-Quack centered around the poem at the end?
+- Software Eng. metaphor(s) for the core concepts (and others?)
+  -> Theatre?
+    * Puppet = hand annotated personalized script to each actor
+    * Ansible = One person holds script, directs all actors + mouths lines
+
+Topics:
+
+- Config Management Goals
+  * no manual mucking on shells / WebUIs / GUIs
+  * repeatability
+  * infrastructure as code
+
+- architectural components
+  * Puppet: master, manifest, agent, facter, puppetdb, hiera
+  * Ansible: playbooks, ssh, inventory
+
+- day-to-day: Puppet
+  * manifest code and hiera data control everything
+  * code largely from the Forge
+  * roles and profiles
+  * optionally Foreman or other ENC
+  * MCollective
+  * PuppetBoard
+
+- day-to-day: Ansible
+  * code in roles, data looked up in grouped YAML inventory
+  * roles available from galaxy, config is then in structured data
+  * playbooks assign roles, handle orchestration
+  * controlled from arbitrary machines via SSH
+  * little comfort without Tower
+
+- language differences
+  -> module, role, resource/task
+
+- Testing
+  * Puppet: noop run, catalog-diff, rspec-puppet, beaker
+  * Puppet: check run, infra-test
+
+- Conceptual basis
+  * Puppet: Provide way to form single-transaction convergence iteration for each single machine
+  * Ansible: Provide arbitrary views and distributed scripts to apply certain aspects of the inventory
