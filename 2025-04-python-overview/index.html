@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Snakes Are My New Favourite</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/solarized.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown data-transition="none">
+				  <textarea data-template>
+## Snakes Are My New Favourite
+A presentation about Python
+---
+But before all that
+## Trans Rights are Human Rights!
+It needs to be said even louder now
+---
+# Scripting
+---
+## Different circumstances
+* one-off data helpers
+* regular task workers
+* team helpers
+* chat bots
+* ...
+---
+* Shell?
+  *  fun and whimsy, YMMV
+* Ruby?
+  * rather obscure, not in base systems
+* Perl?
+  * `$_ =~ /^[^\d-]+?.*,([^,]+),.*;$/;` 🤪
+---
+## Python
+
+```python
+for result, count in get_summaries():
+    if "success" in result:
+        total += current_count
+    else:
+        failures += 1
+```
+---
+## Nifty built-in utilities
+```bash
+# serve $PWD on http://localhost:8000 ?
+$ python -m http.server
+
+# make json readable
+$ cat /tmp/large.json | python -m json.tool | less
+---
+## Very natural API integration
+```python
+import requests
+
+# request and decode JSON data
+r = requests.get("https://wttr.in/?format=j2")
+data = r.json()
+
+# now work with data
+print("Feels like {} °C outside".format(
+        data["current_condition"][0]["FeelsLikeC"]))
+```
+				  </textarea>
+				</section>
+				<section data-transition="none">
+					<img class="r-stretch" src="./modules.drawio.svg" alt="Python modules"/>
+				</section>
+				<section data-transition="none">
+					<img class="r-stretch" src="./clash.drawio.svg" alt="Python modules"/>
+					<p>"Dependency hell"</p>
+				</section>
+				<section data-markdown data-transition="none">
+				  <textarea data-template>
+## Not much of an issue anymore
+```bash [1]
+felix@deb01:~/testenv$ pip install ansible==10.0
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+```
+---
+## Basic virtual environment
+1. create virtual env
+```bash
+$ virtualenv /tmp/venv
+```
+2. activate it for this shell
+```bash
+$ . /tmp/venv/bin/activate
+```
+3. install modules in the env
+```bash
+(venv) $ pip install ansible==10.7.0
+(venv) $ ansible --version
+ansible [core 2.17.11]
+```
+---
+## More streamlined alternatives
+* pyenv
+* pipsi
+* pipx
+---
+## Let your dependencies travel in git
+My favourite: pipenv
+```bash [1]
+$ pipenv install flask
+```
+```bash [1]
+$ cat Pipfile
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
+```
+---
+## Let your dependencies travel in git
+My favourite: pipenv
+```bash [1-2,8-9]
+$ pipenv install flask
+```
+```bash [1,7-8]
+$ cat Pipfile
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
+---
+```bash [1,15]
+$ pipenv run pip list
+Package      Version
+------------ -------
+blinker      1.9.0
+click        8.1.8
+Flask        3.1.0
+itsdangerous 2.2.0
+Jinja2       3.1.6
+MarkupSafe   3.0.2
+pip          23.0.1
+setuptools   66.1.1
+Werkzeug     3.1.3
+wheel        0.38.4
+
+$ pipenv run flask run -app demo_app
+---
+### The virtualenv is specific to each Pipfile!
+```bash [1,5]
+~/testenv$ pwd && pipenv --venv
+/home/felix/testenv
+/home/felix/.local/share/virtualenvs/testenv-2KEFYwlv
+
+~/staging-code$ pwd && pipenv --venv
+/home/felix/staging-code
+/home/felix/.local/share/virtualenvs/staging-code-FZb6lRtC
+---
+## From pipenv to production
+1. create requirements.txt for virtualenv
+```bash
+$ pipenv requirements > requirements.txt
+```
+
+2. deploy explicit venv e.g. with Ansible
+```yaml
+- name: Create virtual environment
+  ansible.builtin.pip:
+    virtualenv: "{{ install_dir }}/venv"
+    requirements: "{{ install_dir }}/requirements.txt"
+---
+## Maintaining the virtualenv is now part of each new deployment
+
+🛑 Dependency Hell is temporarily closed. 🛑
+---
+I have been Felix.
+
+🐘 [@felixf@chaos.social](https://chaos.social/@felixf)
+
+🦋 [@felix-frank.net](https://bsky.app/profile/felix-frank.net)
+
+Let me know about your favourite scripting approaches 🌱
+				  </textarea>
+				</section>
+			</div>
+
+			<!--
+			<div id="footer" style="background: #00acac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felix-frank.net | @felixf@chaos.social
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					Snakes Are My New Favorite
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					StackConf 2025
+				</span>
+			</div>
+			-->
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				autoSlide: 15000,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
