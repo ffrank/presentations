@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>All I want is some notifications 😭</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/solarized.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown data-transition="none">
+				  <textarea data-template>
+## All I want is some notifications 😭
+A Tale of an Admin
+
+who dislikes email
+
+like, a LOT
+---
+## PSA
+
+STOP fascism
+
+END AfD
+
+END Republicans
+---
+Meet Emily
+
+![Customer](customer.jpg)
+---
+Meet Emily
+
+![Customer](customer.jpg)
+---
+# JBOSS
+Just a Bunch of Silly Servers
+---
+## Handmade since 1992 (ish)
+(Nagios did not exist before 1999)
+---
+## But things need to work
+* cron jobs
+* urgent incoming trading messages
+* scripts failing
+---
+# My face 😩
+## when I have to send email 
+## from my scripts
+---
+Just let me
+# REST
+---
+```python
+app_token = "nsvnad82bqr84nv01381qnnf32nc92"
+user_tokens = { "felix": "isv983nc9qcnve0pjer9gvn2q892mb" }
+
+def send_notification(message, user):
+    conn = http.client.HTTPSConnection("api.pushover.net:443")
+    conn.request("POST", "/1/messages.json",
+      urllib.parse.urlencode({
+        "token": app_token,
+        "user": user_tokens[user],
+        "message": message,
+      }), { "Content-type": "application/x-www-form-urlencoded" })
+    return conn.getresponse()
+```
+---
+```python
+app_token = "nsvnad82bqr84nv01381qnnf32nc92"
+user_tokens = { "felix": "isv983nc9qcnve0pjer9gvn2q892mb" }
+
+def send_notification(message, user):
+    conn = http.client.HTTPSConnection("api.pushover.net:443")
+    conn.request("POST", "/1/messages.json",
+      urllib.parse.urlencode({
+        "token": app_token,
+        "user": user_tokens[user],
+        "message": message,
+      }), { "Content-type": "application/x-www-form-urlencoded" })
+    return conn.getresponse()
+```
+---
+It's magic!
+# Step one: Register
+https://pushover.net/
+---
+It's magic!
+# Step two: Pay up
+Teams: $5 per user / month
+
+Individuals: $5 per platform / life
+---
+It's magic!
+## Step three:
+## Create application endpoints
+These can include icons to tell notifications apart easily
+---
+![pushover interface](application.png)
+---
+The
+# REST
+is just
+# HTTP
+---
+![Example code](code-examples.png)
+---
+## HTTP
+Works on anything with a TCP stack™️ 
+---
+## Or just stuff it into your favourite monitoring solution
+---
+I have been Felix.
+
+🐘 [@felixf@chaos.social](https://chaos.social/@felixf)
+
+🦋 [@felix-frank.net](https://bsky.app/profile/felix-frank.net)
+
+Show me your ugliest shell scripts 🥰
+				  </textarea>
+				</section>
+			</div>
+
+			<div id="footer" style="background: #00acac;
+						position: absolute;
+						bottom: 0px;
+						left: 0px;
+						right: 0px;
+						height:24px;
+						color: white;
+						font-size: 20px;
+						padding: 4px;">
+				<span style="float: left; width: 33%;">
+					@felix-frank.net | @felixf@chaos.social
+				</span>
+				<span style="float: left; left: 33%; width: 33%; text-align: center;">
+					Notifications plz 👉👈🥹
+				</span>
+				<span style="float: left; right: 0px; width: 33%; text-align: right;">
+					OSMC 2025
+				</span>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				//autoSlide: 15000,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
